@@ -1,0 +1,119 @@
+{
+  "equipos": [
+    {
+      "nombre": "Red Bull Racing",
+      "pais": "Austria",
+      "motor": "Honda",
+      "pilotos": [
+        {
+          "id": 1,
+          "nombre": "Max Verstappen",
+          "equipo": "Red Bull Racing",
+          "rol": "Líder"
+        },
+        {
+          "id": 1,
+          "nombre": "Max Verstappen",
+          "equipo": "Red Bull Racing",
+          "rol": "Líder"
+        },
+        {
+          "id": 1,
+          "nombre": "Max Verstappen",
+          "equipo": "Red Bull Racing",
+          "rol": "Líder"
+        }
+      ],
+      "imagen": "https://upload.wikimedia.org/wikipedia/commons/b/bb/Red_Bull_Racing_Logo.svg",
+      "id": "6193"
+    }
+  ],
+  "circuitos": [
+    {
+      "nombre": "Silverstone",
+      "pais": "Reino Unido",
+      "longitud_km": 5.89,
+      "vueltas": 52,
+      "descripcion": "Uno de los circuitos más rápidos del calendario, con curvas de alta velocidad como Maggotts y Becketts.",
+      "record_vuelta": {
+        "tiempo": "1:27.097",
+        "piloto": "Max Verstappen",
+        "año": 2020
+      },
+      "ganadores": [
+        {
+          "temporada": 2021,
+          "piloto": 3
+        },
+        {
+          "temporada": 2022,
+          "piloto": 5
+        },
+        {
+          "temporada": 2023,
+          "piloto": 1
+        }
+      ],
+      "imagen": "https://upload.wikimedia.org/wikipedia/commons/5/5e/Silverstone_Circuit_2020_layout.png",
+      "id": "354c"
+    }
+  ],
+  "vehiculos": [
+    {
+      "id": "d6df",
+      "equipo": "Red Bull Racing",
+      "modelo": "RB21",
+      "motor": "Honda V6",
+      "velocidad_maxima_kmh": 360,
+      "aceleracion_0_100": 2.5,
+      "pilotos": [
+        3,
+        9
+      ],
+      "rendimiento": {
+        "conduccion_normal": {
+          "velocidad_promedio_kmh": 320,
+          "consumo_combustible": {
+            "seco": 1.9,
+            "lluvioso": 2.1,
+            "extremo": 2.4
+          },
+          "desgaste_neumaticos": {
+            "seco": 1.5,
+            "lluvioso": 0.8,
+            "extremo": 2.5
+          }
+        }
+      },
+      "imagen": "https://upload.wikimedia.org/wikipedia/commons/8/89/Max_Verstappen_2023_Austria_FP2_%28cropped%29.jpg"
+    },
+    {
+      "id": "4712",
+      "equipo": "Red Bull Racing",
+      "modelo": "RB20",
+      "motor": "Honda",
+      "velocidad_maxima_kmh": 360,
+      "aceleracion_0_100": 2.5,
+      "pilotos": [
+        1,
+        2
+      ],
+      "rendimiento": {
+        "conduccion_normal": {
+          "velocidad_promedio_kmh": 320,
+          "consumo_combustible": {
+            "seco": 1.9,
+            "lluvioso": 2.1,
+            "extremo": 2.4
+          },
+          "desgaste_neumaticos": {
+            "seco": 1.5,
+            "lluvioso": 0.8,
+            "extremo": 2.5
+          }
+        }
+      },
+      "imagen": "https://upload.wikimedia.org/wikipedia/commons/8/89/Max_Verstappen_2023_Austria_FP2_%28cropped%29.jpg"
+    }
+  ]
+}

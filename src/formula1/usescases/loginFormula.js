@@ -160,6 +160,7 @@ export class LoginFormula extends HTMLElement {
                 title: "Welcome!",
                 text: "Login successful",
             });
+            this.adminIndex();
         } else {
             Swal.fire({
                 icon: "error",
@@ -167,6 +168,12 @@ export class LoginFormula extends HTMLElement {
                 text: "Incorrect username or password!",
             });
         }
+    }
+
+    adminIndex(){
+        this.shadowRoot.innerHTML = `
+        <admin-index></admin-index>
+        `;
     }
 }
 
