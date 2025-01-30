@@ -10,18 +10,6 @@
           "nombre": "Max Verstappen",
           "equipo": "Red Bull Racing",
           "rol": "Líder"
-        },
-        {
-          "id": 1,
-          "nombre": "Max Verstappen",
-          "equipo": "Red Bull Racing",
-          "rol": "Líder"
-        },
-        {
-          "id": 1,
-          "nombre": "Max Verstappen",
-          "equipo": "Red Bull Racing",
-          "rol": "Líder"
         }
       ],
       "imagen": "https://upload.wikimedia.org/wikipedia/commons/b/bb/Red_Bull_Racing_Logo.svg",
@@ -43,14 +31,6 @@
       "ganadores": [
         {
           "temporada": 2021,
-          "piloto": 3
-        },
-        {
-          "temporada": 2022,
-          "piloto": 5
-        },
-        {
-          "temporada": 2023,
           "piloto": 1
         }
       ],
