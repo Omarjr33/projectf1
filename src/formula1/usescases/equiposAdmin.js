@@ -226,9 +226,15 @@ export class equiposAdmin extends HTMLElement {
                 <button id="btnRegistrar" type="submit" class="btn-submit">
                     Registrar Equipo
                 </button>
-
                 <div id="statusMessage" class="status-message"></div>
             </form>
+             <div class="card">
+            <h1>Conoce nuestros equipos</h1>
+            <button id="btnListar" type="submit" class="btn-submit">↓</button>
+            <div id="equiposCards">
+            <!--Aquí se llamarán las cartas desde archivo JS-->
+            </div>
+        </div>
         </div>
         `;
     }
