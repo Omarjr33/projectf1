@@ -1,11 +1,12 @@
 export class VehiculosAdmin extends HTMLElement {
         constructor(){
             super();
+            this.attachShadow({ mode: 'open' });
             this.render();
         }
     render(){
 
-        this.innerHTML = /*html*/ `
+        this.shadowRoot.innerHTML = /*html*/ `
         <form id="formCrearVehiculo"> 
         <div class="col">
                 <label for="idVehiculo" class="form-label">COD</label>
@@ -41,7 +42,13 @@ export class VehiculosAdmin extends HTMLElement {
                 <label for="exampleInputVelocidadProm" class="form-label"> Rendimiento</label>
                 <input type="number" class="form-control" id="exampleInputVelocidadProm" aria-describedby="VelocidadPromHelp">
             </div>
-        
+        </form>
+        <div class="card">
+        <h1>Conoce nuestros Vehiculos</h1>
+        <button id="btnListar" type="submit" class="btn-submit">↓</button>
+        <div id="equiposCards">
+        <!--Aquí se llamarán las cartas desde archivo JS-->
+        </div>
         `;
     }
 }

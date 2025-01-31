@@ -217,7 +217,13 @@ export class pilotosAdmin extends HTMLElement {
 
                 <div id="statusMessage" class="status-message"></div>
             </form>
-       `;
+            <div class="card">
+            <h1>Conoce nuestros Pilotos</h1>
+            <button id="btnListar" type="submit" class="btn-submit">↓</button>
+            <div id="equiposCards">
+            <!--Aquí se llamarán las cartas desde archivo JS-->
+            </div>
+        `;
     }
 
     setupEventListeners() {
