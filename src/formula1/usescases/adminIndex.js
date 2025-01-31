@@ -153,16 +153,16 @@ export class adminIndex extends HTMLElement {
                 <div class="navbar-collapse" id="navbarSupportedContent">
                     <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                         <li class="nav-item">
-                            <a class="nav-link active mnadministrador" aria-current="page" href="#" data-verocultar='["#equipos", ["#pilotos", "#circuitos", "#vehiculos"]]'>Equipos</a>
+                            <a class="nav-link active" href="#" data-section="equipos">Equipos</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link mnadministrador" aria-current="page" href="#" data-verocultar='["#pilotos", ["#equipos", "#circuitos", "#vehiculos"]]'>Pilotos</a>
+                            <a class="nav-link" href="#" data-section="pilotos">Pilotos</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link mnadministrador" aria-current="page" href="#" data-verocultar='["#circuitos", ["#pilotos", "#equipos", "#vehiculos"]]'>Circuitos</a>
+                            <a class="nav-link" href="#" data-section="circuitos">Circuitos</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link mnadministrador" aria-current="page" href="#" data-verocultar='["#vehiculos", ["#pilotos", "#circuitos", "#equipos"]]'>Vehículos</a>
+                            <a class="nav-link" href="#" data-section="vehiculos">Vehículos</a>
                         </li>
                     </ul>
                 </div>
@@ -182,29 +182,35 @@ export class adminIndex extends HTMLElement {
         </div>
         `;
 
+        // Agregar event listeners a los enlaces de navegación
+        this.querySelectorAll('.nav-link').forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
 
-        this.querySelectorAll(".mnadministrador").forEach((val, id) => {
-            val.addEventListener("click", (e) => {
- 
-                this.querySelectorAll(".nav-link").forEach(link => {
-                    link.classList.remove('active');
+                // Remover clase 'active' de todos los enlaces
+                this.querySelectorAll('.nav-link').forEach(navLink => {
+                    navLink.classList.remove('active');
                 });
-                
+
+                // Añadir clase 'active' al enlace clickeado
                 e.target.classList.add('active');
 
-                let data = JSON.parse(e.target.dataset.verocultar);
-                let cardVer = document.querySelector(data[0]);
-                cardVer.style.display = 'block';
-                data[1].forEach(card => {
-                    let cardActual = document.querySelector(card);
-                    cardActual.style.display = 'none';
+                // Obtener la sección a mostrar
+                const section = e.target.dataset.section;
+
+                // Ocultar todos los contenedores
+                ['equipos', 'pilotos', 'circuitos', 'vehiculos'].forEach(containerName => {
+                    const container = this.querySelector(`#${containerName}`);
+                    container.style.display = containerName === section ? 'block' : 'none';
                 });
-                e.stopImmediatePropagation();
-                e.preventDefault();
+
+                // Cerrar el menú móvil si está abierto
+                const collapse = this.querySelector('.navbar-collapse');
+                collapse.classList.remove('show');
             });
         });
 
-
+        // Agregar toggle para menú móvil
         const toggler = this.querySelector('.navbar-toggler');
         const collapse = this.querySelector('.navbar-collapse');
         
