@@ -285,9 +285,9 @@ export class pilotosAdmin extends HTMLElement {
                 handleImageDisplay(file);
             }
         });
-
+        
         // Manejo del envío del formulario
-        formCrearPiloto.addEventListener('submit', (e) => {
+        his.shadowRoot.querySelector('#RegistrarPiloto').addEventListener("click", (e) => {
             e.preventDefault();
             const formData = new FormData(formCrearPiloto);
 
@@ -325,7 +325,7 @@ export class pilotosAdmin extends HTMLElement {
             }
         });
     }
-    mostrarPilotoa = () => {
+    mostrarPilotos = () => {
         getPilotos()
         .then((pilotos) => {
             //Toma el elemento HTML con ID productosCards
@@ -340,17 +340,17 @@ export class pilotosAdmin extends HTMLElement {
                 //Cambios dentro del archivo HTML, se completa la información con la data adquirida
                 divItems.innerHTML = /*html*/ `
                 <div id="card__listar" class="card">
-                    <img src="${imagenEquipo}" alt="Equipo Image">
-                    <h1 class="card__title">${nombreEquipo}</h1>
-                    <p class="card__pais">${paisEquipo}</p>
-                    <p class="card__motor">${motorEquipo}</p>
+                    <img src="${imagenPiloto}" alt="Equipo Image">
+                    <h1 class="card__title">${nombrePiloto}</h1>
+                    <p class="card__pais">${equipo}</p>
+                    <p class="card__motor">${rolPiloto}</p>
                     <div>
                         <button class="btnEditar">Editar</button>
                         <button class="btnEliminar" data-id="${idEquipo}">Eliminar</button>
                     </div>
                 </div>
                 `;
-                equiposCards.appendChild(divItems);
+                PilotosCards.appendChild(divItems);
             });
 
             this.eliminarEquipo();
