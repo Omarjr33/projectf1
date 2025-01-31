@@ -1,4 +1,5 @@
-import { postEquipos } from "../../Apis/equiposApis.js";
+import Swal from 'sweetalert2';
+import { postEquipos, getEquipos, deleteEquipos } from "../../Apis/equiposApis.js";
 
 export class equiposAdmin extends HTMLElement {
     constructor() {
@@ -6,9 +7,11 @@ export class equiposAdmin extends HTMLElement {
         this.attachShadow({ mode: 'open' });
         this.render();
         this.crearEquipo();
+        this.eliminarEquipo();
     }
 
     render() {
+        let idEquipo = Date.now();
         this.shadowRoot.innerHTML = /*html*/`
         <style>
             :host {
@@ -194,6 +197,10 @@ export class equiposAdmin extends HTMLElement {
                 <h2>Registro de Equipo</h2>
             </div>
             <form id="formCrearEquipo">
+                <div class="codigo" style="display: none;">
+                    <label for="idEquipo" class="form-label">COD</label>
+                    <input type="number" class="form-control" id="idEquipo" name ="idEquipo" placeholder="${idEquipo}" disabled>
+                </div>
                 <div class="form-grid">
                     <div class="form-group">
                         <label class="form-label" for="nombreEquipo">Nombre del Equipo</label>
@@ -201,21 +208,21 @@ export class equiposAdmin extends HTMLElement {
                     </div>
                     
                     <div class="form-group">
-                        <label class="form-label" for="pais">País</label>
-                        <input type="text" class="form-control" id="pais" name="pais" placeholder="Ingrese el país">
+                        <label class="form-label" for="paisEquipo">País</label>
+                        <input type="text" class="form-control" id="paisEquipo" name="paisEquipo" placeholder="Ingrese el país">
                     </div>
                     
                     <div class="form-group">
-                        <label class="form-label" for="Motor">Motor</label>
-                        <input type="text" class="form-control" id="Motor" name="Motor" placeholder="Especifique el motor">
+                        <label class="form-label" for="motorEquipo">Motor</label>
+                        <input type="text" class="form-control" id="motorEquipo" name="motorEquipo" placeholder="Especifique el motor">
                     </div>
                     
                     <div class="form-group">
-                        <label class="form-label" for="imageEquipo">Imagen del Equipo</label>
+                        <label class="form-label" for="imagenEquipo">Imagen del Equipo</label>
                         <div class="image-upload-container" id="dropZone">
                             <i>📁</i>
                             <p class="image-upload-text">Arrastra una imagen aquí o haz clic para seleccionar</p>
-                            <input type="file" class="file-input" id="imageEquipo" name="imageEquipo" accept="image/*">
+                            <input type="file" class="file-input" id="imagenEquipo" name="imagenEquipo" accept="image/*">
                         </div>
                         <div class="preview-container">
                             <img class="preview-image" id="imagePreview" alt="Preview">
@@ -237,6 +244,13 @@ export class equiposAdmin extends HTMLElement {
         </div>
         </div>
         `;
+        this.addEventListener();
+    }
+
+    addEventListener(){
+        this.shadowRoot.querySelector('#btnListar').addEventListener("click", (e) => {
+            this.mostrarEquipos();
+        });
     }
 
     crearEquipo = () => {
@@ -302,7 +316,7 @@ export class equiposAdmin extends HTMLElement {
                 const reader = new FileReader();
                 reader.onloadend = () => {
                     const datos = Object.fromEntries(formData.entries());
-                    datos.imageEquipo = reader.result;
+                    datos.imagenEquipo = reader.result;
                     
                     postEquipos(datos)
                         .then(response => {
@@ -333,32 +347,76 @@ export class equiposAdmin extends HTMLElement {
             }
         });
     }
+
     mostrarEquipos = () => {
         getEquipos()
         .then((equipos) => {
             //Toma el elemento HTML con ID productosCards
-            const equiposCards = document.getElementById('equiposCards');
+            const equiposCards = this.shadowRoot.querySelector('#equiposCards');
             
             equipos.forEach((equipo) => {
-                const {nombreEquipo, pais, motor, imagenEquipo} = equipo;
+                const {nombreEquipo, paisEquipo, motorEquipo, imagenEquipo, idEquipo} = equipo;
                 //Crea un div en HTML
                 const divItems = document.createElement('div');
                 //El div creado tendrá como clase col
                 divItems.classList.add('col');
                 //Cambios dentro del archivo HTML, se completa la información con la data adquirida
-                divItems.innerHTML = /*html*/`
+                divItems.innerHTML = /*html*/ `
                 <div id="card__listar" class="card">
                     <img src="${imagenEquipo}" alt="Equipo Image">
                     <h1 class="card__title">${nombreEquipo}</h1>
-                    <p class="card__pais">${pais}</p>
-                    <p class="card__motor">${motor}</p>
+                    <p class="card__pais">${paisEquipo}</p>
+                    <p class="card__motor">${motorEquipo}</p>
+                    <div>
+                        <button class="btnEditar">Editar</button>
+                        <button class="btnEliminar" data-id="${idEquipo}">Eliminar</button>
+                    </div>
                 </div>
                 `;
                 equiposCards.appendChild(divItems);
             });
 
+            this.eliminarEquipo();
+
         }).catch ((error) => {
             console.error('Error en la solicitud GET:', error.message);
+        });
+    }
+
+    eliminarEquipo(){
+        const btnEliminar = this.shadowRoot.querySelectorAll('.btnEliminar');
+
+        btnEliminar.forEach((btn) => {
+            btn.addEventListener('click', async (e) => {
+                const idEquipo = e.target.getAttribute("data-id");
+                Swal.fire({
+                    title: "¿Está seguro de eliminar el producto?",
+                    icon: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#3085d6",
+                    cancelButtonColor: "#d33",
+                    confirmButtonText: "Si, seguro!"
+                  }).then(async(result) => {
+                    if (result.isConfirmed) {
+                      Swal.fire({
+                        title: "Eliminado!",
+                        text: "El producto ha sido eliminado.",
+                        icon: "success"
+                      });
+                      
+                      try {
+                          const response = await deleteEquipos(idEquipo);
+                          if (response.ok) {
+                              this.mostrarEquipos();
+                          } else {
+                              throw new Error(`Error en la solicitud DELETE: ${response.status} - ${response.statusText}`);
+                          }
+                      } catch (error) {
+                          console.error('Error en la solicitud DELETE:', error.message);
+                      }
+                    }
+                  });
+            });
         });
     }
 
