@@ -1,6 +1,7 @@
 {
   "equipos": [
     {
+      "id": "6193",
       "nombre": "Red Bull Racing",
       "pais": "Austria",
       "motor": "Honda",
@@ -12,8 +13,7 @@
           "rol": "Líder"
         }
       ],
-      "imagen": "https://upload.wikimedia.org/wikipedia/commons/b/bb/Red_Bull_Racing_Logo.svg",
-      "id": "6193"
+      "imagen": "https://upload.wikimedia.org/wikipedia/commons/b/bb/Red_Bull_Racing_Logo.svg"
     }
   ],
   "circuitos": [

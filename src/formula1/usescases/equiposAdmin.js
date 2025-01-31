@@ -4,12 +4,16 @@ export class equiposAdmin extends HTMLElement {
     constructor(){
         super();
         this.render();
-        this.crearEquipo();
+        this.addCrearEquipo();
     }
     render(){
+        let id = Date.now();
         this.innerHTML= /*html*/ `
-        <div class="container">
         <form id="formCrearEquipo">
+            <div class="col">
+                <label for="id" class="form-label">COD</label>
+                <input type="number" class="form-control" id="id" name ="id" placeholder="${id}">
+            </div>
             <div class="row">
                 <div class="col">
                     <label for="nombreEquipo" class="form-label">Nombre Equipo</label>
@@ -36,14 +40,14 @@ export class equiposAdmin extends HTMLElement {
                 </div>
             </div>
         </form>
-        </div>
         `;
     }
 
-    crearEquipo = () =>{
-        const formCrearEquipo = document.querySelector('#formCrearEquipo');
-        document.querySelector('#btnRegistrar').addEventListener("click",(e) =>{
+    addCrearEquipo = () => {
+        const formCrearEquipo = document.querySelector("#formCrearEquipo");
+        document.querySelector('#btnRegistar').addEventListener("click",(e) =>{
             e.preventDefault();
+
             const datos = Object.fromEntries(new FormData(formCrearEquipo).entries());
             datos.id = document.querySelector("#id").placeholder;
             postEquipos(datos)
