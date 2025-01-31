@@ -54,7 +54,7 @@ const deleteEquipo = async (id) =>{
             headers: myHeaders,
         });
     } catch (error) {
-        console.error('Error en la solicitud POST:', error.message);
+        console.error('Error en la solicitud DELETE:', error.message);
     }
 
 }

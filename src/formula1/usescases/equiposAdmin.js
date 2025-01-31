@@ -353,9 +353,9 @@ export class equiposAdmin extends HTMLElement {
         .then((equipos) => {
             //Toma el elemento HTML con ID productosCards
             const equiposCards = this.shadowRoot.querySelector('#equiposCards');
+            equiposCards.innerHTML = '';
             
             equipos.forEach((equipo) => {
-                const {nombreEquipo, paisEquipo, motorEquipo, imagenEquipo, idEquipo} = equipo;
                 //Crea un div en HTML
                 const divItems = document.createElement('div');
                 //El div creado tendrá como clase col
@@ -363,13 +363,13 @@ export class equiposAdmin extends HTMLElement {
                 //Cambios dentro del archivo HTML, se completa la información con la data adquirida
                 divItems.innerHTML = /*html*/ `
                 <div id="card__listar" class="card">
-                    <img src="${imagenEquipo}" alt="Equipo Image">
-                    <h1 class="card__title">${nombreEquipo}</h1>
-                    <p class="card__pais">${paisEquipo}</p>
-                    <p class="card__motor">${motorEquipo}</p>
+                    <img src="${equipo.imagenEquipo}" alt="Equipo Image">
+                    <h1 class="card__title">${equipo.nombreEquipo}</h1>
+                    <p class="card__pais">${equipo.paisEquipo}</p>
+                    <p class="card__motor">${equipo.motorEquipo}</p>
                     <div>
                         <button class="btnEditar">Editar</button>
-                        <button class="btnEliminar" data-id="${idEquipo}">Eliminar</button>
+                        <button class="btnEliminar" data-id="${equipo.id}">Eliminar</button>
                     </div>
                 </div>
                 `;
@@ -383,43 +383,53 @@ export class equiposAdmin extends HTMLElement {
         });
     }
 
-    eliminarEquipo(){
-        const btnEliminar = this.shadowRoot.querySelectorAll('.btnEliminar');
-
-        btnEliminar.forEach((btn) => {
-            btn.addEventListener('click', async (e) => {
-                const idEquipo = e.target.getAttribute("data-id");
-                Swal.fire({
-                    title: "¿Está seguro de eliminar el producto?",
+    eliminarEquipo() {
+        const equiposCards = this.shadowRoot.querySelector("#equiposCards");
+    
+        equiposCards.addEventListener("click", async (e) => {
+            if (e.target.classList.contains("btnEliminar")) {
+                const id = e.target.getAttribute("data-id");
+    
+                if (!id) {
+                    console.error("ID del equipo no encontrado.");
+                    return;
+                }
+    
+                console.log(`Intentando eliminar equipo con ID: ${id}`);
+    
+                // Confirmación con SweetAlert2
+                const confirmacion = await Swal.fire({
+                    title: "¿Está seguro de eliminar el equipo?",
+                    text: "Esta acción no se puede deshacer.",
                     icon: "warning",
                     showCancelButton: true,
                     confirmButtonColor: "#3085d6",
                     cancelButtonColor: "#d33",
-                    confirmButtonText: "Si, seguro!"
-                  }).then(async(result) => {
-                    if (result.isConfirmed) {
-                      Swal.fire({
-                        title: "Eliminado!",
-                        text: "El producto ha sido eliminado.",
-                        icon: "success"
-                      });
-                      
-                      try {
-                          const response = await deleteEquipos(idEquipo);
-                          if (response.ok) {
-                              this.mostrarEquipos();
-                          } else {
-                              throw new Error(`Error en la solicitud DELETE: ${response.status} - ${response.statusText}`);
-                          }
-                      } catch (error) {
-                          console.error('Error en la solicitud DELETE:', error.message);
-                      }
+                    confirmButtonText: "Sí, eliminar",
+                    cancelButtonText: "Cancelar"
+                });
+    
+                if (confirmacion.isConfirmed) {
+                    try {
+                        const response = await deleteEquipos(id);
+    
+                        if (!response || !response.ok) {
+                            throw new Error(`Error ${response ? response.status : "desconocido"}`);
+                        }
+    
+                        // Mensaje de éxito
+                        Swal.fire("Eliminado", "El equipo ha sido eliminado.", "success");
+    
+                        // Actualizar la lista de equipos después de eliminar
+                        this.mostrarEquipos();
+                    } catch (error) {
+                        console.error("Error al eliminar el equipo:", error);
+                        Swal.fire("Error", "No se pudo eliminar el equipo.", "error");
                     }
-                  });
-            });
+                }
+            }
         });
-    }
-
+    }    
 }
 
 customElements.define("equipos-admin", equiposAdmin);
