@@ -178,7 +178,7 @@ export class adminIndex extends HTMLElement {
             <circuitos-admin></circuitos-admin>
         </div>
         <div class="container" id="vehiculos" style="display:none;">
-            <vehiculos-admin></vehiculos-admin>
+        <vehiculos-admin> </vehiculos-admin>
         </div>
         `;
 
