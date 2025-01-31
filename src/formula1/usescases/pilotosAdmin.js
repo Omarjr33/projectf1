@@ -224,6 +224,13 @@ export class pilotosAdmin extends HTMLElement {
             <!--Aquí se llamarán las cartas desde archivo JS-->
             </div>
         `;
+        this.addEventListener();
+    }
+
+    addEventListener(){
+        this.shadowRoot.querySelector('#btnListar').addEventListener("click", (e) => {
+            this.mostrarEquipos();
+        });
     }
 
     setupEventListeners() {
@@ -278,9 +285,9 @@ export class pilotosAdmin extends HTMLElement {
                 handleImageDisplay(file);
             }
         });
-
+        
         // Manejo del envío del formulario
-        formCrearPiloto.addEventListener('submit', (e) => {
+        his.shadowRoot.querySelector('#RegistrarPiloto').addEventListener("click", (e) => {
             e.preventDefault();
             const formData = new FormData(formCrearPiloto);
 
@@ -318,6 +325,41 @@ export class pilotosAdmin extends HTMLElement {
             }
         });
     }
+    mostrarPilotos = () => {
+        getPilotos()
+        .then((pilotos) => {
+            //Toma el elemento HTML con ID productosCards
+            const PilotosCards = this.shadowRoot.querySelector('#pilotosCards');
+            
+            pilotos.forEach((pilotos) => {
+                const {nombrePiloto, } = equipo;
+                //Crea un div en HTML
+                const divItems = document.createElement('div');
+                //El div creado tendrá como clase col
+                divItems.classList.add('col');
+                //Cambios dentro del archivo HTML, se completa la información con la data adquirida
+                divItems.innerHTML = /*html*/ `
+                <div id="card__listar" class="card">
+                    <img src="${imagenPiloto}" alt="Equipo Image">
+                    <h1 class="card__title">${nombrePiloto}</h1>
+                    <p class="card__pais">${equipo}</p>
+                    <p class="card__motor">${rolPiloto}</p>
+                    <div>
+                        <button class="btnEditar">Editar</button>
+                        <button class="btnEliminar" data-id="${idEquipo}">Eliminar</button>
+                    </div>
+                </div>
+                `;
+                PilotosCards.appendChild(divItems);
+            });
+
+            this.eliminarEquipo();
+
+        }).catch ((error) => {
+            console.error('Error en la solicitud GET:', error.message);
+        });
+    }
+
 }
 
 customElements.define("pilotos-admin", pilotosAdmin);
