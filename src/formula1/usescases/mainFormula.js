@@ -23,7 +23,7 @@ export class mainFormula extends HTMLElement{
     
             <main class="hero">
                 <h1>Carreras<br>DRIVING 101</h1>
-                <img class="carf1" src="/src/img/image 1.png" alt="carf1">
+                <img class="carf1" src="src/img/image 1efwef.png" alt="carf1">
             </main>
     
             <footer class="footer">
