@@ -41,13 +41,61 @@ export class VehiculosAdmin extends HTMLElement {
             <input type="text" class="form-control" id="exampleInputModelo" aria-describedby="ModeloHelp">
         </div>
         <div class="mb-3"> 
-            <label for="exampleInputVelocidadProm" class="form-label"> Rendimiento</label>
-            <select class="form-select" >
-                <option selected>Seleccionar Rendimiento</option>
-                <option value="1" id="SleccionRendimiento" >Conduccion Normal</option>
-                <option value="2" id="SleccionRendimiento" >Conduccion Agresiva</option>
-                <option value="3" id="SleccionRendimiento" >Ahorro Combustible</option>
-        </select>
+                <h2>Rendimiento</h2>
+
+                <h3> Conduccion Normal</h3>
+                <label for="exampleInputVelocProm" class="form-label">Velocidad Promedio</label>
+                <input type="text" class="form-control" id="exampleInputVelocProm" aria-describedby="VelocPromHelp">
+                <p> Consumo de Combustible</p>
+                <label for="exampleInputSeco" class="form-label">Seco</label>
+                <input type="text" class="form-control" id="exampleInputSeco" aria-describedby="SecoHelp">
+                <label for="exampleInputLluvioso" class="form-label">Lluvioso</label>
+                <input type="text" class="form-control" id="exampleInputNormal" aria-describedby="LluviosoHelp">
+                <label for="exampleInputExtremo" class="form-label">Extremo</label>
+                <input type="text" class="form-control" id="exampleInputExtremo" aria-describedby="ExtremoHelp">
+                <p>Desgaste de Neumaticos</p>
+                <label for="exampleInputSeco" class="form-label">Seco</label>
+                <input type="text" class="form-control" id="exampleInputSeco" aria-describedby="SecoHelp">
+                <label for="exampleInputLluvioso" class="form-label">Lluvioso</label>
+                <input type="text" class="form-control" id="exampleInputNormal" aria-describedby="LluviosoHelp">
+                <label for="exampleInputExtremo" class="form-label">Extremo</label>
+                <input type="text" class="form-control" id="exampleInputExtremo" aria-describedby="ExtremoHelp">
+
+                <h3> Conduccion Agresiva</h3>
+                <label for="exampleInputVelocProm" class="form-label">Velocidad Promedio</label>
+                <input type="text" class="form-control" id="exampleInputVelocProm" aria-describedby="VelocPromHelp">
+                <p> Consumo de Combustible</p>
+                <label for="exampleInputSeco" class="form-label">Seco</label>
+                <input type="text" class="form-control" id="exampleInputSeco" aria-describedby="SecoHelp">
+                <label for="exampleInputLluvioso" class="form-label">Lluvioso</label>
+                <input type="text" class="form-control" id="exampleInputNormal" aria-describedby="LluviosoHelp">
+                <label for="exampleInputExtremo" class="form-label">Extremo</label>
+                <input type="text" class="form-control" id="exampleInputExtremo" aria-describedby="ExtremoHelp">
+                <p>Desgaste de Neumaticos</p>
+                <label for="exampleInputSeco" class="form-label">Seco</label>
+                <input type="text" class="form-control" id="exampleInputSeco" aria-describedby="SecoHelp">
+                <label for="exampleInputLluvioso" class="form-label">Lluvioso</label>
+                <input type="text" class="form-control" id="exampleInputNormal" aria-describedby="LluviosoHelp">
+                <label for="exampleInputExtremo" class="form-label">Extremo</label>
+                <input type="text" class="form-control" id="exampleInputExtremo" aria-describedby="ExtremoHelp">
+
+                <h3> Ahorro de Combustible</h3>
+                <label for="exampleInputVelocProm" class="form-label">Velocidad Promedio</label>
+                <input type="text" class="form-control" id="exampleInputVelocProm" aria-describedby="VelocPromHelp">
+                <p> Consumo de Combustible</p>
+                <label for="exampleInputSeco" class="form-label">Seco</label>
+                <input type="text" class="form-control" id="exampleInputSeco" aria-describedby="SecoHelp">
+                <label for="exampleInputLluvioso" class="form-label">Lluvioso</label>
+                <input type="text" class="form-control" id="exampleInputNormal" aria-describedby="LluviosoHelp">
+                <label for="exampleInputExtremo" class="form-label">Extremo</label>
+                <input type="text" class="form-control" id="exampleInputExtremo" aria-describedby="ExtremoHelp">
+                <p>Desgaste de Neumaticos</p>
+                <label for="exampleInputSeco" class="form-label">Seco</label>
+                <input type="text" class="form-control" id="exampleInputSeco" aria-describedby="SecoHelp">
+                <label for="exampleInputLluvioso" class="form-label">Lluvioso</label>
+                <input type="text" class="form-control" id="exampleInputNormal" aria-describedby="LluviosoHelp">
+                <label for="exampleInputExtremo" class="form-label">Extremo</label>
+                <input type="text" class="form-control" id="exampleInputExtremo" aria-describedby="ExtremoHelp">
         </div>
         <div id="containerRendimiento">
 
@@ -61,54 +109,7 @@ export class VehiculosAdmin extends HTMLElement {
             </div>
         </div>
         `;
-    }
-
-    mostrarRendimiento = () => {
-        getRendimiento()
-        .then((rendimiento) => {
-            //Toma el elemento HTML con ID productosCards
-            const  containerRendimiento= document.getElementById('containerRendimiento');
-            
-            rendimiento.forEach((rendimiento) => {
-                const {} = rendimiento;
-                //Crea un div en HTML
-                const divItems = document.createElement('div');
-                //El div creado tendrá como clase col
-                divItems.classList.add('col');
-                //Cambios dentro del archivo HTML, se completa la información con la data adquirida
-                divItems.innerHTML = /*html*/`
-                <form>
-                <div class="mb-3">
-                    <label for="exampleInputNombre" class="form-label">Velocidad Promedio</label>
-                    <input type="text" class="form-control" id="exampleInputNombre" aria-describedby="NombreHelp">
-                </div>
-                <div class="mb-3">
-                    <label for="exampleInputNombre" class="form-label">Consumo de Combustible</label>
-                    <label for="exampleInputNombre" class="form-label">Seco</label>
-                    <input type="number" class="form-control" id="exampleInputNombre" aria-describedby="NombreHelp">
-                    <label for="exampleInputNombre" class="form-label">Lluvioso</label>
-                    <input type="number" class="form-control" id="exampleInputNombre" aria-describedby="NombreHelp">
-                    <label for="exampleInputNombre" class="form-label">Extremo</label>
-                    <input type="number" class="form-control" id="exampleInputNombre" aria-describedby="NombreHelp">
-                </div>
-                <div class="mb-3">
-                    <label for="exampleInputNombre" class="form-label">Desgaste de neumaticos</label>
-                    <label for="exampleInputNombre" class="form-label">Seco</label>
-                    <input type="number" class="form-control" id="exampleInputNombre" aria-describedby="NombreHelp">
-                    <label for="exampleInputNombre" class="form-label">Lluvioso</label>
-                    <input type="number" class="form-control" id="exampleInputNombre" aria-describedby="NombreHelp">
-                    <label for="exampleInputNombre" class="form-label">Extremo</label>
-                    <input type="number" class="form-control" id="exampleInputNombre" aria-describedby="NombreHelp">
-                </div>
-                </form>
-                `;
-                equiposCards.appendChild(divItems);
-            });
-
-        }).catch ((error) => {
-            console.error('Error en la solicitud GET:', error.message);
-        });
-    }
+    }    
     
 }
 
