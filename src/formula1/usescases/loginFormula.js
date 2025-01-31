@@ -46,7 +46,7 @@ export class LoginFormula extends HTMLElement {
                 .welcome {
                     color: #0c0101;
                     font-size: 2rem;
-                    font-weight: bold
+                    font-weight: bold;
                     margin-bottom: 1rem;
                     text-align: center;
                 }
@@ -71,29 +71,36 @@ export class LoginFormula extends HTMLElement {
                     background: rgba(102, 45, 45, 0.15);
                 }
 
-                .login-btn {
+                .login-btn, .reload-btn {
                     width: 100%;
                     padding: 0.75rem;
                     border: none;
                     border-radius: 25px;
-                    background:#430707;
+                    background: #430707;
                     color: white;
                     font-size: 1rem;
                     cursor: pointer;
                     transition: background 0.3s ease;
+                    margin-bottom: 0.5rem;
+                }
+
+                .reload-btn {
+                    background: #43070794;
                 }
 
                 .login-btn:hover {
-                    background:rgba(195, 9, 58, 0.71);
+                    background: rgba(195, 9, 58, 0.71);
                 }
 
-                
+                .reload-btn:hover {
+                    background: rgba(0, 0, 0, 0.8);
+                }
             </style>
 
             <div class="night-bg">
                 <div class="stars"></div>
                 <div class="login-container">
-                    <h1 class="welcome" >INICIAR SESION</h1>
+                    <h1 class="welcome">INICIAR SESION</h1>
                     <form id="loginForm">
                         <div class="form-group">
                             <input type="text" class="input-field" id="userAdmin" placeholder="Username">
@@ -102,9 +109,7 @@ export class LoginFormula extends HTMLElement {
                             <input type="password" class="input-field" id="passwordAdmin" placeholder="Password">
                         </div>
                         <button type="submit" class="login-btn">LOGIN</button>
-                        <div class="links">
-                            
-                        </div>
+                        <button type="button" class="reload-btn" id="reloadButton">Regresar</button>
                     </form>
                 </div>
             </div>
@@ -144,9 +149,15 @@ export class LoginFormula extends HTMLElement {
 
     addEventListener() {
         const form = this.shadowRoot.querySelector('#loginForm');
+        const reloadButton = this.shadowRoot.querySelector('#reloadButton');
+        
         form.addEventListener('submit', (e) => {
             e.preventDefault();
             this.ingresoAdmin();
+        });
+
+        reloadButton.addEventListener('click', () => {
+            window.location.reload();
         });
     }
 
@@ -170,7 +181,7 @@ export class LoginFormula extends HTMLElement {
         }
     }
 
-    adminIndex(){
+    adminIndex() {
         this.shadowRoot.innerHTML = `
         <admin-index></admin-index>
         `;
