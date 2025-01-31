@@ -153,16 +153,16 @@ export class adminIndex extends HTMLElement {
                 <div class="navbar-collapse" id="navbarSupportedContent">
                     <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                         <li class="nav-item">
-                            <a class="nav-link active navbar" aria-current="page" href="#" data-verocultar='["#equipos", ["#pilotos", "#circuitos", "#vehiculos"]]'>Equipos</a>
+                            <a class="nav-link active mnadministrador" aria-current="page" href="#" data-verocultar='["#equipos", ["#pilotos", "#circuitos", "#vehiculos"]]'>Equipos</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link navbar" aria-current="page" href="#" data-verocultar='["#pilotos", ["#equipos", "#circuitos", "#vehiculos"]]'>Pilotos</a>
+                            <a class="nav-link mnadministrador" aria-current="page" href="#" data-verocultar='["#pilotos", ["#equipos", "#circuitos", "#vehiculos"]]'>Pilotos</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link navbar" aria-current="page" href="#" data-verocultar='["#circuitos", ["#pilotos", "#equipos", "#vehiculos"]]'>Circuitos</a>
+                            <a class="nav-link mnadministrador" aria-current="page" href="#" data-verocultar='["#circuitos", ["#pilotos", "#equipos", "#vehiculos"]]'>Circuitos</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link navbar" aria-current="page" href="#" data-verocultar='["#vehiculos", ["#pilotos", "#circuitos", "#equipos"]]'>Vehículos</a>
+                            <a class="nav-link mnadministrador" aria-current="page" href="#" data-verocultar='["#vehiculos", ["#pilotos", "#circuitos", "#equipos"]]'>Vehículos</a>
                         </li>
                     </ul>
                 </div>
@@ -183,7 +183,7 @@ export class adminIndex extends HTMLElement {
         `;
 
 
-        this.querySelectorAll(".navbar").forEach((val, id) => {
+        this.querySelectorAll(".mnadministrador").forEach((val, id) => {
             val.addEventListener("click", (e) => {
  
                 this.querySelectorAll(".nav-link").forEach(link => {
