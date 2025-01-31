@@ -1,3 +1,4 @@
+const divContainerProduct = document.querySelector('.containerRendimiento'); 
 export class VehiculosAdmin extends HTMLElement {
     constructor(){
         super();
@@ -39,9 +40,17 @@ export class VehiculosAdmin extends HTMLElement {
             <label for="exampleInputModelo" class="form-label">Modelo</label>
             <input type="text" class="form-control" id="exampleInputModelo" aria-describedby="ModeloHelp">
         </div>
-        <div class="mb-3">
+        <div class="mb-3"> 
             <label for="exampleInputVelocidadProm" class="form-label"> Rendimiento</label>
-            <input type="number" class="form-control" id="exampleInputVelocidadProm" aria-describedby="VelocidadPromHelp">
+            <select class="form-select" >
+                <option selected>Seleccionar Rendimiento</option>
+                <option value="1" id="SleccionRendimiento" >Conduccion Normal</option>
+                <option value="2" id="SleccionRendimiento" >Conduccion Agresiva</option>
+                <option value="3" id="SleccionRendimiento" >Ahorro Combustible</option>
+        </select>
+        </div>
+        <div id="containerRendimiento">
+
         </div>
         </form>
         <div class="card">
@@ -53,5 +62,54 @@ export class VehiculosAdmin extends HTMLElement {
         </div>
         `;
     }
+
+    mostrarRendimiento = () => {
+        getRendimiento()
+        .then((rendimiento) => {
+            //Toma el elemento HTML con ID productosCards
+            const  containerRendimiento= document.getElementById('containerRendimiento');
+            
+            rendimiento.forEach((rendimiento) => {
+                const {} = rendimiento;
+                //Crea un div en HTML
+                const divItems = document.createElement('div');
+                //El div creado tendrá como clase col
+                divItems.classList.add('col');
+                //Cambios dentro del archivo HTML, se completa la información con la data adquirida
+                divItems.innerHTML = /*html*/`
+                <form>
+                <div class="mb-3">
+                    <label for="exampleInputNombre" class="form-label">Velocidad Promedio</label>
+                    <input type="text" class="form-control" id="exampleInputNombre" aria-describedby="NombreHelp">
+                </div>
+                <div class="mb-3">
+                    <label for="exampleInputNombre" class="form-label">Consumo de Combustible</label>
+                    <label for="exampleInputNombre" class="form-label">Seco</label>
+                    <input type="number" class="form-control" id="exampleInputNombre" aria-describedby="NombreHelp">
+                    <label for="exampleInputNombre" class="form-label">Lluvioso</label>
+                    <input type="number" class="form-control" id="exampleInputNombre" aria-describedby="NombreHelp">
+                    <label for="exampleInputNombre" class="form-label">Extremo</label>
+                    <input type="number" class="form-control" id="exampleInputNombre" aria-describedby="NombreHelp">
+                </div>
+                <div class="mb-3">
+                    <label for="exampleInputNombre" class="form-label">Desgaste de neumaticos</label>
+                    <label for="exampleInputNombre" class="form-label">Seco</label>
+                    <input type="number" class="form-control" id="exampleInputNombre" aria-describedby="NombreHelp">
+                    <label for="exampleInputNombre" class="form-label">Lluvioso</label>
+                    <input type="number" class="form-control" id="exampleInputNombre" aria-describedby="NombreHelp">
+                    <label for="exampleInputNombre" class="form-label">Extremo</label>
+                    <input type="number" class="form-control" id="exampleInputNombre" aria-describedby="NombreHelp">
+                </div>
+                </form>
+                `;
+                equiposCards.appendChild(divItems);
+            });
+
+        }).catch ((error) => {
+            console.error('Error en la solicitud GET:', error.message);
+        });
+    }
+    
 }
+
 customElements.define("vehiculos-admin", VehiculosAdmin);
