@@ -12,7 +12,7 @@ export class equiposAdmin extends HTMLElement {
         <form id="formCrearEquipo">
             <div class="col">
                 <label for="id" class="form-label">COD</label>
-                <input type="number" class="form-control" id="id" name ="id" placeholder="${id}">
+                <input type="number" class="form-control" id="id" name ="id" placeholder="${id}" disabled>
             </div>
             <div class="row">
                 <div class="col">
