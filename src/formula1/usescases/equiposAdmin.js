@@ -333,6 +333,35 @@ export class equiposAdmin extends HTMLElement {
             }
         });
     }
+    mostrarEquipos = () => {
+        getEquipos()
+        .then((equipos) => {
+            //Toma el elemento HTML con ID productosCards
+            const equiposCards = document.getElementById('equiposCards');
+            
+            equipos.forEach((equipo) => {
+                const {nombreEquipo, pais, motor, imagenEquipo} = equipo;
+                //Crea un div en HTML
+                const divItems = document.createElement('div');
+                //El div creado tendrá como clase col
+                divItems.classList.add('col');
+                //Cambios dentro del archivo HTML, se completa la información con la data adquirida
+                divItems.innerHTML = /*html*/`
+                <div id="card__listar" class="card">
+                    <img src="${imagenEquipo}" alt="Equipo Image">
+                    <h1 class="card__title">${nombreEquipo}</h1>
+                    <p class="card__pais">${pais}</p>
+                    <p class="card__motor">${motor}</p>
+                </div>
+                `;
+                equiposCards.appendChild(divItems);
+            });
+
+        }).catch ((error) => {
+            console.error('Error en la solicitud GET:', error.message);
+        });
+    }
+
 }
 
 customElements.define("equipos-admin", equiposAdmin);

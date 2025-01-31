@@ -1,16 +1,17 @@
 export class VehiculosAdmin extends HTMLElement {
-        constructor(){
-            super();
-            this.attachShadow({ mode: 'open' });
-            this.render();
-        }
-    render(){
+    constructor(){
+        super();
+        this.attachShadow({ mode: 'open' });
+        this.render();
+    }
 
+    render(){
+        let idVehiculo = Date.now();
         this.shadowRoot.innerHTML = /*html*/ `
         <form id="formCrearVehiculo"> 
         <div class="col">
-                <label for="idVehiculo" class="form-label">COD</label>
-                <input type="number" class="form-control" id="idVehiculo" name ="idVehiculo" placeholder="${idVehiculo}" disabled>
+            <label for="idVehiculo" class="form-label">COD</label>
+            <input type="number" class="form-control" id="idVehiculo" name ="idVehiculo" placeholder="${idVehiculo}" disabled>
         </div>
         <div class="mb-3">
             <label for="exampleInputNombre" class="form-label">Motor</label>
@@ -26,28 +27,29 @@ export class VehiculosAdmin extends HTMLElement {
         </select>
         </div>
         <div class="mb-3">
-        <label for="exampleInputPilotos" class="form-label">Pilotos</label>
-        <select class="form-select" >
-            <option selected>Seleccionar Piloto</option>
-            <option value="1">One</option>
-            <option value="2">Two</option>
-            <option value="3">Three</option>
+            <label for="exampleInputPilotos" class="form-label">Pilotos</label>
+            <select class="form-select" >
+                <option selected>Seleccionar Piloto</option>
+                <option value="1">One</option>
+                <option value="2">Two</option>
+                <option value="3">Three</option>
         </select>
         </div>
         <div class="mb-3">
             <label for="exampleInputModelo" class="form-label">Modelo</label>
             <input type="text" class="form-control" id="exampleInputModelo" aria-describedby="ModeloHelp">
-                </div>
-                <div class="mb-3">
-                <label for="exampleInputVelocidadProm" class="form-label"> Rendimiento</label>
-                <input type="number" class="form-control" id="exampleInputVelocidadProm" aria-describedby="VelocidadPromHelp">
-            </div>
+        </div>
+        <div class="mb-3">
+            <label for="exampleInputVelocidadProm" class="form-label"> Rendimiento</label>
+            <input type="number" class="form-control" id="exampleInputVelocidadProm" aria-describedby="VelocidadPromHelp">
+        </div>
         </form>
         <div class="card">
-        <h1>Conoce nuestros Vehiculos</h1>
-        <button id="btnListar" type="submit" class="btn-submit">↓</button>
-        <div id="equiposCards">
-        <!--Aquí se llamarán las cartas desde archivo JS-->
+            <h1>Conoce nuestros Vehiculos</h1>
+            <button id="btnListar" type="submit" class="btn-submit">↓</button>
+            <div id="vehiculosCards">
+            <!--Aquí se llamarán las cartas desde archivo JS-->
+            </div>
         </div>
         `;
     }
