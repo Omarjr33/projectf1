@@ -5,11 +5,12 @@ export class pilotosAdmin extends HTMLElement{
         this.render();
     }
     render(){
+        let idPiloto = Date.now();
         this.innerHTML= /*html*/ `
         <form id="formCrearPiloto"> 
-        <div class="mb-3">
-            <label for="exampleInputNombre" class="form-label" >Codigo</label>
-            <input type="text" class="form-control" id="exampleInputNombre" aria-describedby="NombreHelp">
+        <div class="col">
+                <label for="idPiloto" class="form-label">COD</label>
+                <input type="number" class="form-control" id="idPiloto" name ="idPiloto" placeholder="${idPiloto}" disabled>
         </div>
         <div class="mb-3">
             <label for="exampleInputNombre" class="form-label">Nombre</label>
