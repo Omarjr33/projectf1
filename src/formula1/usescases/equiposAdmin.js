@@ -22,11 +22,12 @@ export class equiposAdmin extends HTMLElement {
                 --bg-secondary: #2d2d2d;
                 --text-primary: #ffffff;
                 --text-secondary: #b3b3b3;
-                --accent-color: #6366f1;
-                --accent-hover: #818cf8;
+                --accent-color:rgba(192, 54, 54, 0.74);
+                --accent-hover:rgb(137, 15, 15);
                 --border-color: #404040;
-                --error-color: #ef4444;
+                --error-color:rgb(79, 2, 2);
                 --success-color: #10b981;
+                --card-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
             }
 
             .card {
@@ -191,6 +192,107 @@ export class equiposAdmin extends HTMLElement {
                 background-color: var(--success-color);
                 color: white;
             }
+
+            /* Nuevo estilo para las tarjetas de equipos */
+            #equiposCards {
+                display: grid;
+                grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+                gap: 2rem;
+                padding: 2rem;
+            }
+
+            #card__listar {
+                background: var(--bg-secondary);
+                border-radius: 15px;
+                overflow: hidden;
+                transition: transform 0.3s ease, box-shadow 0.3s ease;
+                box-shadow: var(--card-shadow);
+                display: flex;
+                flex-direction: column;
+                height: 90%;
+            }
+
+            #card__listar:hover {
+                transform: translateY(-5px);
+                box-shadow: 0 8px 12px rgba(0, 0, 0, 0.2);
+            }
+
+            #card__listar img {
+                width: 200px;
+                height: 200px;
+                object-fit: contain;
+                margin: 1.5rem auto;
+                padding: 1rem;
+                background: var(--bg-primary);
+                border-radius: 10px;
+            }
+
+            .card__content {
+                padding: 1.5rem;
+                flex-grow: 1;
+                display: flex;
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+
+            .card__title {
+                color: var(--text-primary);
+                font-size: 1.5rem;
+                margin: 0;
+                text-align: center;
+            }
+
+            .card__pais {
+                color: var(--text-secondary);
+                font-size: 1.1rem;
+                margin: 0.5rem 0;
+                text-align: center;
+            }
+
+            .card__motor {
+                color: var(--accent-color);
+                font-size: 1.1rem;
+                margin: 0;
+                text-align: center;
+                font-weight: 500;
+            }
+
+            .card__actions {
+                display: flex;
+                gap: 1rem;
+                padding: 1.5rem;
+                justify-content: center;
+                background: #2d2d2d;
+                margin-top: auto;
+            }
+
+            .btnEditarForm, .btnEliminar {
+                padding: 0.75rem 1.5rem;
+                border: none;
+                border-radius: 8px;
+                font-weight: 600;
+                cursor: pointer;
+                transition: all 0.3s ease;
+                font-size: 0.9rem;
+            }
+
+            .btnEditarForm {
+                background-color: var(--accent-color);
+                color: white;
+            }
+
+            .btnEditarForm:hover {
+                background-color: var(--accent-hover);
+            }
+
+            .btnEliminar {
+                background-color: var(--error-color);
+                color: white;
+            }
+
+            .btnEliminar:hover {
+                background-color: #dc2626;
+            }
         </style>
 
         <div class="card">
@@ -236,13 +338,13 @@ export class equiposAdmin extends HTMLElement {
                 </button>
                 <div id="statusMessage" class="status-message"></div>
             </form>
-             <div class="card">
-            <h1>Conoce nuestros equipos</h1>
-            <button id="btnListar" type="submit" class="btn-submit">↓</button>
-            <div id="equiposCards">
-            <!--Aquí se llamarán las cartas desde archivo JS-->
+            <div class="card">
+                <h1>Conoce nuestros equipos</h1>
+                <button id="btnListar" type="submit" class="btn-submit">↓</button>
+                <div id="equiposCards">
+                <!--Aquí se llamarán las cartas desde archivo JS-->
+                </div>
             </div>
-        </div>
         </div>
         `;
         this.addEventListener();
@@ -352,29 +454,26 @@ export class equiposAdmin extends HTMLElement {
     mostrarEquipos = () => {
         getEquipos()
         .then((equipos) => {
-            //Toma el elemento HTML con ID productosCards
             const equiposCards = this.shadowRoot.querySelector('#equiposCards');
             equiposCards.innerHTML = '';
             
             equipos.forEach((equipo) => {
-                //Crea un div en HTML
                 const divItems = document.createElement('div');
-                //El div creado tendrá como clase col
                 divItems.classList.add('col');
-                //Cambios dentro del archivo HTML, se completa la información con la data adquirida
                 divItems.innerHTML = /*html*/ `
                 <div id="card__listar" class="card">
-                    <img src="${equipo.imagenEquipo}" alt="Equipo Image">
-                    <h1 class="card__title">${equipo.nombreEquipo}</h1>
-                    <p class="card__pais">${equipo.paisEquipo}</p>
-                    <p class="card__motor">${equipo.motorEquipo}</p>
-                    <div>
+                    <img src="${equipo.imagenEquipo}" alt="${equipo.nombreEquipo} Logo">
+                    <div class="card__content">
+                        <h1 class="card__title">${equipo.nombreEquipo}</h1>
+                        <p class="card__pais">🌍 ${equipo.paisEquipo}</p>
+                        <p class="card__motor">⚡ ${equipo.motorEquipo}</p>
+                    </div>
+                    <div class="card__actions">
                         <button class="btnEditarForm" data-id="${equipo.id}">Editar</button>
                         <button class="btnEliminar" data-id="${equipo.id}">Eliminar</button>
                     </div>
                 </div>
                 <form id="formEditarEquipo" style="display: none;">
-                
                 </form>
                 `;
                 equiposCards.appendChild(divItems);
@@ -386,9 +485,7 @@ export class equiposAdmin extends HTMLElement {
                     const id = e.target.getAttribute("data-id");
                     this.mostrarFormularioEdit(id);
                 });
-                
             });
-
         }).catch ((error) => {
             console.error('Error en la solicitud GET:', error.message);
         });
@@ -406,7 +503,6 @@ export class equiposAdmin extends HTMLElement {
                     return;
                 }
     
-                // Confirmación con SweetAlert2
                 const confirmacion = await Swal.fire({
                     title: "¿Está seguro de eliminar el equipo?",
                     text: "Esta acción no se puede deshacer.",
@@ -426,10 +522,7 @@ export class equiposAdmin extends HTMLElement {
                             throw new Error(`Error ${response ? response.status : "desconocido"}`);
                         }
     
-                        // Mensaje de éxito
                         Swal.fire("Eliminado", "El equipo ha sido eliminado.", "success");
-    
-                        // Actualizar la lista de equipos después de eliminar
                         this.mostrarEquipos();
                     } catch (error) {
                         console.error("Error al eliminar el equipo:", error);
@@ -474,7 +567,7 @@ export class equiposAdmin extends HTMLElement {
                             <p class="image-upload-text">Arrastra una imagen aquí o haz clic para seleccionar</p>
                             <input type="file" class="file-input" id="imagenEquipo" name="imagenEquipo" accept="image/*">
                         </div>
-                        <div class="preview-container">
+                        <div class="preview-container" style="display: block;">
                             <img class="preview-image" id="imagePreview" src="${imagenEquipo}" alt="Preview">
                         </div>
                     </div>
@@ -497,20 +590,16 @@ export class equiposAdmin extends HTMLElement {
     editarEquipo() {
         const formEditarEquipo = this.shadowRoot.querySelector('#formEditarEquipo');
         
-        // Esperamos a que se haga clic en el botón de editar
         this.shadowRoot.querySelector('#btnEditar').addEventListener("click", (e) => {
             e.preventDefault();
             
-            // Obtenemos los datos del formulario
             const datos = Object.fromEntries(new FormData(formEditarEquipo).entries());
             const id = e.target.getAttribute("data-id");
             
-            // Llamamos a la función `patchEquipos` pasando los datos y el ID
             patchEquipos(datos, id)
                 .then(response => {
-                    // Verificamos si la solicitud fue exitosa
                     if (response.ok) {
-                        return response.json(); // Devolvemos la respuesta como JSON
+                        return response.json();
                     } else {
                         throw new Error(`Error en la solicitud PATCH: ${response.status} - ${response.statusText}`);
                     }
@@ -522,7 +611,6 @@ export class equiposAdmin extends HTMLElement {
                         title: '¡Éxito!',
                         text: 'El equipo ha sido editado correctamente.',
                     });
-                    // Puedes actualizar la lista de equipos después de la edición
                     this.mostrarEquipos();
                 })
                 .catch(error => {
@@ -535,7 +623,6 @@ export class equiposAdmin extends HTMLElement {
                 });
         });
     }
-    
 }
 
 customElements.define("equipos-admin", equiposAdmin);

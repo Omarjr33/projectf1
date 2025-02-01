@@ -23,7 +23,7 @@ export class VehiculosAdmin extends HTMLElement {
     }
 
     nextStep() {
-        if (this.currentStep < 4) {
+        if (this.currentStep < 5) {
             const currentSection = this.shadowRoot.querySelector(`[data-step="${this.currentStep}"]`);
             const nextSection = this.shadowRoot.querySelector(`[data-step="${this.currentStep + 1}"]`);
             
@@ -50,7 +50,7 @@ export class VehiculosAdmin extends HTMLElement {
 
     updateProgressBar() {
         const progress = this.shadowRoot.querySelector('.progress-bar');
-        const percentage = ((this.currentStep - 1) / 3) * 100;
+        const percentage = ((this.currentStep - 1) / 4) * 100;
         progress.style.width = `${percentage}%`;
     }
 
@@ -338,6 +338,7 @@ export class VehiculosAdmin extends HTMLElement {
                     <input type="text" class="form-control" id="aceleracion_0_100" name="aceleracion_0_100" aria-describedby="ModeloHelp">
                 </div>
                 <div class="step-navigation">
+                    <button type="button" class="step-btn prev-step">Anterior</button>
                     <button type="button" class="step-btn next-step">Siguiente: Conducción Normal</button>
                 </div>
             </div>
@@ -360,14 +361,14 @@ export class VehiculosAdmin extends HTMLElement {
                 <label for="lluvioso_neumaticos" class="form-label">Lluvioso</label>
                 <input type="text" class="form-control" id="lluvioso_neumaticos" name="lluvioso_neumaticos" aria-describedby="LluviosoHelp">
                 <label for="extremo_neumaticos" class="form-label">Extremo</label>
-                <input type="text" class="form-control" id="extremo_neumaticos" name="extremo_neumaticos" aria-describedby="ExtremoHelp">
+                <input type="text" class="form-control" id="extremo_<input type="text" class="form-control" id="extremo_neumaticos" name="extremo_neumaticos" aria-describedby="ExtremoHelp">
                 <div class="step-navigation">
                     <button type="button" class="step-btn prev-step">Anterior</button>
                     <button type="button" class="step-btn next-step">Siguiente: Conducción Agresiva</button>
                 </div>
             </div>
 
-            <!-- Step 3: Conducción Agresiva -->
+            <!-- Step 4: Conducción Agresiva -->
             <div class="step-section" data-step="4">
                 <h3>Conducción Agresiva</h3>
                 <label for="velocidad_agresiva" class="form-label">Velocidad Promedio</label>
@@ -405,12 +406,12 @@ export class VehiculosAdmin extends HTMLElement {
                 <label for="extremo_ahorro" class="form-label">Extremo</label>
                 <input type="text" class="form-control" id="extremo_ahorro" name="extremo_ahorro"  aria-describedby="ExtremoHelp">
                 <p>Desgaste de Neumaticos</p>
-                <label for="seco_ahorro" class="form-label">Seco</label>
-                <input type="text" class="form-control" id="seco_ahorro" name="seco_ahorro" aria-describedby="SecoHelp">
-                <label for="lluvioso_combustible" class="form-label">Lluvioso</label>
-                <input type="text" class="form-control" id="lluvioso_combustible" name="lluvioso_combustible" aria-describedby="LluviosoHelp">
-                <label for="extremo_combustible" class="form-label">Extremo</label>
-                <input type="text" class="form-control" id="extremo_combustible" name="extremo_combustible" aria-describedby="ExtremoHelp">
+                <label for="seco_ahorro_neu" class="form-label">Seco</label>
+                <input type="text" class="form-control" id="seco_ahorro_neu" name="seco_ahorro_neu" aria-describedby="SecoHelp">
+                <label for="lluvioso_ahorro_neu" class="form-label">Lluvioso</label>
+                <input type="text" class="form-control" id="lluvioso_ahorro_neu" name="lluvioso_ahorro_neu" aria-describedby="LluviosoHelp">
+                <label for="extremo_ahorro_neu" class="form-label">Extremo</label>
+                <input type="text" class="form-control" id="extremo_ahorro_neu" name="extremo_ahorro_neu" aria-describedby="ExtremoHelp">
                 <div class="step-navigation">
                     <button type="button" class="step-btn prev-step">Anterior</button>
                     <button type="submit" btn="btnRegistrarVehiculo" class="step-btn">Guardar Vehículo</button>
