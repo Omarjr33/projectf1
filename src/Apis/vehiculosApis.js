@@ -3,9 +3,9 @@ const myHeaders = new Headers({
     "Content-Type": "application/json"
 });
 
-const getPiloto = async() => {
+const getVehiculo = async() => {
     try {
-        const respuesta = await fetch(`${URL_API}/pilotos`);
+        const respuesta = await fetch(`${URL_API}/vehiculos`);
 		// Si la respuesta es correcta
 		if(respuesta.status === 200){
 			const datos = await respuesta.json();
@@ -22,9 +22,9 @@ const getPiloto = async() => {
 	}
     
 }
-const postPiloto = async (datos) => {
+const postVehiculo = async (datos) => {
     try {
-        return await fetch(`${URL_API}/pilotos`, {
+        return await fetch(`${URL_API}/vehiculos`, {
             method: "POST",
             headers: myHeaders,
             body: JSON.stringify(datos)
@@ -33,10 +33,10 @@ const postPiloto = async (datos) => {
         console.error('Error en la solicitud POST:', error.message);
     }
 }
-const patchPiloto = async (datos,id) =>{
+const patchVehiculo = async (datos,id) =>{
 
     try {
-        return await fetch(`${URL_API}/pilotos/${id}`, {
+        return await fetch(`${URL_API}/vehiculos/${id}`, {
             method: "PATCH",
             headers: myHeaders,
             body: JSON.stringify(datos)
@@ -46,21 +46,21 @@ const patchPiloto = async (datos,id) =>{
     }
 
 }
-const deletePiloto = async (id) =>{
+const deleteVehiculo = async (id) =>{
 
     try {
-        return await fetch(`${URL_API}/pilotos/${id}`, {
+        return await fetch(`${URL_API}/vehiculos/${id}`, {
             method: "DELETE",
             headers: myHeaders,
         });
     } catch (error) {
-        console.error('Error en la solicitud POST:', error.message);
+        console.error('Error en la solicitud DELETE:', error.message);
     }
 
 }
 export {
-    getPiloto as getPilotos,
-    postPiloto as postPilotos,
-    patchPiloto as patchPilotos,
-    deletePiloto as deletePilotos
+    getVehiculo as getVehiculos,
+    postVehiculo as postVehiculos,
+    patchVehiculo as patchVehiculos,
+    deleteVehiculo as deleteVehiculos
 };
