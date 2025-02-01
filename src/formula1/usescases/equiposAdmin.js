@@ -1,5 +1,5 @@
 import Swal from 'sweetalert2';
-import { postEquipos, getEquipos, deleteEquipos } from "../../Apis/equiposApis.js";
+import { postEquipos, getEquipos, deleteEquipos, patchEquipos } from "../../Apis/equiposApis.js";
 
 export class equiposAdmin extends HTMLElement {
     constructor() {
@@ -8,6 +8,7 @@ export class equiposAdmin extends HTMLElement {
         this.render();
         this.crearEquipo();
         this.eliminarEquipo();
+        this.editarEquipo();
     }
 
     render() {
@@ -368,15 +369,25 @@ export class equiposAdmin extends HTMLElement {
                     <p class="card__pais">${equipo.paisEquipo}</p>
                     <p class="card__motor">${equipo.motorEquipo}</p>
                     <div>
-                        <button class="btnEditar">Editar</button>
+                        <button class="btnEditarForm" data-id="${equipo.id}">Editar</button>
                         <button class="btnEliminar" data-id="${equipo.id}">Eliminar</button>
                     </div>
                 </div>
+                <form id="formEditarEquipo" style="display: none;">
+                
+                </form>
                 `;
                 equiposCards.appendChild(divItems);
             });
 
             this.eliminarEquipo();
+            this.shadowRoot.querySelectorAll('.btnEditarForm').forEach((btnEditarForm) => {
+                btnEditarForm.addEventListener("click", (e) => {
+                    const id = e.target.getAttribute("data-id");
+                    this.mostrarFormularioEdit(id);
+                });
+                
+            });
 
         }).catch ((error) => {
             console.error('Error en la solicitud GET:', error.message);
@@ -394,8 +405,6 @@ export class equiposAdmin extends HTMLElement {
                     console.error("ID del equipo no encontrado.");
                     return;
                 }
-    
-                console.log(`Intentando eliminar equipo con ID: ${id}`);
     
                 // Confirmación con SweetAlert2
                 const confirmacion = await Swal.fire({
@@ -429,7 +438,104 @@ export class equiposAdmin extends HTMLElement {
                 }
             }
         });
-    }    
+    }   
+
+    mostrarFormularioEdit = (id) => {
+        const formEditarEquipo = this.shadowRoot.querySelector('#formEditarEquipo');
+        formEditarEquipo.style.display = 'none';
+        
+        getEquipos()
+        .then((equipos) => {
+            const equipo = equipos.find((equipo) => equipo.id === id);
+            if (equipo) {
+                const {nombreEquipo, paisEquipo, motorEquipo, imagenEquipo } = equipo;
+
+                formEditarEquipo.innerHTML = /*html*/ `
+                    <div class="form-grid">
+                    <div class="form-group">
+                        <label class="form-label" for="nombreEquipo">Nombre del Equipo</label>
+                        <input type="text" class="form-control" id="nombreEquipo" name="nombreEquipo" value="${nombreEquipo}">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="paisEquipo">País</label>
+                        <input type="text" class="form-control" id="paisEquipo" name="paisEquipo" value="${paisEquipo}">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="motorEquipo">Motor</label>
+                        <input type="text" class="form-control" id="motorEquipo" name="motorEquipo" value="${motorEquipo}">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="imagenEquipo">Imagen del Equipo</label>
+                        <div class="image-upload-container" id="dropZone">
+                            <i>📁</i>
+                            <p class="image-upload-text">Arrastra una imagen aquí o haz clic para seleccionar</p>
+                            <input type="file" class="file-input" id="imagenEquipo" name="imagenEquipo" accept="image/*">
+                        </div>
+                        <div class="preview-container">
+                            <img class="preview-image" id="imagePreview" src="${imagenEquipo}" alt="Preview">
+                        </div>
+                    </div>
+                </div>
+    
+                <button id="btnEditar" data-id="${id}" type="submit" class="btn-submit">
+                    Editar Equipo
+                </button>
+                `;
+    
+                formEditarEquipo.style.display = 'block';
+                this.editarEquipo();
+            }
+        })
+        .catch((error) => {
+            console.error('Error en la solicitud GET:', error.message);
+        });
+    }
+    
+    editarEquipo() {
+        const formEditarEquipo = this.shadowRoot.querySelector('#formEditarEquipo');
+        
+        // Esperamos a que se haga clic en el botón de editar
+        this.shadowRoot.querySelector('#btnEditar').addEventListener("click", (e) => {
+            e.preventDefault();
+            
+            // Obtenemos los datos del formulario
+            const datos = Object.fromEntries(new FormData(formEditarEquipo).entries());
+            const id = e.target.getAttribute("data-id");
+            
+            // Llamamos a la función `patchEquipos` pasando los datos y el ID
+            patchEquipos(datos, id)
+                .then(response => {
+                    // Verificamos si la solicitud fue exitosa
+                    if (response.ok) {
+                        return response.json(); // Devolvemos la respuesta como JSON
+                    } else {
+                        throw new Error(`Error en la solicitud PATCH: ${response.status} - ${response.statusText}`);
+                    }
+                })
+                .then(responseData => {
+                    console.log("Equipo actualizado:", responseData);
+                    Swal.fire({
+                        icon: 'success',
+                        title: '¡Éxito!',
+                        text: 'El equipo ha sido editado correctamente.',
+                    });
+                    // Puedes actualizar la lista de equipos después de la edición
+                    this.mostrarEquipos();
+                })
+                .catch(error => {
+                    console.error('Error en la solicitud PATCH:', error.message);
+                    Swal.fire({
+                        icon: 'error',
+                        title: '¡Error!',
+                        text: 'Hubo un problema al editar el equipo.',
+                    });
+                });
+        });
+    }
+    
 }
 
 customElements.define("equipos-admin", equiposAdmin);
