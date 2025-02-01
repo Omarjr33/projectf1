@@ -1,5 +1,5 @@
 import Swal from 'sweetalert2';
-import { postCircuitos, getCircuitos } from "../../Apis/circuitosApis.js";
+import { postCircuitos, getCircuitos, deleteCircuitos } from "../../Apis/circuitosApis.js";
 
 export class circuitosAdmin extends HTMLElement {
     constructor() {
@@ -7,6 +7,7 @@ export class circuitosAdmin extends HTMLElement {
         this.attachShadow({ mode: 'open' });
         this.render();
         this.addEventListeners(); // Llamamos la función de eventos correctamente
+        this.eliminarCircuitos();
     }
 
     render() {
@@ -185,6 +186,10 @@ export class circuitosAdmin extends HTMLElement {
                                 <p>📏 ${circuito.longitud} km</p>
                                 <p>${circuito.descripcion}</p>
                             </div>
+                            <div class="card__actions">
+                                <button class="btnEditarForm" data-id="${circuito.id}">Editar</button>
+                                <button class="btnEliminar" data-id="${circuito.id}">Eliminar</button>
+                            </div>
                         </div>
                     `;
                     circuitosCards.appendChild(divItems);
@@ -193,11 +198,48 @@ export class circuitosAdmin extends HTMLElement {
             .catch((error) => console.error('Error en la solicitud GET:', error));
     }
 
-
-
-
-
+    eliminarCircuitos() {
+        const circuitosCards = this.shadowRoot.querySelector("#circuitosCards");
     
+        circuitosCards.addEventListener("click", async (e) => {
+            if (e.target.classList.contains("btnEliminar")) {
+                const id = e.target.getAttribute("data-id");
+    
+                if (!id) {
+                    console.error("ID del equipo no encontrado.");
+                    return;
+                }
+    
+                const confirmacion = await Swal.fire({
+                    title: "¿Está seguro de eliminar el equipo?",
+                    text: "Esta acción no se puede deshacer.",
+                    icon: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#3085d6",
+                    cancelButtonColor: "#d33",
+                    confirmButtonText: "Sí, eliminar",
+                    cancelButtonText: "Cancelar"
+                });
+    
+                if (confirmacion.isConfirmed) {
+                    try {
+                        const response = await deleteCircuitos(id);
+    
+                        if (!response || !response.ok) {
+                            throw new Error(`Error ${response ? response.status : "desconocido"}`);
+                        }
+    
+                        Swal.fire("Eliminado", "El circuito ha sido eliminado.", "success");
+                        this.mostrarCircuitos();
+                    } catch (error) {
+                        console.error("Error al eliminar el circuito:", error);
+                        Swal.fire("Error", "No se pudo eliminar el circuito.", "error");
+                    }
+                }
+            }
+        });
+    }   
+
 }
 
 customElements.define("circuitos-admin", circuitosAdmin);
