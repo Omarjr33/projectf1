@@ -352,7 +352,8 @@ export class pilotosAdmin extends HTMLElement {
             const pilotosCards = this.shadowRoot.querySelector('#pilotosCards');
             pilotosCards.innerHTML = '';
     
-            fetch('../../../db.json')  // Obtener también los equipos desde el JSON
+            // Obtener los equipos también desde el archivo JSON
+            fetch('../../../db.json')
             .then(response => response.json())
             .then(data => {
                 // Crear un mapa para relacionar los equipos por su id
@@ -363,8 +364,10 @@ export class pilotosAdmin extends HTMLElement {
     
                 // Ahora, mostramos a los pilotos
                 pilotos.forEach((piloto) => {
+                    const { equipoPiloto } = piloto;
+                    
                     // Obtener el nombre del equipo usando el id del piloto
-                    const equipoNombre = equiposMap[piloto.equipoPiloto];
+                    const equipoNombre = equiposMap[equipoPiloto];
     
                     // Crea un div para mostrar la tarjeta del piloto
                     const divItems = document.createElement('div');
@@ -382,6 +385,9 @@ export class pilotosAdmin extends HTMLElement {
                             <button class="btnEliminar" data-id="${piloto.id}">Eliminar</button>
                         </div>
                     </div>
+                    <form id="formEditarPiloto" style="display: none;">
+                
+                    </form>
                     `;
                     pilotosCards.appendChild(divItems);
                 });
@@ -402,9 +408,8 @@ export class pilotosAdmin extends HTMLElement {
         .catch ((error) => {
             console.error('Error en la solicitud GET:', error.message);
         });
-    }
+    }    
     
-
     eliminarPiloto() {
         const pilotosCards = this.shadowRoot.querySelector("#pilotosCards");
     
@@ -472,11 +477,8 @@ export class pilotosAdmin extends HTMLElement {
                 </div>
                 <div class="form-group">
                     <label for="equipoPiloto" class="form-label">Equipo</label>
-                    <select class="form-select" id="equipoPiloto" name="equipoPiloto">
-                        <option selected>Seleccionar Equipo</option>
-                        <option value="1">Mercedes</option>
-                        <option value="2">Ferrari</option>
-                        <option value="3">Red Bull</option>
+                    <select class="form-select" id="equipoPilotoEditar" name="equipoPilotoEditar">
+                        <option value="">Seleccionar Equipo</option>
                     </select>
                 </div>
                 <div class="form-group">
@@ -495,8 +497,20 @@ export class pilotosAdmin extends HTMLElement {
                     Editar Piloto
                 </button>
                 `;
-    
                 formEditarPiloto.style.display = 'block';
+                fetch('../../../db.json')
+                .then(response => response.json()) 
+                .then(data => {
+                    const equipoPilotoEditar = this.shadowRoot.querySelector("#equipoPilotoEditar");
+                    
+                    // Llenamos el <select> con las opciones del JSON
+                    data.equipos.forEach(equipo => {
+                        const option = document.createElement("option");
+                        option.value = equipo.id;  // El valor que se pasará cuando se seleccione esta opción
+                        option.textContent = equipo.nombreEquipo;  // El texto visible en el selector
+                        equipoPilotoEditar.appendChild(option);
+                    });
+                })
                 this.editarPiloto();
             }
         })
@@ -508,44 +522,71 @@ export class pilotosAdmin extends HTMLElement {
     editarPiloto() {
         const formEditarPiloto = this.shadowRoot.querySelector('#formEditarPiloto');
         
-        // Esperamos a que se haga clic en el botón de editar
         this.shadowRoot.querySelector('#btnEditarPiloto').addEventListener("click", (e) => {
             e.preventDefault();
             
             // Obtenemos los datos del formulario
             const datos = Object.fromEntries(new FormData(formEditarPiloto).entries());
             const id = e.target.getAttribute("data-id");
-            
-            // Llamamos a la función `patchEquipos` pasando los datos y el ID
-            patchPilotos(datos, id)
-                .then(response => {
-                    // Verificamos si la solicitud fue exitosa
-                    if (response.ok) {
-                        return response.json(); // Devolvemos la respuesta como JSON
+    
+            // Obtener el ID del equipo seleccionado desde el formulario
+            const equipoID = datos.equipoPilotoEditar;
+    
+            // Buscar el nombre del equipo correspondiente al ID
+            fetch('../../../db.json')
+                .then(response => response.json())
+                .then(data => {
+    
+                    const equiposMap = data.equipos.reduce((acc, equipo) => {
+                        acc[equipo.id] = equipo.nombreEquipo;  // Asocia el id del equipo con su nombre
+                        return acc;
+                    }, {});
+    
+                    // Usamos equipoID para obtener el nombre del equipo desde el mapa
+                    const equipoNombre = equiposMap[equipoID];
+    
+                    if (equipoNombre) {
+                        // Reemplazamos el ID del equipo con el nombre del equipo
+                        datos.equipoPiloto = equipoNombre;  // Actualizar directamente la propiedad equipoPiloto
+    
+                        delete datos.equipoPilotoEditar;  // Eliminamos el campo extra de editar
+    
+                        // Llamamos a la función `patchPilotos` pasando los datos y el ID del piloto
+                        patchPilotos(datos, id)
+                            .then(response => {
+                                if (response.ok) {
+                                    return response.json();
+                                } else {
+                                    throw new Error(`Error en la solicitud PATCH: ${response.status} - ${response.statusText}`);
+                                }
+                            })
+                            .then(responseData => {
+                                console.log("Piloto actualizado:", responseData);
+                                Swal.fire({
+                                    icon: 'success',
+                                    title: '¡Éxito!',
+                                    text: 'El piloto ha sido editado correctamente.',
+                                });
+                                // Puedes actualizar la lista de pilotos después de la edición
+                                this.mostrarPilotos();
+                            })
+                            .catch(error => {
+                                console.error('Error en la solicitud PATCH:', error.message);
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: '¡Error!',
+                                    text: 'Hubo un problema al editar el piloto.',
+                                });
+                            });
                     } else {
-                        throw new Error(`Error en la solicitud PATCH: ${response.status} - ${response.statusText}`);
+                        console.error("Equipo no encontrado");
                     }
                 })
-                .then(responseData => {
-                    console.log("Piloto actualizado:", responseData);
-                    Swal.fire({
-                        icon: 'success',
-                        title: '¡Éxito!',
-                        text: 'El equipo ha sido editado correctamente.',
-                    });
-                    // Puedes actualizar la lista de equipos después de la edición
-                    this.mostrarPilotos();
-                })
                 .catch(error => {
-                    console.error('Error en la solicitud PATCH:', error.message);
-                    Swal.fire({
-                        icon: 'error',
-                        title: '¡Error!',
-                        text: 'Hubo un problema al editar el piloto.',
-                    });
+                    console.error('Error al obtener equipos:', error.message);
                 });
         });
-    }
+    } 
 }
 
 customElements.define("pilotos-admin", pilotosAdmin);
