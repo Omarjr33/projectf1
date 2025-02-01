@@ -3,7 +3,7 @@ export class pilotosAdmin extends HTMLElement {
         super();
         this.attachShadow({ mode: 'open' });
         this.render();
-        this.setupEventListeners();
+        this.mostrarPilotos();
     }
     render() {
         this.shadowRoot.innerHTML = /*html*/ `
@@ -233,7 +233,7 @@ export class pilotosAdmin extends HTMLElement {
         });
     }
 
-    setupEventListeners() {
+    mostrarPilotos() {
         const formCrearPiloto = this.shadowRoot.querySelector('#formCrearPiloto');
         const dropZone = this.shadowRoot.querySelector('#dropZone');
         const fileInput = this.shadowRoot.querySelector('.file-input');
@@ -329,36 +329,48 @@ export class pilotosAdmin extends HTMLElement {
         getPilotos()
         .then((pilotos) => {
             //Toma el elemento HTML con ID productosCards
-            const PilotosCards = this.shadowRoot.querySelector('#pilotosCards');
+            const pilotosCards = this.shadowRoot.querySelector('#pilotosCards');
+            pilotosCards.innerHTML = '';
             
-            pilotos.forEach((pilotos) => {
-                const {nombrePiloto, } = equipo;
+            pilotos.forEach((piloto) => {
                 //Crea un div en HTML
                 const divItems = document.createElement('div');
                 //El div creado tendrá como clase col
                 divItems.classList.add('col');
                 //Cambios dentro del archivo HTML, se completa la información con la data adquirida
-                divItems.innerHTML = /*html*/ `
+                divItems.innerHTML = /html/ `
                 <div id="card__listar" class="card">
-                    <img src="${imagenPiloto}" alt="Equipo Image">
-                    <h1 class="card__title">${nombrePiloto}</h1>
-                    <p class="card__pais">${equipo}</p>
-                    <p class="card__motor">${rolPiloto}</p>
+                    <img src="${piloto.imagenPiloto}" alt="Equipo Image">
+                    <h1 class="card__title">${piloto.nombrePiloto}</h1>
+                    <p class="card__pais">${piloto.nombreequipo}</p>
+                    <p class="card__motor">${piloto.rolPiloto}</p>
                     <div>
-                        <button class="btnEditar">Editar</button>
-                        <button class="btnEliminar" data-id="${idEquipo}">Eliminar</button>
+                        <button class="btnEditarForm" data-id="${piloto.id}">Editar</button>
+                        <button class="btnEliminar" data-id="${piloto.id}">Eliminar</button>
                     </div>
                 </div>
+                <form id="formEditarEquipo" style="display: none;">
+                
+                </form>
                 `;
-                PilotosCards.appendChild(divItems);
+                pilotosCards.appendChild(divItems);
             });
-
             this.eliminarEquipo();
-
+            this.shadowRoot.querySelectorAll('.btnEditarForm').forEach((btnEditarForm) => {
+                btnEditarForm.addEventListener("click", (e) => {
+                    const id = e.target.getAttribute("data-id");
+                    this.mostrarFormularioEdit(id);
+                });
+                
+            });
         }).catch ((error) => {
             console.error('Error en la solicitud GET:', error.message);
         });
-    }
+ }
+
+
+
+   
 
 }
 
