@@ -1,4 +1,5 @@
 import { postVehiculos, getVehiculos, deleteVehiculos, patchVehiculos } from "../../Apis/vehiculosApis.js";
+import VehiculoModel from "../../Models/vehiculoModel.js";
 const divContainerProduct = document.querySelector('.containerRendimiento');
 
 export class VehiculosAdmin extends HTMLElement {
@@ -412,7 +413,7 @@ export class VehiculosAdmin extends HTMLElement {
                 <input type="text" class="form-control" id="extremo_combustible" name="extremo_combustible" aria-describedby="ExtremoHelp">
                 <div class="step-navigation">
                     <button type="button" class="step-btn prev-step">Anterior</button>
-                    <button type="submit" class="step-btn">Guardar Vehículo</button>
+                    <button type="submit" btn="btnRegistrarVehiculo" class="step-btn">Guardar Vehículo</button>
                 </div>
             </div>
         </form>
