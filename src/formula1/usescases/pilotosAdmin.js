@@ -20,10 +20,10 @@ export class pilotosAdmin extends HTMLElement {
                 --bg-secondary: #2d2d2d;
                 --text-primary: #ffffff;
                 --text-secondary: #b3b3b3;
-                --accent-color: #6366f1;
-                --accent-hover: #818cf8;
+                --accent-color:rgb(198, 43, 43);
+                --accent-hover:rgb(136, 12, 12);
                 --border-color: #404040;
-                --error-color: #ef4444;
+                --error-color:rgb(104, 11, 11);
                 --success-color: #10b981;
             }
 
