@@ -1,54 +1,245 @@
+import Swal from 'sweetalert2';
+import { postCircuitos, getCircuitos, deleteCircuitos } from "../../Apis/circuitosApis.js";
+
 export class circuitosAdmin extends HTMLElement {
-    constructor(){
+    constructor() {
         super();
+        this.attachShadow({ mode: 'open' });
         this.render();
+        this.addEventListeners(); // Llamamos la función de eventos correctamente
+        this.eliminarCircuitos();
     }
 
-    render(){
+    render() {
         let idCircuito = Date.now();
-        this.innerHTML = /*html*/`
-        <form id="formCrearEquipo">
-            <div class="col">
-                <label for="idCircuito" class="form-label">ID</label>
-                <input type="number" class="form-control" id="idCircuito" name ="idCircuito" placeholder="${idCircuito}" disabled>
-            </div>
-            <div class="row">
-                <div class="col">
-                    <label for="nombreCircuito" class="form-label">Nombre Circuito</label>
-                    <input type="text" class="form-control" id="nombreCircuito" name="nombreCircuito">
-                </div>
-                <div class="col">
-                    <label for="paisCircuito" class="form-label">Pais</label>
-                    <input type="text" class="form-control" id="paisCircuito" name="paisCircuito">
-                </div>
-            </div>
-            <div class="row">
-                <div class="col">
-                    <label for="vueltas" class="form-label">Vueltas</label>
-                    <input type="number" class="form-control" id="vueltas" name ="vueltas">
-                </div>
-                <div class="col">
-                    <label for="longitud" class="form-label">Longitud KM</label>
-                    <input type="number" class="form-control" id="longitud" name ="longitud">
-                </div>
-            </div>
-            <div class="row">
-                <div class="col">
-                    <label for="imageCircuito" class="form-label">Imágen</label>
-                    <input type="url" class="form-control" id="imageCircuito" name="imageCircuito">
-                </div>
-                <div class="col">
-                    <label for="descripcion" class="form-label">Descripción</label>
-                    <input type="number" class="form-control" id="descripcion" name ="descripcion">
+        const styles = `
+            :host {
+                display: block;
+                font-family: 'Segoe UI', system-ui, sans-serif;
+            }
+            .card {
+                background: #1a1a1a;
+                border-radius: 12px;
+                padding: 2rem;
+                box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+                color: #ffffff;
+                transition: transform 0.2s ease;
+            }
+            .card:hover {
+                transform: translateY(-2px);
+            }
+            .form-group {
+                margin-bottom: 1.5rem;
+            }
+            .row {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+                gap: 2rem;
+                margin-bottom: 1rem;
+            }
+            label {
+                display: block;
+                margin-bottom: 0.5rem;
+                font-size: 0.9rem;
+                color: #9ca3af;
+            }
+            input {
+                width: 100%;
+                padding: 0.75rem;
+                border: 1px solid #374151;
+                background: #27272a;
+                border-radius: 6px;
+                color: #ffffff;
+                font-size: 1rem;
+                transition: border-color 0.2s ease;
+            }
+            input:focus {
+                outline: none;
+                border-color: rgb(132, 0, 0);
+                box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1);
+            }
+            button {
+                background: rgb(183, 16, 16);
+                color: white;
+                border: none;
+                padding: 0.75rem 1.5rem;
+                border-radius: 6px;
+                font-weight: 500;
+                cursor: pointer;
+                transition: background-color 0.2s ease;
+            }
+            button:hover {
+                background: rgb(93, 8, 8);
+            }
+        `;
+
+        this.shadowRoot.innerHTML = `
+            <style>${styles}</style>
+            <div class="card">
+                <form id="formCrearCircuito">
+                    <div class="form-group">
+                        <label for="idCircuito">ID</label>
+                        <input type="number" id="idCircuito" name="idCircuito" value="${idCircuito}" disabled>
                     </div>
-            </div>
-            <div class="row mt-3">
-                <div class="col">
-                    <button id="btnRegistrarCircuito" type="submit" class="btn btn-primary">Registrar</button>  
+
+                    <div class="row">
+                        <div class="form-group">
+                            <label for="nombreCircuito">Nombre Circuito</label>
+                            <input type="text" id="nombreCircuito" name="nombreCircuito" placeholder="Ingrese nombre del circuito">
+                        </div>
+                        <div class="form-group">
+                            <label for="paisCircuito">País</label>
+                            <input type="text" id="paisCircuito" name="paisCircuito" placeholder="Ingrese país">
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="form-group">
+                            <label for="vueltas">Vueltas</label>
+                            <input type="number" id="vueltas" name="vueltas" placeholder="Número de vueltas">
+                        </div>
+                        <div class="form-group">
+                            <label for="longitud">Longitud KM</label>
+                            <input type="number" id="longitud" name="longitud" placeholder="Longitud en kilómetros">
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="form-group">
+                            <label for="imageCircuito">Imagen (URL)</label>
+                            <input type="url" id="imageCircuito" name="imageCircuito" placeholder="URL de la imagen">
+                        </div>
+                        <div class="form-group">
+                            <label for="descripcion">Descripción</label>
+                            <input type="text" id="descripcion" name="descripcion" placeholder="Descripción del circuito">
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="form-group">
+                            <button id="btnRegistrarCircuito" type="button">Registrar Circuito</button>
+                            <div id="statusMessage" class="status-message"></div>
+                        </div>
+                    </div>
+                </form>
+
+                <div class="card">
+                    <h1>Conoce nuestros circuitos</h1>
+                    <button id="btnListar" type="button">↓</button>
+                    <div id="circuitosCards"></div>
                 </div>
             </div>
-        </form>
         `;
     }
+
+    addEventListeners() {
+        this.shadowRoot.querySelector('#btnRegistrarCircuito').addEventListener("click", () => this.crearCircuito());
+        this.shadowRoot.querySelector('#btnListar').addEventListener("click", () => this.mostrarCircuitos());
+    }
+
+    crearCircuito = () => {
+        const formCrearCircuito = this.shadowRoot.querySelector('#formCrearCircuito');
+        const statusMessage = this.shadowRoot.querySelector('#statusMessage');
+
+        const formData = new FormData(formCrearCircuito);
+        const datos = Object.fromEntries(formData.entries());
+
+        postCircuitos(datos)
+            .then(response => response.json())
+            .then(responseData => {
+                statusMessage.textContent = '¡Circuito registrado exitosamente!';
+                statusMessage.className = 'status-message success';
+                statusMessage.style.display = 'block';
+                formCrearCircuito.reset();
+                setTimeout(() => {
+                    statusMessage.style.display = 'none';
+                }, 3000);
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                statusMessage.textContent = 'Error al registrar el circuito.';
+                statusMessage.className = 'status-message error';
+            });
+    }
+
+    mostrarCircuitos = () => {
+        getCircuitos()
+            .then((circuitos) => {
+                if (!Array.isArray(circuitos)) {
+                    console.error("Los datos recibidos no son un array:", circuitos);
+                    return;
+                }
+
+                const circuitosCards = this.shadowRoot.querySelector('#circuitosCards');
+                circuitosCards.innerHTML = '';
+
+                circuitos.forEach((circuito) => {
+                    const divItems = document.createElement('div');
+                    divItems.classList.add('col');
+                    divItems.innerHTML = `
+                        <div class="card">
+                            <img src="${circuito.imageCircuito}" alt="${circuito.nombreCircuito}">
+                            <div class="card__content">
+                                <h1>${circuito.nombreCircuito}</h1>
+                                <p>🌍 ${circuito.paisCircuito}</p>
+                                <p>⚡ ${circuito.vueltas} vueltas</p>
+                                <p>📏 ${circuito.longitud} km</p>
+                                <p>${circuito.descripcion}</p>
+                            </div>
+                            <div class="card__actions">
+                                <button class="btnEditarForm" data-id="${circuito.id}">Editar</button>
+                                <button class="btnEliminar" data-id="${circuito.id}">Eliminar</button>
+                            </div>
+                        </div>
+                    `;
+                    circuitosCards.appendChild(divItems);
+                });
+            })
+            .catch((error) => console.error('Error en la solicitud GET:', error));
+    }
+
+    eliminarCircuitos() {
+        const circuitosCards = this.shadowRoot.querySelector("#circuitosCards");
+    
+        circuitosCards.addEventListener("click", async (e) => {
+            if (e.target.classList.contains("btnEliminar")) {
+                const id = e.target.getAttribute("data-id");
+    
+                if (!id) {
+                    console.error("ID del equipo no encontrado.");
+                    return;
+                }
+    
+                const confirmacion = await Swal.fire({
+                    title: "¿Está seguro de eliminar el equipo?",
+                    text: "Esta acción no se puede deshacer.",
+                    icon: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#3085d6",
+                    cancelButtonColor: "#d33",
+                    confirmButtonText: "Sí, eliminar",
+                    cancelButtonText: "Cancelar"
+                });
+    
+                if (confirmacion.isConfirmed) {
+                    try {
+                        const response = await deleteCircuitos(id);
+    
+                        if (!response || !response.ok) {
+                            throw new Error(`Error ${response ? response.status : "desconocido"}`);
+                        }
+    
+                        Swal.fire("Eliminado", "El circuito ha sido eliminado.", "success");
+                        this.mostrarCircuitos();
+                    } catch (error) {
+                        console.error("Error al eliminar el circuito:", error);
+                        Swal.fire("Error", "No se pudo eliminar el circuito.", "error");
+                    }
+                }
+            }
+        });
+    }   
+
 }
+
 customElements.define("circuitos-admin", circuitosAdmin);
