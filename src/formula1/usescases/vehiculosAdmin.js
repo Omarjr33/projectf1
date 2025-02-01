@@ -7,6 +7,7 @@ export class VehiculosAdmin extends HTMLElement {
         this.currentStep = 1;
         this.render();
         this.setupEventListeners();
+        this.crearVehiculos();
     }
 
     setupEventListeners() {
@@ -300,7 +301,7 @@ export class VehiculosAdmin extends HTMLElement {
                 </div>
                 <div class="form-group">
                     <label for="equipoPiloto" class="form-label">Equipo</label>
-                    <select class="form-select" id="equipoPiloto" name="equipoPiloto">
+                    <select class="form-select" id="equipoPilotoVeh" name="equipoPiloto">
                         <option value="">Seleccionar Equipo</option>
                     </select>
                 </div>
@@ -314,7 +315,7 @@ export class VehiculosAdmin extends HTMLElement {
                 <h3>Información Adicional</h3>
                 <div class="form-group">
                     <label for="nombrePiloto" class="form-label">Piloto</label>
-                    <select class="form-select" id="nombrePiloto" name="nombrePiloto">
+                    <select class="form-select" id="nombrePilotoVeh" name="nombrePiloto">
                         <option value="">Seleccionar Piloto</option>
                     </select>
                 </div>
@@ -420,7 +421,7 @@ export class VehiculosAdmin extends HTMLElement {
         fetch('../../../db.json')
         .then(response => response.json()) 
         .then(data => {
-            const equipoPiloto = this.shadowRoot.querySelector("#equipoPiloto");
+            const equipoPiloto = this.shadowRoot.querySelector("#equipoPilotoVeh");
             
             data.equipos.forEach(equipo => {
                 const option = document.createElement("option");
@@ -436,7 +437,7 @@ export class VehiculosAdmin extends HTMLElement {
         fetch('../../../db.json')
         .then(response => response.json()) 
         .then(data => {
-            const nombrePiloto = this.shadowRoot.querySelector("#nombrePiloto");
+            const nombrePiloto = this.shadowRoot.querySelector("#nombrePilotoVeh");
             
             data.pilotos.forEach(piloto => {
                 const option = document.createElement("option");
@@ -450,15 +451,14 @@ export class VehiculosAdmin extends HTMLElement {
         });
     }
 
-    saveData() {
+    crearVehiculos() {
         const formCrearVehiculo = this.shadowRoot.querySelector('#formCrearVehiculo');
-        const btnRegistrarVehiculos = this.shadowRoot.querySelector('#btnRegistrarVehiculos');
-        const fileInput = formCrearVehiculo.querySelector('#imagenVehiculo'); // Obtener el input de la imagen
-        const previewContainer = this.shadowRoot.querySelector('#previewContainer');
+        const dropZone = this.shadowRoot.querySelector('#dropZone');
+        const fileInput = this.shadowRoot.querySelector('.file-input');
+        const previewContainer = this.shadowRoot.querySelector('.preview-container');
         const imagePreview = this.shadowRoot.querySelector('#imagePreview');
         const statusMessage = this.shadowRoot.querySelector('#statusMessage');
-        
-        // Mostrar la vista previa de la imagen
+
         const handleImageDisplay = (file) => {
             if (file) {
                 const reader = new FileReader();
@@ -469,108 +469,78 @@ export class VehiculosAdmin extends HTMLElement {
                 reader.readAsDataURL(file);
             }
         };
+
+        dropZone.addEventListener('click', () => fileInput.click());
         
-        // Evento de registro de vehículo
-        btnRegistrarVehiculos.addEventListener("click", (e) => {
-            e.preventDefault(); // Prevenir el envío del formulario
-        
-            const formData = new FormData(formCrearVehiculo); // Recoger los datos del formulario
-            
-            const datos = {
-                equipo: formData.get('equipoPiloto'),
-                modelo: formData.get('modelo'),
-                motor: formData.get('motor'),
-                velocidad_maxima_kmh: formData.get('velocidad_maxima_kmh'),
-                aceleracion_0_100: formData.get('aceleracion_0_100'),
-                pilotos: formData.get('nombrePiloto'),
-                rendimiento: {
-                    conduccion_normal: {
-                        velocidad_promedio_kmh: formData.get('velocidad_normal'),
-                        consumo_combustible: {
-                            seco: formData.get('seco_normal'),
-                            lluvioso: formData.get('lluvioso_normal'),
-                            extremo: formData.get('extremo_normal')
-                        },
-                        desgaste_neumaticos: {
-                            seco: formData.get('seco_neumaticos'),
-                            lluvioso: formData.get('lluvioso_neumaticos'),
-                            extremo: formData.get('extremo_neumaticos')
-                        },
-                    },
-                    conduccion_agresiva: {
-                        velocidad_promedio_kmh: formData.get('velocidad_agresiva'),
-                        consumo_combustible: {
-                            seco: formData.get('seco_agresiva'),
-                            lluvioso: formData.get('lluvioso_agresiva'),
-                            extremo: formData.get('extremo_agresiva')
-                        },
-                        desgaste_neumaticos: {
-                            seco: formData.get('seco_agreneu'),
-                            lluvioso: formData.get('lluvioso_agreneu'),
-                            extremo: formData.get('extremo_agreneu')
-                        },
-                    },
-                    ahorro_combustible: {
-                        velocidad_promedio_kmh: formData.get('velocidad_combustible'),
-                        consumo_combustible: {
-                            seco: formData.get('seco_ahorro'),
-                            lluvioso: formData.get('lluvioso_ahorro'),
-                            extremo: formData.get('extremo_ahorro')
-                        },
-                        desgaste_neumaticos: {
-                            seco: formData.get('seco_ahorro_neu'),
-                            lluvioso: formData.get('lluvioso_ahorro_neu'),
-                            extremo: formData.get('extremo_ahorro_neu')
-                        }
-                    }
-                }
-            };
-    
-            // Si hay una imagen seleccionada, manejarla y agregarla a los datos
+        dropZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            dropZone.style.borderColor = 'var(--accent-color)';
+            dropZone.style.backgroundColor = 'rgba(99, 102, 241, 0.1)';
+        });
+
+        dropZone.addEventListener('dragleave', (e) => {
+            e.preventDefault();
+            dropZone.style.borderColor = 'var(--border-color)';
+            dropZone.style.backgroundColor = 'transparent';
+        });
+
+        dropZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            const file = e.dataTransfer.files[0];
+            if (file && file.type.startsWith('image/')) {
+                fileInput.files = e.dataTransfer.files;
+                handleImageDisplay(file);
+            }
+            dropZone.style.borderColor = 'var(--border-color)';
+            dropZone.style.backgroundColor = 'transparent';
+        });
+
+        fileInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                handleImageDisplay(file);
+            }
+        });// Manejo del envío del formulario
+        this.shadowRoot.querySelector('#btnRegistrarVehiculo').addEventListener("click", (e) => {
+            e.preventDefault();
+            const formData = new FormData(formCrearVehiculo);
+
             const file = fileInput.files[0];
             if (file) {
                 const reader = new FileReader();
                 reader.onloadend = () => {
-                    // Ahora agregamos la imagen a los datos de la misma manera
-                    datos.imagenVehiculo = reader.result; // Aquí guardamos el DataURL de la imagen
-                    enviarDatos(datos); // Enviar los datos completos
+                    const datos = Object.fromEntries(formData.entries());
+                    datos.imagenVehiculo = reader.result;
+
+                    postVehiculos(datos)
+                        .then(response => {
+                            if (response.ok) {
+                                return response.json();
+                            }
+                            throw new Error(`Error: ${response.status} - ${response.statusText}`);
+                        })
+                        .then(responseData => {
+                            console.log('Respuesta exitosa:', responseData);
+                            statusMessage.textContent = '¡Vehiculo registrado exitosamente!';
+                            statusMessage.className = 'status-message success';
+                            statusMessage.style.display = 'block';
+                            formCrearVehiculo.reset();
+                            previewContainer.style.display = 'none';
+                            setTimeout(() => {
+                                statusMessage.style.display = 'none';
+                            }, 3000);
+                        })
+                        .catch(error => {
+                            console.error('Error:', error.message);
+                            statusMessage.textContent = 'Error al registrar el vehiculo. Por favor, intente nuevamente.';
+                            statusMessage.className = 'status-message error';
+                            statusMessage.style.display = 'block';
+                        });
                 };
                 reader.readAsDataURL(file);
-                handleImageDisplay(file); // Mostrar vista previa
-            } else {
-                // Si no hay imagen, solo enviar los datos
-                enviarDatos(datos);
             }
         });
-    
-        // Función para enviar los datos al servidor
-        const enviarDatos = (datos) => {
-            postVehiculos(datos)
-                .then(response => {
-                    if (response.ok) {
-                        return response.json();
-                    }
-                    throw new Error(`Error: ${response.status} - ${response.statusText}`);
-                })
-                .then(responseData => {
-                    console.log('Respuesta exitosa:', responseData);
-                    statusMessage.textContent = '¡Vehículo registrado exitosamente!';
-                    statusMessage.className = 'status-message success';
-                    statusMessage.style.display = 'block';
-                    formCrearVehiculo.reset();
-                    previewContainer.style.display = 'none';
-                    setTimeout(() => {
-                        statusMessage.style.display = 'none';
-                    }, 3000);
-                })
-                .catch(error => {
-                    console.error('Error:', error.message);
-                    statusMessage.textContent = 'Error al registrar el vehículo. Por favor, intente nuevamente.';
-                    statusMessage.className = 'status-message error';
-                    statusMessage.style.display = 'block';
-                });
-        };
-    }    
+    }
 }
 
 customElements.define("vehiculos-admin", VehiculosAdmin);
