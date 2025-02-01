@@ -36,7 +36,6 @@ export class pilotosAdmin extends HTMLElement {
                 margin: 2rem auto;
                 color: var(--text-primary);
             }
-            
 
             .card-header {
                 text-align: center;
@@ -176,6 +175,159 @@ export class pilotosAdmin extends HTMLElement {
                 background-color: var(--success-color);
                 color: white;
             }
+
+            /* Estilos para las tarjetas 3D */
+            #pilotosCards {
+                display: flex;
+                flex-wrap: wrap;
+                justify-content: center;
+                gap: 50px;
+                padding: 20px;
+            }
+
+            .elemento__cartao {
+                width: 200px;
+                height: 300px;
+                position: relative;
+                display: flex;
+                justify-content: center;
+                align-items: flex-end;
+                padding: 0 36px;
+                perspective: 2500px;
+                margin: 0;
+            }
+
+            .caixa__foto {
+                transition: all 0.5s;
+                position: absolute;
+                width: 100%;
+                height: 100%;
+                z-index: 1;
+                overflow: hidden;
+                border-radius: 15px;
+            }
+
+            .elemento__cartao:hover .caixa__foto {
+                transform: perspective(900px) translateY(-5%) rotateX(25deg) translateZ(0);
+                box-shadow: 2px 35px 32px -8px rgba(0, 0, 0, 0.75);
+            }
+
+            .elemento__foto__cobertura {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+            }
+
+            .caixa__foto::before,
+            .caixa__foto::after {
+                content: "";
+                opacity: 0;
+                width: 100%;
+                height: 80px;
+                transition: all 0.5s;
+                position: absolute;
+                left: 0;
+            }
+
+            .caixa__foto::before {
+                top: 0;
+                height: 100%;
+                background-image: linear-gradient(
+                    to top,
+                    transparent 46%,
+                    rgba(12, 13, 19, 0.5) 68%,
+                    rgba(12, 13, 19) 0.97
+                );
+            }
+
+            .caixa__foto::after {
+                bottom: 0;
+                opacity: 1;
+                background-image: linear-gradient(
+                    to bottom,
+                    transparent 46%,
+                    rgba(12, 13, 19, 0.5) 68%,
+                    rgba(12, 13, 19) 0.97
+                );
+            }
+
+            .elemento__cartao:hover .caixa__foto::before,
+            .elemento__cartao:hover .caixa__foto::after {
+                opacity: 1;
+            }
+
+            .elemento__cartao:hover .caixa__foto::after {
+                height: 120px;
+            }
+
+            .card__info {
+                position: absolute;
+                bottom: 0;
+                left: 0;
+                right: 0;
+                padding: 15px;
+                color: white;
+                text-align: center;
+                z-index: 2;
+                transition: transform 0.5s;
+                background: rgba(0, 0, 0, 0.7);
+                border-radius: 0 0 15px 15px;
+            }
+
+            .elemento__cartao:hover .card__info {
+                transform: translateY(-20px);
+            }
+
+            .card__title {
+                margin: 0;
+                font-size: 1.2em;
+                font-weight: bold;
+                color: var(--text-primary);
+            }
+
+            .card__pais,
+            .card__rol {
+                margin: 5px 0;
+                font-size: 0.9em;
+                color: var(--text-secondary);
+            }
+
+            .btnEditarForm,
+            .btnEliminar {
+                background: var(--accent-color);
+                color: white;
+                border: none;
+                padding: 5px 10px;
+                margin: 5px;
+                border-radius: 5px;
+                cursor: pointer;
+                transition: all 0.3s ease;
+            }
+
+            .btnEliminar {
+                background: var(--error-color);
+            }
+
+            .btnEditarForm:hover {
+                background: var(--accent-hover);
+                transform: translateY(-2px);
+            }
+
+            .btnEliminar:hover {
+                background: #dc2626;
+                transform: translateY(-2px);
+            }
+
+            @media (max-width: 768px) {
+                .card {
+                    padding: 2rem;
+                }
+
+                .elemento__cartao {
+                    width: 160px;
+                    height: 240px;
+                }
+            }
         </style>
 
         <div class="card">
@@ -215,27 +367,28 @@ export class pilotosAdmin extends HTMLElement {
 
                 <div id="statusMessage" class="status-message"></div>
             </form>
-            <div class="card">
+        </div>
+
+        <div class="card">
             <h1>Conoce nuestros Pilotos</h1>
             <button id="btnListarPilotos" type="submit" class="btn-submit">↓</button>
             <div id="pilotosCards">
             <!--Aquí se llamarán las cartas desde archivo JS-->
             </div>
+        </div>
         `;
         this.addEventListener();
 
-        
         fetch('../../../db.json')
         .then(response => response.json()) 
         .then(data => {
             const equipoPiloto = this.shadowRoot.querySelector("#equipoPiloto");
             
-            // Llenamos el <select> con las opciones del JSON
             data.equipos.forEach(equipo => {
-            const option = document.createElement("option");
-            option.value = equipo.id;  // El valor que se pasará cuando se seleccione esta opción
-            option.textContent = equipo.nombreEquipo;  // El texto visible en el selector
-            equipoPiloto.appendChild(option);
+                const option = document.createElement("option");
+                option.value = equipo.id;
+                option.textContent = equipo.nombreEquipo;
+                equipoPiloto.appendChild(option);
             });
         })
         .catch(error => {
@@ -243,7 +396,7 @@ export class pilotosAdmin extends HTMLElement {
         });
     }
 
-    addEventListener(){
+    addEventListener() {
         this.shadowRoot.querySelector('#btnListarPilotos').addEventListener("click", (e) => {
             this.mostrarPilotos();
         });
@@ -257,7 +410,6 @@ export class pilotosAdmin extends HTMLElement {
         const imagePreview = this.shadowRoot.querySelector('#imagePreview');
         const statusMessage = this.shadowRoot.querySelector('#statusMessage');
 
-        // Función para manejar la visualización de la imagen
         const handleImageDisplay = (file) => {
             if (file) {
                 const reader = new FileReader();
@@ -269,7 +421,6 @@ export class pilotosAdmin extends HTMLElement {
             }
         };
 
-        // Event listeners para drag and drop
         dropZone.addEventListener('click', () => fileInput.click());
         
         dropZone.addEventListener('dragover', (e) => {
@@ -300,14 +451,11 @@ export class pilotosAdmin extends HTMLElement {
             if (file) {
                 handleImageDisplay(file);
             }
-        });
-        
-        // Manejo del envío del formulario
+        });// Manejo del envío del formulario
         this.shadowRoot.querySelector('#btnRegistrarPiloto').addEventListener("click", (e) => {
             e.preventDefault();
             const formData = new FormData(formCrearPiloto);
 
-            // Convertir la imagen a Base64 si existe
             const file = fileInput.files[0];
             if (file) {
                 const reader = new FileReader();
@@ -348,51 +496,45 @@ export class pilotosAdmin extends HTMLElement {
     mostrarPilotos = () => {
         getPilotos()
         .then((pilotos) => {
-            // Toma el elemento HTML con ID pilotosCards
             const pilotosCards = this.shadowRoot.querySelector('#pilotosCards');
             pilotosCards.innerHTML = '';
-    
-            // Obtener los equipos también desde el archivo JSON
+
             fetch('../../../db.json')
             .then(response => response.json())
             .then(data => {
-                // Crear un mapa para relacionar los equipos por su id
                 const equiposMap = data.equipos.reduce((acc, equipo) => {
-                    acc[equipo.id] = equipo.nombreEquipo;  // Asocia el id del equipo con su nombre
+                    acc[equipo.id] = equipo.nombreEquipo;
                     return acc;
                 }, {});
-    
-                // Ahora, mostramos a los pilotos
+
                 pilotos.forEach((piloto) => {
                     const { equipoPiloto } = piloto;
-                    
-                    // Obtener el nombre del equipo usando el id del piloto
                     const equipoNombre = equiposMap[equipoPiloto];
-    
-                    // Crea un div para mostrar la tarjeta del piloto
+
                     const divItems = document.createElement('div');
                     divItems.classList.add('col');
-    
-                    // Cambios dentro del archivo HTML, se completa la información con la data adquirida
+
                     divItems.innerHTML = /*html*/ `
-                    <div id="card__listar" class="card">
-                        <img src="${piloto.imagenPiloto}" alt="Imagen del Piloto">
-                        <h1 class="card__title">${piloto.nombrePiloto}</h1>
-                        <p class="card__pais">${equipoNombre}</p> <!-- Mostrar el nombre del equipo -->
-                        <p class="card__rol">${piloto.rolPiloto}</p>
-                        <div>
-                            <button class="btnEditarForm" data-id="${piloto.id}">Editar</button>
-                            <button class="btnEliminar" data-id="${piloto.id}">Eliminar</button>
+                        <div class="elemento__cartao">
+                            <div class="caixa__foto">
+                                <img src="${piloto.imagenPiloto}" alt="Imagen del Piloto" class="elemento__foto__cobertura">
+                            </div>
+                            <div class="card__info">
+                                <h1 class="card__title">${piloto.nombrePiloto}</h1>
+                                <p class="card__pais">${equipoNombre}</p>
+                                <p class="card__rol">${piloto.rolPiloto}</p>
+                                <div>
+                                    <button class="btnEditarForm" data-id="${piloto.id}">Editar</button>
+                                    <button class="btnEliminar" data-id="${piloto.id}">Eliminar</button>
+                                </div>
+                            </div>
                         </div>
-                    </div>
-                    <form id="formEditarPiloto" style="display: none;">
-                
-                    </form>
+                        <form id="formEditarPiloto" style="display: none;">
+                        </form>
                     `;
                     pilotosCards.appendChild(divItems);
                 });
-    
-                // Añadir los manejadores de eventos para eliminar y editar
+
                 this.eliminarPiloto();
                 this.shadowRoot.querySelectorAll('.btnEditarForm').forEach((btnEditarForm) => {
                     btnEditarForm.addEventListener("click", (e) => {
@@ -408,8 +550,8 @@ export class pilotosAdmin extends HTMLElement {
         .catch ((error) => {
             console.error('Error en la solicitud GET:', error.message);
         });
-    }    
-    
+    }
+
     eliminarPiloto() {
         const pilotosCards = this.shadowRoot.querySelector("#pilotosCards");
     
@@ -422,7 +564,6 @@ export class pilotosAdmin extends HTMLElement {
                     return;
                 }
     
-                // Confirmación con SweetAlert2
                 const confirmacion = await Swal.fire({
                     title: "¿Está seguro de eliminar el piloto?",
                     text: "Esta acción no se puede deshacer.",
@@ -442,10 +583,7 @@ export class pilotosAdmin extends HTMLElement {
                             throw new Error(`Error ${response ? response.status : "desconocido"}`);
                         }
     
-                        // Mensaje de éxito
                         Swal.fire("Eliminado", "El piloto ha sido eliminado.", "success");
-    
-                        // Actualizar la lista de equipos después de eliminar
                         this.mostrarPilotos();
                     } catch (error) {
                         console.error("Error al eliminar el piloto:", error);
@@ -454,7 +592,7 @@ export class pilotosAdmin extends HTMLElement {
                 }
             }
         });
-    }   
+    }
 
     mostrarFormularioEdit = (id) => {
         const formEditarPiloto = this.shadowRoot.querySelector('#formEditarPiloto');
@@ -488,7 +626,7 @@ export class pilotosAdmin extends HTMLElement {
                         <p class="image-upload-text">Arrastra una imagen aquí o haz clic para seleccionar</p>
                         <input type="file" class="file-input" id="imagenPiloto" name="imagenPiloto" accept="image/*">
                     </div>
-                    <div class="preview-container">
+                    <div class="preview-container" style="display: block;">
                         <img class="preview-image" id="imagePreview" src="${imagenPiloto}" alt="Preview">
                     </div>
                 </div>
@@ -498,16 +636,16 @@ export class pilotosAdmin extends HTMLElement {
                 </button>
                 `;
                 formEditarPiloto.style.display = 'block';
+                
                 fetch('../../../db.json')
                 .then(response => response.json()) 
                 .then(data => {
                     const equipoPilotoEditar = this.shadowRoot.querySelector("#equipoPilotoEditar");
                     
-                    // Llenamos el <select> con las opciones del JSON
                     data.equipos.forEach(equipo => {
                         const option = document.createElement("option");
-                        option.value = equipo.id;  // El valor que se pasará cuando se seleccione esta opción
-                        option.textContent = equipo.nombreEquipo;  // El texto visible en el selector
+                        option.value = equipo.id;
+                        option.textContent = equipo.nombreEquipo;
                         equipoPilotoEditar.appendChild(option);
                     });
                 })
@@ -525,33 +663,26 @@ export class pilotosAdmin extends HTMLElement {
         this.shadowRoot.querySelector('#btnEditarPiloto').addEventListener("click", (e) => {
             e.preventDefault();
             
-            // Obtenemos los datos del formulario
             const datos = Object.fromEntries(new FormData(formEditarPiloto).entries());
             const id = e.target.getAttribute("data-id");
     
-            // Obtener el ID del equipo seleccionado desde el formulario
             const equipoID = datos.equipoPilotoEditar;
     
-            // Buscar el nombre del equipo correspondiente al ID
             fetch('../../../db.json')
                 .then(response => response.json())
                 .then(data => {
-    
                     const equiposMap = data.equipos.reduce((acc, equipo) => {
-                        acc[equipo.id] = equipo.nombreEquipo;  // Asocia el id del equipo con su nombre
+                        acc[equipo.id] = equipo.nombreEquipo;
                         return acc;
                     }, {});
     
-                    // Usamos equipoID para obtener el nombre del equipo desde el mapa
                     const equipoNombre = equiposMap[equipoID];
     
                     if (equipoNombre) {
-                        // Reemplazamos el ID del equipo con el nombre del equipo
-                        datos.equipoPiloto = equipoNombre;  // Actualizar directamente la propiedad equipoPiloto
+                        datos.equipoPiloto = equipoNombre;
     
-                        delete datos.equipoPilotoEditar;  // Eliminamos el campo extra de editar
+                        delete datos.equipoPilotoEditar;
     
-                        // Llamamos a la función `patchPilotos` pasando los datos y el ID del piloto
                         patchPilotos(datos, id)
                             .then(response => {
                                 if (response.ok) {
@@ -567,7 +698,6 @@ export class pilotosAdmin extends HTMLElement {
                                     title: '¡Éxito!',
                                     text: 'El piloto ha sido editado correctamente.',
                                 });
-                                // Puedes actualizar la lista de pilotos después de la edición
                                 this.mostrarPilotos();
                             })
                             .catch(error => {
@@ -586,7 +716,7 @@ export class pilotosAdmin extends HTMLElement {
                     console.error('Error al obtener equipos:', error.message);
                 });
         });
-    } 
+    }
 }
 
 customElements.define("pilotos-admin", pilotosAdmin);
