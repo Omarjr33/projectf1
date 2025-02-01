@@ -1,13 +1,14 @@
 import Swal from 'sweetalert2';
-import { postCircuitos, getCircuitos, deleteCircuitos } from "../../Apis/circuitosApis.js";
+import { postCircuitos, getCircuitos, deleteCircuitos, patchCircuitos } from "../../Apis/circuitosApis.js";
 
 export class circuitosAdmin extends HTMLElement {
     constructor() {
         super();
         this.attachShadow({ mode: 'open' });
         this.render();
-        this.addEventListeners(); // Llamamos la función de eventos correctamente
+        this.addEventListeners(); 
         this.eliminarCircuitos();
+        this.editarCircuito();
     }
 
     render() {
@@ -191,6 +192,8 @@ export class circuitosAdmin extends HTMLElement {
                                 <button class="btnEliminar" data-id="${circuito.id}">Eliminar</button>
                             </div>
                         </div>
+                         <form id="formEditarCircuito" style="display: none;">
+                        </form>
                     `;
                     circuitosCards.appendChild(divItems);
                 });
@@ -206,12 +209,12 @@ export class circuitosAdmin extends HTMLElement {
                 const id = e.target.getAttribute("data-id");
     
                 if (!id) {
-                    console.error("ID del equipo no encontrado.");
+                    console.error("ID del circuitoo no encontrado.");
                     return;
                 }
     
                 const confirmacion = await Swal.fire({
-                    title: "¿Está seguro de eliminar el equipo?",
+                    title: "¿Está seguro de eliminar el circuito?",
                     text: "Esta acción no se puede deshacer.",
                     icon: "warning",
                     showCancelButton: true,
@@ -239,6 +242,106 @@ export class circuitosAdmin extends HTMLElement {
             }
         });
     }   
+
+    mostrarFormularioEdit = (id) => {
+        const formEditarCircuito = this.shadowRoot.querySelector('#formEditarCircuito');
+        formEditarCircuito.style.display = 'none';
+        
+        getCircuitos()
+        .then((circuitos) => {
+            const circuito = circuitos.find((circuito) => circuito.id === id);
+            if (circuito) {
+                const {nombreCircuito } = circuito;
+                formEditarCircuito.innerHTML = /*html*/ `
+                    <div class="form-grid">
+                    
+                    <div class="form-group">
+                         <label class="form-label" for="nombreCircuito">Codigo Circuito</label>
+                         <input type="text" class="form-control" id="nombreCircuito" name="nombreCircuito" placeholder="${idCircuito}" disabled>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="nombreCircuito">Nombre del Circuito</label>
+                        <input type="text" class="form-control" id="nombreCircuito" name="nombreCircuito" value="${nombreCircuito}">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="paisCircuito">País</label>
+                        <input type="text" class="form-control" id="paisCircuito" name="paisCircuito" value="${paisCircuito}">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="vueltas">Vueltas</label>
+                        <input type="text" class="form-control" id="vueltas" name="vueltas" value="${vueltas}">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="longitud">Longitud</label>
+                        <input type="text" class="form-control" id="longitud" name="longitud" value="${longitud}">
+                    </div>
+
+                     <div class="form-group">
+                         <label class="form-label" for="descripcion">Longitud</label>
+                         <input type="text" class="form-control" id="descripcion" name="descripcion" value="${descripcion}">
+                    </div>
+                    
+                    <div class="form-group">
+                         <label for="imageCircuito">Imagen (URL)</label>
+                         <input type="url" id="imageCircuito" name="imageCircuito" value="${imageCircuito}">
+                    </div>
+                </div>
+    
+                <button id="btnEditar" data-id="${id}" type="submit" class="btn-submit">
+                    Editar Circuito
+                </button>
+                `;
+    
+                formEditarCircuito.style.display = 'block';
+                this.editarCircuito();
+            }
+        })
+        .catch((error) => {
+            console.error('Error en la solicitud GET:', error.message);
+        });
+    }
+    
+
+    editarCircuito() {
+        const formEditarCircuito = this.shadowRoot.querySelector('#formEditarCircuito');
+        
+        this.shadowRoot.querySelector('#btnEditar').addEventListener("click", (e) => {
+            e.preventDefault();
+            
+            const datos = Object.fromEntries(new FormData(formEditarCircuito).entries());
+            const id = e.target.getAttribute("data-id");
+            
+            patchCircuitos(datos, id)
+                .then(response => {
+                    if (response.ok) {
+                        return response.json();
+                    } else {
+                        throw new Error(`Error en la solicitud PATCH: ${response.status} - ${response.statusText}`);
+                    }
+                })
+                .then(responseData => {
+                    console.log("Circuito actualizado:", responseData);
+                    Swal.fire({
+                        icon: 'success',
+                        title: '¡Éxito!',
+                        text: 'El circuito ha sido editado correctamente.',
+                    });
+                    this.mostrarCircuitos();
+                })
+                .catch(error => {
+                    console.error('Error en la solicitud PATCH:', error.message);
+                    Swal.fire({
+                        icon: 'error',
+                        title: '¡Error!',
+                        text: 'Hubo un problema al editar el circuito.',
+                    });
+                });
+        });
+    }
 
 }
 
