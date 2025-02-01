@@ -192,6 +192,12 @@ export class circuitosAdmin extends HTMLElement {
             })
             .catch((error) => console.error('Error en la solicitud GET:', error));
     }
+
+
+
+
+
+    
 }
 
 customElements.define("circuitos-admin", circuitosAdmin);
