@@ -22,6 +22,7 @@ const getVehiculo = async() => {
 	}
     
 }
+
 const postVehiculo = async (datos) => {
     try {
         return await fetch(`${URL_API}/vehiculos`, {
@@ -33,6 +34,7 @@ const postVehiculo = async (datos) => {
         console.error('Error en la solicitud POST:', error.message);
     }
 }
+
 const patchVehiculo = async (datos,id) =>{
 
     try {
@@ -54,7 +56,7 @@ const deleteVehiculo = async (id) =>{
             headers: myHeaders,
         });
     } catch (error) {
-        console.error('Error en la solicitud DELETE:', error.message);
+        console.error('Error en la solicitud POST:', error.message);
     }
 
 }
