@@ -3,7 +3,7 @@ const myHeaders = new Headers({
     "Content-Type": "application/json"
 });
 
-const getPilotos = async() => {
+const getPiloto = async() => {
     try {
         const respuesta = await fetch(`${URL_API}/pilotos`);
 		// Si la respuesta es correcta
@@ -22,7 +22,7 @@ const getPilotos = async() => {
 	}
     
 }
-const postPilotos = async (datos) => {
+const postPiloto = async (datos) => {
     try {
         return await fetch(`${URL_API}/pilotos`, {
             method: "POST",
@@ -33,7 +33,7 @@ const postPilotos = async (datos) => {
         console.error('Error en la solicitud POST:', error.message);
     }
 }
-const patchPilotos = async (datos,id) =>{
+const patchPiloto = async (datos,id) =>{
 
     try {
         return await fetch(`${URL_API}/pilotos/${id}`, {
@@ -46,7 +46,7 @@ const patchPilotos = async (datos,id) =>{
     }
 
 }
-const deletePilotos = async (id) =>{
+const deletePiloto = async (id) =>{
 
     try {
         return await fetch(`${URL_API}/pilotos/${id}`, {
