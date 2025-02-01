@@ -6,7 +6,7 @@ export class circuitosAdmin extends HTMLElement {
         super();
         this.attachShadow({ mode: 'open' });
         this.render();
-        this.crearCircuito();
+        this.addEventListeners(); // Llamamos la función de eventos correctamente
     }
 
     render() {
@@ -16,7 +16,6 @@ export class circuitosAdmin extends HTMLElement {
                 display: block;
                 font-family: 'Segoe UI', system-ui, sans-serif;
             }
-
             .card {
                 background: #1a1a1a;
                 border-radius: 12px;
@@ -25,29 +24,24 @@ export class circuitosAdmin extends HTMLElement {
                 color: #ffffff;
                 transition: transform 0.2s ease;
             }
-
             .card:hover {
                 transform: translateY(-2px);
             }
-
             .form-group {
                 margin-bottom: 1.5rem;
             }
-
             .row {
                 display: grid;
                 grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
                 gap: 2rem;
                 margin-bottom: 1rem;
             }
-
             label {
                 display: block;
                 margin-bottom: 0.5rem;
                 font-size: 0.9rem;
                 color: #9ca3af;
             }
-
             input {
                 width: 100%;
                 padding: 0.75rem;
@@ -58,13 +52,11 @@ export class circuitosAdmin extends HTMLElement {
                 font-size: 1rem;
                 transition: border-color 0.2s ease;
             }
-
             input:focus {
                 outline: none;
                 border-color: rgb(132, 0, 0);
                 box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1);
             }
-
             button {
                 background: rgb(183, 16, 16);
                 color: white;
@@ -75,7 +67,6 @@ export class circuitosAdmin extends HTMLElement {
                 cursor: pointer;
                 transition: background-color 0.2s ease;
             }
-
             button:hover {
                 background: rgb(93, 8, 8);
             }
@@ -130,45 +121,31 @@ export class circuitosAdmin extends HTMLElement {
                         </div>
                     </div>
                 </form>
-                 <div class="card">
-                    <h1>Conoce nuestros equipos</h1>
-                    <button id="btnListar" type="submit" class="btn-submit">↓</button>
-                    <div id="circuitosCards">
-                    <!--Aquí se llamarán las cartas desde archivo JS-->
-                 </div>
- </div>
+
+                <div class="card">
+                    <h1>Conoce nuestros circuitos</h1>
+                    <button id="btnListar" type="button">↓</button>
+                    <div id="circuitosCards"></div>
+                </div>
             </div>
         `;
-        this.addEventListener();
-    }
-    addEventListener(){
-        this.shadowRoot.querySelector('#btnListar').addEventListener("click", (e) => {
-            this.mostrarCircuitos();
-        });
     }
 
-    addEventListener() {
-        this.shadowRoot.querySelector('#btnRegistrarCircuito').addEventListener("click", (e) => {
-            this.crearCircuito();
-        });
+    addEventListeners() {
+        this.shadowRoot.querySelector('#btnRegistrarCircuito').addEventListener("click", () => this.crearCircuito());
+        this.shadowRoot.querySelector('#btnListar').addEventListener("click", () => this.mostrarCircuitos());
     }
 
     crearCircuito = () => {
         const formCrearCircuito = this.shadowRoot.querySelector('#formCrearCircuito');
         const statusMessage = this.shadowRoot.querySelector('#statusMessage');
-        
+
         const formData = new FormData(formCrearCircuito);
         const datos = Object.fromEntries(formData.entries());
 
         postCircuitos(datos)
-            .then(response => {
-                if (response.ok) {
-                    return response.json();
-                }
-                throw new Error(`Error: ${response.status} - ${response.statusText}`);
-            })
+            .then(response => response.json())
             .then(responseData => {
-                console.log('Respuesta exitosa:', responseData);
                 statusMessage.textContent = '¡Circuito registrado exitosamente!';
                 statusMessage.className = 'status-message success';
                 statusMessage.style.display = 'block';
@@ -178,52 +155,42 @@ export class circuitosAdmin extends HTMLElement {
                 }, 3000);
             })
             .catch(error => {
-                console.error('Error:', error.message);
-                statusMessage.textContent = 'Error al registrar el circuito. Por favor, intente nuevamente.';
+                console.error('Error:', error);
+                statusMessage.textContent = 'Error al registrar el circuito.';
                 statusMessage.className = 'status-message error';
-                statusMessage.style.display = 'block';
             });
     }
 
     mostrarCircuitos = () => {
         getCircuitos()
-        .then((circuitos) => {
-            const circuitosCards = this.shadowRoot.querySelector('#circuitosCards');
-            circuitosCards.innerHTML = '';
-            
-            circuitos.forEach((circuito) => {
-                const divItems = document.createElement('div');
-                divItems.classList.add('col');
-                divItems.innerHTML = /*html*/ `
-                <div id="card__listar" class="card">
-                    <img src="${circuito.imagenEquipo}" alt="${circuito.nombreEquipo} Logo">
-                    <div class="card__content">
-                        <h1 class="card__title">${circuito.nombreEquipo}</h1>
-                        <p class="card__pais">🌍 ${circuito.paisEquipo}</p>
-                        <p class="card__vueltas">⚡ ${circuito.vueltasEquipo}</p>
-                        <p class="card__longitud">⚡ ${circuito.longitudEquipo}</p>
-                        <p class="card__descripcion">⚡ ${circuito.descripcionEquipo}</p>
-                    </div>
-                    <div class="card__actions">
-                        <button class="btnEditarForm" data-id="${circuito.id}">Editar</button>
-                        <button class="btnEliminar" data-id="${circuito.id}">Eliminar</button>
-                    </div>
-                </div>
-                <form id="formEditarEquipo" style="display: none;">
-                </form>
-                `;
-                circuitosCards.appendChild(divItems);
-            });
-            this.eliminarEquipo();
-            this.shadowRoot.querySelectorAll('.btnEditarForm').forEach((btnEditarForm) => {
-                btnEditarForm.addEventListener("click", (e) => {
-                    const id = e.target.getAttribute("data-id");
-                    this.mostrarFormularioEdit(id);
+            .then((circuitos) => {
+                if (!Array.isArray(circuitos)) {
+                    console.error("Los datos recibidos no son un array:", circuitos);
+                    return;
+                }
+
+                const circuitosCards = this.shadowRoot.querySelector('#circuitosCards');
+                circuitosCards.innerHTML = '';
+
+                circuitos.forEach((circuito) => {
+                    const divItems = document.createElement('div');
+                    divItems.classList.add('col');
+                    divItems.innerHTML = `
+                        <div class="card">
+                            <img src="${circuito.imageCircuito}" alt="${circuito.nombreCircuito}">
+                            <div class="card__content">
+                                <h1>${circuito.nombreCircuito}</h1>
+                                <p>🌍 ${circuito.paisCircuito}</p>
+                                <p>⚡ ${circuito.vueltas} vueltas</p>
+                                <p>📏 ${circuito.longitud} km</p>
+                                <p>${circuito.descripcion}</p>
+                            </div>
+                        </div>
+                    `;
+                    circuitosCards.appendChild(divItems);
                 });
-            });
-        }).catch ((error) => {
-            console.error('Error en la solicitud GET:', error.message);
-        });
+            })
+            .catch((error) => console.error('Error en la solicitud GET:', error));
     }
 }
 
