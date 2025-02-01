@@ -53,17 +53,19 @@
       ],
       "rendimiento": {
         "conduccion_normal": {
-          "velocidad_promedio_kmh": 320,
-          "consumo_combustible": {
-            "seco": 1.9,
-            "lluvioso": 2.1,
-            "extremo": 2.4
-          },
-          "desgaste_neumaticos": {
-            "seco": 1.5,
-            "lluvioso": 0.8,
-            "extremo": 2.5
-          }
+          "velocidad_normal": 315,
+          "consumo_combustible_normal": { "seco_normal": 2.0, "lluvioso_normal": 2.2, "extremo_normal": 2.5 },
+          "desgaste_neumaticos_normal": { "seco_neumaticos": 1.6, "lluvioso_neumaticos": 0.9, "extremo_neumaticos": 2.6 }
+        },
+        "conduccion_agresiva": {
+          "velocidad_agresiva": 335,
+          "consumo_combustible_agresiva": { "seco_agresiva": 2.6, "lluvioso_agresiva": 2.8, "extremo_agresiva": 3.2 },
+          "desgaste_neumaticos_agresiva": { "seco_agreneu": 2.3, "lluvioso_agreneu": 1.4, "extremo_agreneu": 3.8 }
+        },
+        "ahorro_combustible": {
+          "velocidad_combustible": 295,
+          "consumo_combustible_ahorro": { "seco_ahorro": 1.7, "lluvioso_ahorro": 1.9, "extremo_ahorro": 2.2 },
+          "desgaste_neumaticos_ahorro": { "seco_combustible": 1.1, "lluvioso_combustible": 0.6, "extremo_combustible": 1.9 }
         }
       },
       "imagen": "https://upload.wikimedia.org/wikipedia/commons/8/89/Max_Verstappen_2023_Austria_FP2_%28cropped%29.jpg"
