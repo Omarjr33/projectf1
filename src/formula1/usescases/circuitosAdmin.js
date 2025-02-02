@@ -6,7 +6,6 @@ export class circuitosAdmin extends HTMLElement {
         super();
         this.attachShadow({ mode: 'open' });
         this.render();
-        this.addEventListeners(); 
         this.eliminarCircuitos();
         this.editarCircuito();
     }
@@ -177,26 +176,24 @@ export class circuitosAdmin extends HTMLElement {
         fetch('../../../db.json')
         .then(response => response.json()) 
         .then(data => {
-            const selectsPilotos = this.shadowRoot.querySelectorAll(".nombrePilotoVeh"); // Selecciona todos los <select>
-
-            // Iterar sobre cada <select> y añadir los pilotos
-            selectsPilotos.forEach(select => {
-                data.pilotos.forEach(piloto => {
-                    const option = document.createElement("option");
-                    option.value = piloto.id;
-                    option.textContent = piloto.nombrePiloto;
-                    select.appendChild(option); // Agregar opción al select correspondiente
-                });
+            const nombrePiloto = this.shadowRoot.querySelectorAll(".nombrePilotoVeh");
+            
+            data.pilotos.forEach(piloto => {
+                const option = document.createElement("option");
+                option.value = piloto.id;
+                option.textContent = piloto.nombrePiloto;
+                nombrePiloto.appendChild(option);
             });
         })
         .catch(error => {
-            console.error("Error al cargar los datos de los pilotos:", error);
+            console.error("Error al cargar los datos de los vehículos:", error);
         });
     }
 
     addEventListeners() {
         this.shadowRoot.querySelector('#btnRegistrarCircuito').addEventListener("click", () => this.crearCircuito());
         this.shadowRoot.querySelector('#btnListar').addEventListener("click", () => this.mostrarCircuitos());
+        this.shadowRoot.querySelector('#btnEditarForm').addEventListener("click", () => this.mostrarFormularioEdit());
     }
 
     crearCircuito = () => {
@@ -241,42 +238,47 @@ export class circuitosAdmin extends HTMLElement {
 
     mostrarCircuitos = () => {
         getCircuitos()
-        .then((circuitos) => {
-            const circuitosCards = this.shadowRoot.querySelector('#circuitosCards');
-            circuitosCards.innerHTML = '';
-            
-            circuitos.forEach((circuito) => {
-                const divItems = document.createElement('div');
-                divItems.classList.add('col');
-                divItems.innerHTML = /*html*/ `
-                <div id="card__listar" class="card">
-                    <img src="${circuito.imageCircuito}" alt="${circuito.nombreCircuito} Logo">
-                    <div class="card__content">
-                        <h1 class="card__title">${circuito.paisCircuito}</h1>
-                        <p class="card__pais">🌍 ${circuito.longitud}</p>
-                        <p class="card__motor">⚡ ${circuito.descripcion}</p>
-                    </div>
-                    <div class="card__actions">
-                        <button class="btnEditarForm" data-id="${circuito.id}">Editar</button>
-                        <button class="btnEliminar" data-id="${circuito.id}">Eliminar</button>
-                    </div>
-                </div>
-                <form id="formEditarCircuito" style="display: none;">
-                </form>
-                `;
-                circuitosCards.appendChild(divItems);
-            });
+            .then((circuitos) => {
+                if (!Array.isArray(circuitos)) {
+                    console.error("Los datos recibidos no son un array:", circuitos);
+                    return;
+                }
 
-            this.eliminarVehiculo();
-            this.shadowRoot.querySelectorAll('.btnEditarForm').forEach((btnEditarForm) => {
-                btnEditarForm.addEventListener("click", (e) => {
-                    const id = e.target.getAttribute("data-id");
-                    this.mostrarFormularioEdit(id);
+                const circuitosCards = this.shadowRoot.querySelector('#circuitosCards');
+                circuitosCards.innerHTML = '';
+
+                circuitos.forEach((circuito) => {
+                    const divItems = document.createElement('div');
+                    divItems.classList.add('col');
+                    divItems.innerHTML = `
+                        <div class="card">
+                            <img src="${circuito.imageCircuito}" alt="${circuito.nombreCircuito}">
+                            <div class="card__content">
+                                <h1>${circuito.nombreCircuito}</h1>
+                                <p>🌍 ${circuito.paisCircuito}</p>
+                                <p>⚡ ${circuito.vueltas} vueltas</p>
+                                <p>📏 ${circuito.longitud} km</p>
+                                <p>${circuito.descripcion}</p>
+                            </div>
+                            <div class="card__actions">
+                                <button class="btnEditarForm" data-id="${circuito.id}">Editar</button>
+                                <button class="btnEliminar" data-id="${circuito.id}">Eliminar</button>
+                            </div>
+                        </div>
+                         <form id="formEditarCircuito" style="display: none;">
+                        </form>
+                    `;
+                    circuitosCards.appendChild(divItems);
                 });
-            });
-        }).catch ((error) => {
-            console.error('Error en la solicitud GET:', error.message);
-        });
+
+                this.shadowRoot.querySelectorAll('.btnEditarForm').forEach((btnEditarForm) => {
+                    btnEditarForm.addEventListener("click", (e) => {
+                        const id = e.target.getAttribute("data-id");
+                        this.mostrarFormularioEdit(id);
+                    });
+                });
+            })
+            .catch((error) => console.error('Error en la solicitud GET:', error));
     }
 
     eliminarCircuitos() {
@@ -372,7 +374,6 @@ export class circuitosAdmin extends HTMLElement {
         });
     }
     
-
     editarCircuito() {
         const formEditarCircuito = this.shadowRoot.querySelector('#formEditarCircuito');
         
@@ -397,7 +398,7 @@ export class circuitosAdmin extends HTMLElement {
                         title: '¡Éxito!',
                         text: 'El circuito ha sido editado correctamente.',
                     });
-                    this.mostrarCircuitos();
+                    this.mostrarEquipos();
                 })
                 .catch(error => {
                     console.error('Error en la solicitud PATCH:', error.message);
