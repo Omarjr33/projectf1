@@ -34,24 +34,13 @@
   ],
   "circuitos": [
     {
-      "nombreCircuito": "Silverstone",
-      "paisCircuito": "Reino Unido",
-      "longitud_km": 5.89,
-      "vueltasCircuitos": 52,
-      "descripcionCircuitos": "Uno de los circuitos más rápidos del calendario, con curvas de alta velocidad como Maggotts y Becketts.",
-      "record_vuelta": {
-        "tiempo": "1:27.097",
-        "piloto": "Max Verstappen",
-        "año": 2020
-      },
-      "ganadores": [
-        {
-          "temporada": 2021,
-          "piloto": 1
-        }
-      ],
-      "imagenCircuito": "https://upload.wikimedia.org/wikipedia/commons/5/5e/Silverstone_Circuit_2020_layout.png",
-      "id": "354c"
+      "id": "354e",
+      "nombreCircuito": "Circuito de Suzuka",
+      "paisCircuito": "Japon",
+      "vueltas": "53",
+      "longitud": "5.81",
+      "imageCircuito": "https://upload.wikimedia.org/wikipedia/commons/e/eb/Suzuka_circuit_map--2005.svg",
+      "descripcion": "Un circuito desafiante con un diseño en forma de ocho, famoso por sus curvas de alta velocidad como 130R y la 'S' de Senna."
     }
   ],
   "vehiculos": [
@@ -107,7 +96,54 @@
           }
         }
       },
-      "imagen": "https://upload.wikimedia.org/wikipedia/commons/8/89/Max_Verstappen_2023_Austria_FP2_%28cropped%29.jpg"
+      "imagenVehiculo": "https://upload.wikimedia.org/wikipedia/commons/8/89/Max_Verstappen_2023_Austria_FP2_%28cropped%29.jpg"
+    },
+    {
+      "id": "4689",
+      "imagenVehiculo": "https://hips.hearstapps.com/hmg-prod/images/red-bull-rb20-10-65cf188306dba.jpg?crop=0.8472222222222222xw:1xh;center,top&resize=1200:*",
+      "motor": "Honda",
+      "modelo": "RB20",
+      "equipoPiloto": "d1d5",
+      "nombrePiloto": "0d49",
+      "velocidadMaximaKmh": "360",
+      "aceleracion0a100": "2.5",
+      "conduccionNormal": {
+        "velocidadNormal": "320",
+        "consumoCombustible": {
+          "seco": "1.9",
+          "extremo": "2.4"
+        },
+        "desgasteNeumaticos": {
+          "seco": "1.5",
+          "lluvioso": "0.8",
+          "extremo": "2.5"
+        }
+      },
+      "conduccionAgresiva": {
+        "velocidadAgresiva": "340",
+        "consumoCombustible": {
+          "seco": "2.4",
+          "lluvioso": "2.6"
+        },
+        "desgasteNeumaticos": {
+          "seco": "1.5",
+          "lluvioso": "0.8",
+          "extremo": "2.5"
+        }
+      },
+      "ahorroCombustible": {
+        "velocidadPromedio": "300",
+        "consumoCombustible": {
+          "seco": "1.6",
+          "lluvioso": "1.8",
+          "extremo": "2.1"
+        },
+        "desgasteNeumaticos": {
+          "seco": "1",
+          "lluvioso": "0.5",
+          "extremo": "1.8"
+        }
+      }
     }
   ]
 }
