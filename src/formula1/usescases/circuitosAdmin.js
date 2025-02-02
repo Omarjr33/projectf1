@@ -115,6 +115,54 @@ export class circuitosAdmin extends HTMLElement {
                             <input type="text" id="descripcion" name="descripcion" placeholder="Descripción del circuito">
                         </div>
                     </div>
+                    <div class="row">
+                        <h1>Record Vuelta</h1>
+                        <div class="form-group">
+                            <label for="tiempo">Tiempo</label>
+                            <input type="text" id="tiempo" name="tiempo" placeholder="Tiempo">
+                        </div>
+                        <div class="form-group">
+                            <label for="piloto">Piloto</label>
+                            <input type="text" id="piloto" name="piloto" placeholder="Piloto">
+                        </div>
+                        <div class="form-group">
+                            <label for="año">Año</label>
+                            <input type="text" id="año" name="año" placeholder="Año">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <h1>Ganadores</h1>
+                        <div class="form-group">
+                            <label for="temporada">Año Temporada</label>
+                            <input type="text" id="temporada1" name="temporada1" placeholder="Última temporada">
+                        </div>
+                        <div class="form-group">
+                            <label for="nombrePiloto" class="form-label">Piloto</label>
+                            <select class="form-select" class="nombrePilotoVeh" name="nombrePiloto">
+                                <option value="">Seleccionar Piloto</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="temporada">Año Temporada</label>
+                            <input type="text" id="temporada2" name="temporada2" placeholder="Penúltima temporada">
+                        </div>
+                        <div class="form-group">
+                            <label for="nombrePiloto" class="form-label">Piloto</label>
+                            <select class="form-select" class="nombrePilotoVeh" name="nombrePiloto">
+                                <option value="">Seleccionar Piloto</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="temporada">Año Temporada</label>
+                            <input type="text" id="temporada3" name="temporada3" placeholder="Antepenúltima temporada">
+                        </div>
+                        <div class="form-group">
+                            <label for="nombrePiloto" class="form-label">Piloto</label>
+                            <select class="form-select" class="nombrePilotoVeh" name="nombrePiloto">
+                                <option value="">Seleccionar Piloto</option>
+                            </select>
+                        </div>
+                    </div>
 
                     <div class="row">
                         <div class="form-group">
@@ -131,6 +179,21 @@ export class circuitosAdmin extends HTMLElement {
                 </div>
             </div>
         `;
+        fetch('../../../db.json')
+        .then(response => response.json()) 
+        .then(data => {
+            const nombrePiloto = this.shadowRoot.querySelectorAll(".nombrePilotoVeh");
+            
+            data.pilotos.forEach(piloto => {
+                const option = document.createElement("option");
+                option.value = piloto.id;
+                option.textContent = piloto.nombrePiloto;
+                nombrePiloto.appendChild(option);
+            });
+        })
+        .catch(error => {
+            console.error("Error al cargar los datos de los vehículos:", error);
+        });
     }
 
     addEventListeners() {
@@ -197,6 +260,13 @@ export class circuitosAdmin extends HTMLElement {
                     `;
                     circuitosCards.appendChild(divItems);
                 });
+
+                this.shadowRoot.querySelectorAll('.btnEditarForm').forEach((btnEditarForm) => {
+                    btnEditarForm.addEventListener("click", (e) => {
+                        const id = e.target.getAttribute("data-id");
+                        this.mostrarFormularioEdit(id);
+                    });
+                });
             })
             .catch((error) => console.error('Error en la solicitud GET:', error));
     }
@@ -251,15 +321,9 @@ export class circuitosAdmin extends HTMLElement {
         .then((circuitos) => {
             const circuito = circuitos.find((circuito) => circuito.id === id);
             if (circuito) {
-                const {nombreCircuito } = circuito;
+                const {nombreCircuito, paisCircuito, vueltas, longitud, descripcion } = circuito;
                 formEditarCircuito.innerHTML = /*html*/ `
                     <div class="form-grid">
-                    
-                    <div class="form-group">
-                         <label class="form-label" for="nombreCircuito">Codigo Circuito</label>
-                         <input type="text" class="form-control" id="nombreCircuito" name="nombreCircuito" placeholder="${idCircuito}" disabled>
-                    </div>
-                    
                     <div class="form-group">
                         <label class="form-label" for="nombreCircuito">Nombre del Circuito</label>
                         <input type="text" class="form-control" id="nombreCircuito" name="nombreCircuito" value="${nombreCircuito}">
@@ -283,11 +347,6 @@ export class circuitosAdmin extends HTMLElement {
                      <div class="form-group">
                          <label class="form-label" for="descripcion">Longitud</label>
                          <input type="text" class="form-control" id="descripcion" name="descripcion" value="${descripcion}">
-                    </div>
-                    
-                    <div class="form-group">
-                         <label for="imageCircuito">Imagen (URL)</label>
-                         <input type="url" id="imageCircuito" name="imageCircuito" value="${imageCircuito}">
                     </div>
                 </div>
     

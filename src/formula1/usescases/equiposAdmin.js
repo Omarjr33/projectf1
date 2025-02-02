@@ -559,18 +559,6 @@ export class equiposAdmin extends HTMLElement {
                         <label class="form-label" for="motorEquipo">Motor</label>
                         <input type="text" class="form-control" id="motorEquipo" name="motorEquipo" value="${motorEquipo}">
                     </div>
-                    
-                    <div class="form-group">
-                        <label class="form-label" for="imagenEquipo">Imagen del Equipo</label>
-                        <div class="image-upload-container" id="dropZone">
-                            <i>📁</i>
-                            <p class="image-upload-text">Arrastra una imagen aquí o haz clic para seleccionar</p>
-                            <input type="file" class="file-input" id="imagenEquipo" name="imagenEquipo" accept="image/*">
-                        </div>
-                        <div class="preview-container" style="display: block;">
-                            <img class="preview-image" id="imagePreview" src="${imagenEquipo}" alt="Preview">
-                        </div>
-                    </div>
                 </div>
     
                 <button id="btnEditar" data-id="${id}" type="submit" class="btn-submit">
