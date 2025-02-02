@@ -6,7 +6,6 @@ export class circuitosAdmin extends HTMLElement {
         super();
         this.attachShadow({ mode: 'open' });
         this.render();
-        this.addEventListeners(); 
         this.eliminarCircuitos();
         this.editarCircuito();
     }
@@ -131,11 +130,13 @@ export class circuitosAdmin extends HTMLElement {
                 </div>
             </div>
         `;
+        this.addEventListeners();
     }
 
     addEventListeners() {
         this.shadowRoot.querySelector('#btnRegistrarCircuito').addEventListener("click", () => this.crearCircuito());
         this.shadowRoot.querySelector('#btnListar').addEventListener("click", () => this.mostrarCircuitos());
+        this.shadowRoot.querySelector('#btnEditarForm').addEventListener("click", () => this.mostrarFormularioEdit());
     }
 
     crearCircuito = () => {
@@ -197,8 +198,17 @@ export class circuitosAdmin extends HTMLElement {
                     `;
                     circuitosCards.appendChild(divItems);
                 });
-            })
-            .catch((error) => console.error('Error en la solicitud GET:', error));
+            //.catch((error) => console.error('Error en la solicitud GET:', error));
+            this.eliminarCircuitos();
+            this.shadowRoot.querySelectorAll('.btnEditarForm').forEach((btnEditarForm) => {
+                btnEditarForm.addEventListener("click", (e) => {
+                    const id = e.target.getAttribute("data-id");
+                    this.mostrarFormularioEdit(id);
+                });
+            });
+        }).catch ((error) => {
+            console.error('Error en la solicitud GET:', error.message);
+        });
     }
 
     eliminarCircuitos() {
@@ -305,7 +315,6 @@ export class circuitosAdmin extends HTMLElement {
         });
     }
     
-
     editarCircuito() {
         const formEditarCircuito = this.shadowRoot.querySelector('#formEditarCircuito');
         
@@ -330,7 +339,7 @@ export class circuitosAdmin extends HTMLElement {
                         title: '¡Éxito!',
                         text: 'El circuito ha sido editado correctamente.',
                     });
-                    this.mostrarCircuitos();
+                    this.mostrarEquipos();
                 })
                 .catch(error => {
                     console.error('Error en la solicitud PATCH:', error.message);
