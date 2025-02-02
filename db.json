@@ -53,41 +53,43 @@
       "nombrePiloto": "0d49",
       "velocidadMaximaKmh": "360",
       "aceleracion0a100": "2.5",
-      "conduccionNormal": {
-        "velocidadNormal": "320",
-        "consumoCombustible": {
-          "seco": "1.9",
-          "extremo": "2.4"
+      "rendimiento": {
+        "conduccionNormal": {
+          "velocidadNormal": "320",
+          "consumoCombustible": {
+            "seco": "1.9",
+            "extremo": "2.4"
+          },
+          "desgasteNeumaticos": {
+            "seco": "1.5",
+            "lluvioso": "0.8",
+            "extremo": "2.5"
+          }
         },
-        "desgasteNeumaticos": {
-          "seco": "1.5",
-          "lluvioso": "0.8",
-          "extremo": "2.5"
-        }
-      },
-      "conduccionAgresiva": {
-        "velocidadAgresiva": "340",
-        "consumoCombustible": {
-          "seco": "2.4",
-          "lluvioso": "2.6"
+        "conduccionAgresiva": {
+          "velocidadAgresiva": "340",
+          "consumoCombustible": {
+            "seco": "2.4",
+            "lluvioso": "2.6"
+          },
+          "desgasteNeumaticos": {
+            "seco": "1.5",
+            "lluvioso": "0.8",
+            "extremo": "2.5"
+          }
         },
-        "desgasteNeumaticos": {
-          "seco": "1.5",
-          "lluvioso": "0.8",
-          "extremo": "2.5"
-        }
-      },
-      "ahorroCombustible": {
-        "velocidadPromedio": "300",
-        "consumoCombustible": {
-          "seco": "1.6",
-          "lluvioso": "1.8",
-          "extremo": "2.1"
-        },
-        "desgasteNeumaticos": {
-          "seco": "1",
-          "lluvioso": "0.5",
-          "extremo": "1.8"
+        "ahorroCombustible": {
+          "velocidadPromedio": "300",
+          "consumoCombustible": {
+            "seco": "1.6",
+            "lluvioso": "1.8",
+            "extremo": "2.1"
+          },
+          "desgasteNeumaticos": {
+            "seco": "1",
+            "lluvioso": "0.5",
+            "extremo": "1.8"
+          }
         }
       }
     }

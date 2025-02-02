@@ -466,43 +466,45 @@ export class VehiculosAdmin extends HTMLElement {
             nombrePiloto: datos.nombrePiloto,
             velocidadMaximaKmh: datos.velocidad_maxima_kmh,
             aceleracion0a100: datos.aceleracion_0_100,
-            conduccionNormal: {
-                velocidadNormal: datos.velocidad_normal,
-                consumoCombustible: {
-                    seco: datos.seco_normal,
-                    lluvioso: datos.lluvioso_normal,
-                    extremo: datos.extremo_normal
+            rendimiento: {
+                conduccionNormal: {
+                    velocidadNormal: datos.velocidad_normal,
+                    consumoCombustible: {
+                        seco: datos.seco_normal,
+                        lluvioso: datos.lluvioso_normal,
+                        extremo: datos.extremo_normal
+                    },
+                    desgasteNeumaticos: {
+                        seco: datos.seco_neumaticos,
+                        lluvioso: datos.lluvioso_neumaticos,
+                        extremo: datos.extremo_neumaticos
+                    }
                 },
-                desgasteNeumaticos: {
-                    seco: datos.seco_neumaticos,
-                    lluvioso: datos.lluvioso_neumaticos,
-                    extremo: datos.extremo_neumaticos
-                }
-            },
-            conduccionAgresiva: {
-                velocidadAgresiva: datos.velocidad_agresiva,
-                consumoCombustible: {
-                    seco: datos.seco_agresiva,
-                    lluvioso: datos.lluvioso_agresiva,
-                    extremo: datos.extremo_agresiva
+                conduccionAgresiva: {
+                    velocidadAgresiva: datos.velocidad_agresiva,
+                    consumoCombustible: {
+                        seco: datos.seco_agresiva,
+                        lluvioso: datos.lluvioso_agresiva,
+                        extremo: datos.extremo_agresiva
+                    },
+                    desgasteNeumaticos: {
+                        seco: datos.seco_agreneu,
+                        lluvioso: datos.lluvioso_agreneu,
+                        extremo: datos.extremo_agreneu
+                    }
                 },
-                desgasteNeumaticos: {
-                    seco: datos.seco_agreneu,
-                    lluvioso: datos.lluvioso_agreneu,
-                    extremo: datos.extremo_agreneu
-                }
-            },
-            ahorroCombustible: {
-                velocidadPromedio: datos.velocidad_combustible,
-                consumoCombustible: {
-                    seco: datos.seco_ahorro,
-                    lluvioso: datos.lluvioso_ahorro,
-                    extremo: datos.extremo_ahorro
-                },
-                desgasteNeumaticos: {
-                    seco: datos.seco_ahorro_neu,
-                    lluvioso: datos.lluvioso_ahorro_neu,
-                    extremo: datos.extremo_ahorro_neu
+                ahorroCombustible: {
+                    velocidadPromedio: datos.velocidad_combustible,
+                    consumoCombustible: {
+                        seco: datos.seco_ahorro,
+                        lluvioso: datos.lluvioso_ahorro,
+                        extremo: datos.extremo_ahorro
+                    },
+                    desgasteNeumaticos: {
+                        seco: datos.seco_ahorro_neu,
+                        lluvioso: datos.lluvioso_ahorro_neu,
+                        extremo: datos.extremo_ahorro_neu
+                    }
                 }
             }
         };
