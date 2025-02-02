@@ -1,3 +1,4 @@
+import "../users/usersAccess.js";
 export class mainFormula extends HTMLElement{
     constructor(){
         super();
@@ -109,7 +110,7 @@ export class mainFormula extends HTMLElement{
             <div class="contact-info">
                 <section class="botao-2">
                     <div class="conteudo__interno">
-                        <button>Simulador de carreras</button>
+                        <button id="btnLoginUser">Simulador de carreras</button>
                     </div>
                 </section>
             </div>
@@ -246,11 +247,21 @@ export class mainFormula extends HTMLElement{
         document.querySelector('#btnLogin').addEventListener('click', () => {
             this.logIn(); 
         });
+
+        document.querySelector('#btnLoginUser').addEventListener('click', () => {
+            this.logInUser(); 
+        });
     }
 
     logIn(){
         this.innerHTML= /*html*/ `
         <login-formula></login-formula>
+        `;
+    }
+
+    logInUser(){
+        this.innerHTML= /*html*/ `
+        <users-access></users-access>
         `;
     }
 
