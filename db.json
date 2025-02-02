@@ -45,60 +45,6 @@
   ],
   "vehiculos": [
     {
-      "id": "d6df",
-      "equipo": "Red Bull Racing",
-      "modelo": "RB21",
-      "motor": "Honda V6",
-      "velocidad_maxima_kmh": 360,
-      "aceleracion_0_100": 2.5,
-      "pilotos": [
-        3,
-        9
-      ],
-      "rendimiento": {
-        "conduccion_normal": {
-          "velocidad_normal": 315,
-          "consumo_combustible_normal": {
-            "seco_normal": 2,
-            "lluvioso_normal": 2.2,
-            "extremo_normal": 2.5
-          },
-          "desgaste_neumaticos_normal": {
-            "seco_neumaticos": 1.6,
-            "lluvioso_neumaticos": 0.9,
-            "extremo_neumaticos": 2.6
-          }
-        },
-        "conduccion_agresiva": {
-          "velocidad_agresiva": 335,
-          "consumo_combustible_agresiva": {
-            "seco_agresiva": 2.6,
-            "lluvioso_agresiva": 2.8,
-            "extremo_agresiva": 3.2
-          },
-          "desgaste_neumaticos_agresiva": {
-            "seco_agreneu": 2.3,
-            "lluvioso_agreneu": 1.4,
-            "extremo_agreneu": 3.8
-          }
-        },
-        "ahorro_combustible": {
-          "velocidad_combustible": 295,
-          "consumo_combustible_ahorro": {
-            "seco_ahorro": 1.7,
-            "lluvioso_ahorro": 1.9,
-            "extremo_ahorro": 2.2
-          },
-          "desgaste_neumaticos_ahorro": {
-            "seco_combustible": 1.1,
-            "lluvioso_combustible": 0.6,
-            "extremo_combustible": 1.9
-          }
-        }
-      },
-      "imagenVehiculo": "https://upload.wikimedia.org/wikipedia/commons/8/89/Max_Verstappen_2023_Austria_FP2_%28cropped%29.jpg"
-    },
-    {
       "id": "4689",
       "imagenVehiculo": "https://hips.hearstapps.com/hmg-prod/images/red-bull-rb20-10-65cf188306dba.jpg?crop=0.8472222222222222xw:1xh;center,top&resize=1200:*",
       "motor": "Honda",
