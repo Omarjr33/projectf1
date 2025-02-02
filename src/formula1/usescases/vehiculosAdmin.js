@@ -55,8 +55,7 @@ export class VehiculosAdmin extends HTMLElement {
     }
 
     render() {
-        let idVehiculo = Date.now();
-        this.shadowRoot.innerHTML = /*html*/ `
+        this.shadowRoot.innerHTML = `
         <style>
             :host {
                 --primary-bg: #1a1a1a;
@@ -64,181 +63,298 @@ export class VehiculosAdmin extends HTMLElement {
                 --input-bg: #333333;
                 --text-primary: #ffffff;
                 --text-secondary: #cccccc;
-                --accent-color:#751010;
+                --accent-color: #751010;
                 --border-color: #404040;
-                --hover-color: #751010;
+                --hover-color: #8b1717;
                 --error-color: #ef4444;
                 --success-color: #10b981;
-            }
-
-            /* Form styles */
-            form {
-                background-color: #2d2d2d;
-                padding: 7rem;
-                border-radius: 12px;
-                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
-                color: var(--text-primary);
-                max-width: 800px;
-                margin: 2rem auto;
-            }
-
-            /* Input fields with enhanced styling */
-            .form-control {
-                background-color: var(--input-bg);
-                border: 1px solid var(--border-color);
-                color: var(--text-primary);
-                padding: 0.75rem 1rem;
-                border-radius: 8px;
-                width: 100%;
-                margin-top: 0.5rem;
-                transition: all 0.3s ease;
-                font-size: 0.95rem;
-                box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1);
-            }
-
-            .form-control:focus {
-                outline: none;
-                border-color: var(--accent-color);
-                box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.2);
-            }
-
-            .form-control:disabled {
-                background-color: var(--secondary-bg);
-                cursor: not-allowed;
-                opacity: 0.7;
-            }
-
-            /* Labels with enhanced styling */
-            .form-label {
-                color: var(--text-secondary);
-                font-size: 0.9rem;
-                margin-bottom: 0.5rem;
                 display: block;
-                font-weight: 500;
-                letter-spacing: 0.5px;
+                min-height: 100vh;
+                background: var(--primary-bg);
+                color: var(--text-primary);
+                font-family: 'Inter', system-ui, -apple-system, sans-serif;
             }
 
-            /* Select dropdowns with enhanced styling */
-            .form-select {
-                background-color: var(--input-bg);
+            /* Card Grid Layout */
+            #vehiculosCards {
+                display: grid;
+                grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+                gap: 2rem;
+                padding: 2rem 0;
+            }
+
+            /* Vehicle Card Styles */
+            #card__listar {
+                background: var(--secondary-bg);
+                border-radius: 15px;
+                overflow: hidden;
+                transition: transform 0.3s ease, box-shadow 0.3s ease;
                 border: 1px solid var(--border-color);
+            }
+
+            #card__listar:hover {
+                transform: translateY(-5px);
+                box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+            }
+
+            #card__listar img {
+                width: 100%;
+                height: 200px;
+                object-fit: cover;
+                border-bottom: 1px solid var(--border-color);
+            }
+
+            .card__content {
+                padding: 1.5rem;
+            }
+
+            .card__title {
+                font-size: 1.5rem;
                 color: var(--text-primary);
-                padding: 0.75rem 1rem;
+                margin-bottom: 0.5rem;
+            }
+
+            .card__pais, .card__motor {
+                color: var(--text-secondary);
+                margin: 0.5rem 0;
+                font-size: 1rem;
+                display: flex;
+                align-items: center;
+                gap: 0.5rem;
+            }
+
+            .card__actions {
+                display: flex;
+                gap: 1rem;
+                padding: 1rem 1.5rem;
+                background: rgba(0, 0, 0, 0.1);
+            }
+
+            /* Button Styles */
+            .btnEditarForm, .btnEliminar, .btn-submit, .step-btn {
+                padding: 0.75rem 1.5rem;
+                border: none;
                 border-radius: 8px;
-                width: 104%;
-                margin-top: 0.5rem;
-                appearance: none;
-                background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='white'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
-                background-repeat: no-repeat;
-                background-position: right 1rem center;
-                background-size: 1.5em;
+                font-weight: 500;
                 cursor: pointer;
                 transition: all 0.3s ease;
+                font-size: 0.9rem;
+                text-align: center;
+                min-width: 120px;
             }
 
-            .form-select:focus {
-                outline: none;
+            .btn-submit, .step-btn.next-step {
+                background: var(--accent-color);
+                color: white;
+            }
+
+            .step-btn.prev-step {
+                background: var(--secondary-bg);
+                border: 1px solid var(--border-color);
+                color: var(--text-primary);
+            }
+
+            .btnEditarForm {
+                background: var(--accent-color);
+                color: white;
+            }
+
+            .btnEliminar {
+                background: #dc2626;
+                color: white;
+            }
+
+            .btnEditarForm:hover, .btn-submit:hover, .step-btn.next-step:hover {
+                background: var(--hover-color);
+                transform: translateY(-2px);
+            }
+
+            .step-btn.prev-step:hover {
+                background: var(--input-bg);
+                transform: translateY(-2px);
+            }
+
+            .btnEliminar:hover {
+                background: #b91c1c;
+                transform: translateY(-2px);
+            }
+
+            /* Form Styles */
+            form {
+                background: var(--secondary-bg);
+                padding: 2.5rem;
+                border-radius: 15px;
+                box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+                margin: 2rem auto;
+                max-width: 800px;
+                position: relative;
+                overflow: hidden;
+            }
+
+            .form-group {
+                margin-bottom: 1.5rem;
+            }
+
+            .form-label {
+                display: block;
+                margin-bottom: 0.5rem;
+                color: var(--text-secondary);
+                font-weight: 500;
+                font-size: 0.9rem;
+            }
+
+            .form-control, .form-select {
+                width: 100%;
+                padding: 0.75rem 1rem;
+                border: 1px solid var(--border-color);
+                border-radius: 8px;
+                background: var(--input-bg);
+                color: var(--text-primary);
+                transition: all 0.3s ease;
+                font-size: 1rem;
+            }
+
+            .form-control:focus, .form-select:focus {
                 border-color: var(--accent-color);
-                box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.2);
+                outline: none;
+                box-shadow: 0 0 0 3px rgba(117, 16, 16, 0.2);
             }
 
-            /* Step navigation */
+            .form-select {
+                appearance: none;
+                background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%23ffffff'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+                background-repeat: no-repeat;
+                background-position: right 1rem center;
+                background-size: 1em;
+                padding-right: 2.5rem;
+            }
+
+            /* Progress Bar */
+            .progress-bar-container {
+                background: var(--input-bg);
+                height: 6px;
+                border-radius: 3px;
+                margin: 2rem 0;
+                overflow: hidden;
+            }
+
+            .progress-bar {
+                background: linear-gradient(90deg, var(--accent-color), var(--hover-color));
+                height: 100%;
+                transition: width 0.3s ease;
+            }
+
+            /* Step Navigation */
             .step-navigation {
                 display: flex;
                 justify-content: space-between;
                 margin-top: 2rem;
                 padding-top: 1.5rem;
                 border-top: 1px solid var(--border-color);
-            }
-
-            /* Progress bar */
-            .progress-bar-container {
-                width: 100%;
-                height: 6px;
-                background-color: var(--border-color);
-                border-radius: 3px;
-                margin: 1.5rem 0;
-                overflow: hidden;
-            }
-
-            .progress-bar {
-                height: 100%;
-                background: linear-gradient(90deg, var(--accent-color), #6366f1);
-                border-radius: 3px;
-                width: 0;
-                transition: width 0.3s ease;
-            }
-
-            /* Step sections */
-            .step-section {
-                display: none;
-                animation: fadeIn 0.5s ease-in-out;
-            }
-
-            .step-section[data-step="1"] {
-                display: block;
+                gap: 1rem;
             }
 
             /* Headings */
-            h2 {
+            h2, h3 {
                 color: var(--text-primary);
                 margin-bottom: 1.5rem;
-                font-size: 1.5rem;
+            }
+
+            h2 {
+                font-size: 1.8rem;
                 font-weight: 600;
+                text-align: center;
                 letter-spacing: -0.025em;
             }
 
             h3 {
-                color: var(--text-primary);
-                margin-top: 1.5rem;
-                margin-bottom: 1.5rem;
-                font-size: 1.2rem;
-                font-weight: 500;
-                padding-bottom: 0.5rem;
+                font-size: 1.4rem;
+                padding-bottom: 1rem;
                 border-bottom: 2px solid var(--border-color);
             }
 
-            /* Navigation buttons */
-            .step-btn {
-                background-color: var(--accent-color);
+            /* Section Groups */
+            .section-group {
+                background: rgba(0, 0, 0, 0.1);
+                border-radius: 8px;
+                padding: 1.5rem;
+                margin-bottom: 1.5rem;
+            }
+
+            .section-group h4 {
+                color: var(--text-secondary);
+                margin-bottom: 1rem;
+                font-size: 1.1rem;
+                font-weight: 500;
+            }
+
+            /* Status Message */
+            .status-message {
+                padding: 1rem;
+                border-radius: 8px;
+                margin-top: 1rem;
+                text-align: center;
+                display: none;
+                animation: slideIn 0.3s ease;
+            }
+
+            .status-message.success {
+                background: var(--success-color);
+                color: white;
+            }
+
+            .status-message.error {
+                background: var(--error-color);
+                color: white;
+            }
+
+            /* Vehicles Container */
+            .vehicles-container {
+                max-width: 1200px;
+                margin: 0 auto;
+                padding: 2rem;
+            }
+
+            /* List Header */
+            .list-header {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 2rem;
+                background: var(--secondary-bg);
+                padding: 1.5rem;
+                border-radius: 12px;
+                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            }
+
+            #btnListarVehiculos {
+                background: var(--accent-color);
                 color: white;
                 border: none;
-                padding: 0.75rem 1.5rem;
-                border-radius: 8px;
+                border-radius: 50%;
+                width: 40px;
+                height: 40px;
+                font-size: 1.5rem;
                 cursor: pointer;
                 transition: all 0.3s ease;
-                font-weight: 500;
-                font-size: 0.9rem;
+                display: flex;
+                align-items: center;
+                justify-content: center;
             }
 
-            .step-btn:hover {
-                background-color: var(--hover-color);
-                transform: translateY(-1px);
-                box-shadow: 0 4px 12px rgba(79, 70, 229, 0.25);
+            #btnListarVehiculos:hover {
+                background: var(--hover-color);
+                transform: translateY(-2px);
             }
 
-            .step-btn.prev-step {
-                background-color: var(--secondary-bg);
+            /* Form sections */
+            .step-section {
+                display: none;
+                animation: fadeIn 0.5s ease;
             }
 
-            .step-btn.prev-step:hover {
-                background-color: #3a3a3a;
-            }
-
-            /* Card styles */
-            .card {
-                background-color: var(--secondary-bg);
-                border-radius: 12px;
-                padding: 2rem;
-                margin-top: 2rem;
-                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
-            }
-
-            .card h1 {
-                color: var(--text-primary);
-                margin-top: 0;
-                margin-bottom: 1.5rem;
-                font-size: 1.5rem;
+            .step-section[data-step="1"] {
+                display: block;
             }
 
             /* Animations */
@@ -253,203 +369,300 @@ export class VehiculosAdmin extends HTMLElement {
                 }
             }
 
-            /* Spacing utilities */
-            .mb-3 {
-                margin-bottom: 1.5rem;
+            @keyframes slideIn {
+                from {
+                    transform: translateY(-100%);
+                    opacity: 0;
+                }
+                to {
+                    transform: translateY(0);
+                    opacity: 1;
+                }
             }
 
-            .col {
-                margin-bottom: 1.5rem;
-            }
-
-            /* Responsive adjustments */
+            /* Responsive Design */
             @media (max-width: 768px) {
+                .vehicles-container {
+                    padding: 1rem;
+                }
+
                 form {
                     padding: 1.5rem;
                     margin: 1rem;
                 }
+
+                #vehiculosCards {
+                    grid-template-columns: 1fr;
+                    gap: 1rem;
+                    padding: 1rem;
+                }
+
+                .card__actions {
+                    flex-direction: column;
+                }
+
+                .step-navigation {
+                    flex-direction: column;
+                }
+
+                .btnEditarForm, .btnEliminar, .btn-submit, .step-btn {
+                    width: 100%;
+                }
+
+                .list-header {
+                    flex-direction: column;
+                    gap: 1rem;
+                    text-align: center;
+                }
             }
         </style>
 
-        <form id="formCrearVehiculo">
-            <div class="steps-container">
-                <h2>Registro de Vehículo</h2>
-                <div class="progress-bar-container">
-                    <div class="progress-bar"></div>
+        <div class="vehicles-container">
+            <form id="formCrearVehiculo">
+                <div class="steps-container">
+                    <h2>Registro de Vehículo</h2>
+                    <div class="progress-bar-container">
+                        <div class="progress-bar"></div>
+                    </div>
                 </div>
-            </div>
 
-            <!-- Step 1: Información Básica -->
-            <div class="step-section" data-step="1">
-                <h3>Información Básica</h3>
-                <div class="form-group">
-                        <label for="imagenVehiculo">Imagen (URL)</label>
-                        <input type="url" id="imagenVehiculo" name="imagenVehiculo" placeholder="URL de la imagen">
+                <!-- Step 1: Información Básica -->
+                <div class="step-section" data-step="1">
+                    <h3>Información Básica</h3>
+                    <div class="form-group">
+                        <label class="form-label" for="imagenVehiculo">Imagen (URL)</label>
+                        <input type="url" class="form-control" id="imagenVehiculo" name="imagenVehiculo" placeholder="URL de la imagen">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="motor">Motor</label>
+                        <input type="text" class="form-control" name="motor" id="motor" placeholder="Especificaciones del motor">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="modelo">Modelo</label>
+                        <input type="text" class="form-control" id="modelo" name="modelo" placeholder="Modelo del vehículo">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="equipoPiloto">Equipo</label>
+                        <select class="form-select" id="equipoPilotoVeh" name="equipoPiloto">
+                            <option value="">Seleccionar Equipo</option>
+                        </select>
+                    </div>
+                    <div class="step-navigation">
+                        <button type="button" class="step-btn next-step">Siguiente</button>
+                    </div>
+                </div>
+
+                <!-- Step 2: Información Adicional -->
+                <div class="step-section" data-step="2">
+                    <h3>Información Adicional</h3>
+                    <div class="form-group">
+                        <label class="form-label" for="nombrePiloto">Piloto</label>
+                        <select class="form-select" id="nombrePilotoVeh" name="nombrePiloto">
+                            <option value="">Seleccionar Piloto</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="velocidad_maxima_kmh">Velocidad Máxima (km/h)</label>
+                        <input type="number" class="form-control" id="velocidad_maxima_kmh" name="velocidad_maxima_kmh">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="aceleracion_0_100">Aceleración (0-100 km/h)</label>
+                        <input type="number" class="form-control" id="aceleracion_0_100" name="aceleracion_0_100" step="0.1">
+                    </div>
+                    <div class="step-navigation">
+                        <button type="button" class="step-btn prev-step">Anterior</button>
+                        <button type="button" class="step-btn next-step">Siguiente</button>
+                    </div>
+                </div>
+
+                <!-- Step 3: Conducción Normal -->
+                <div class="step-section" data-step="3">
+                    <h3>Conducción Normal</h3>
+                    <div class="form-group">
+                        <label class="form-label" for="velocidad_normal">Velocidad Promedio (km/h)</label>
+                        <input type="number" class="form-control" id="velocidad_normal" name="velocidad_normal">
+                    </div>
+                    
+                    <div class="section-group">
+                        <h4>Consumo de Combustible</h4>
+                        <div class="form-group">
+                            <label class="form-label" for="seco_normal">Condición Seca (L/100km)</label>
+                            <input type="number" class="form-control" id="seco_normal" name="seco_normal" step="0.1">
                         </div>
-                <div class="mb-3">
-                    <label for="motor" class="form-label">Motor</label>
-                    <input type="text" class="form-control" name="motor" id="motor" aria-describedby="NombreHelp">
-                </div>
-                <div class="mb-3">
-                    <label for="modelo" class="form-label">Modelo</label>
-                    <input type="text" class="form-control" id="modelo" name="modelo" aria-describedby="ModeloHelp">
-                </div>
-                <div class="form-group">
-                    <label for="equipoPiloto" class="form-label">Equipo</label>
-                    <select class="form-select" id="equipoPilotoVeh" name="equipoPiloto">
-                        <option value="">Seleccionar Equipo</option>
-                    </select>
-                </div>
-                <div class="step-navigation">
-                    <button type="button" class="step-btn next-step">Siguiente: Información Adicional</button>
-                </div>
-            </div>
+                        <div class="form-group">
+                            <label class="form-label" for="lluvioso_normal">Condición Lluviosa (L/100km)</label>
+                            <input type="number" class="form-control" id="lluvioso_normal" name="lluvioso_normal" step="0.1">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="extremo_normal">Condición Extrema (L/100km)</label>
+                            <input type="number" class="form-control" id="extremo_normal" name="extremo_normal" step="0.1">
+                        </div>
+                    </div>
+                    
+                    <div class="section-group">
+                        <h4>Desgaste de Neumáticos (%)</h4>
+                        <div class="form-group">
+                            <label class="form-label" for="seco_neumaticos">Condición Seca</label>
+                            <input type="number" class="form-control" id="seco_neumaticos" name="seco_neumaticos" step="0.1">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="lluvioso_neumaticos">Condición Lluviosa</label>
+                            <input type="number" class="form-control" id="lluvioso_neumaticos" name="lluvioso_neumaticos" step="0.1">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="extremo_neumaticos">Condición Extrema</label>
+                            <input type="number" class="form-control" id="extremo_neumaticos" name="extremo_neumaticos" step="0.1">
+                        </div>
+                    </div>
 
-            <!-- Step 2: Información -->
-            <div class="step-section" data-step="2">
-                <h3>Información Adicional</h3>
-                <div class="form-group">
-                    <label for="nombrePiloto" class="form-label">Piloto</label>
-                    <select class="form-select" id="nombrePilotoVeh" name="nombrePiloto">
-                        <option value="">Seleccionar Piloto</option>
-                    </select>
+                    <div class="step-navigation">
+                        <button type="button" class="step-btn prev-step">Anterior</button>
+                        <button type="button" class="step-btn next-step">Siguiente</button>
+                    </div>
                 </div>
-                <div class="mb-3">
-                    <label for="velocidad_maxima_kmh" class="form-label">Velocidad Máxima</label>
-                    <input type="number" class="form-control" id="velocidad_maxima_kmh" name="velocidad_maxima_kmh" aria-describedby="ModeloHelp">
-                </div>
-                <div class="mb-3">
-                    <label for="aceleracion_0_100" class="form-label">Aceleración</label>
-                    <input type="number" class="form-control" id="aceleracion_0_100" name="aceleracion_0_100" aria-describedby="ModeloHelp">
-                </div>
-                <div class="step-navigation">
-                    <button type="button" class="step-btn prev-step">Anterior</button>
-                    <button type="button" class="step-btn next-step">Siguiente: Conducción Normal</button>
-                </div>
-            </div>
 
-            <!--Step 3: Conducción Normal-->
-            <div class="step-section" data-step="3">
-                <h3>Conducción Normal</h3>
-                <label for="velocidad_normal" class="form-label">Velocidad Promedio</label>
-                <input type="number" class="form-control" id="velocidad_normal" name="velocidad_normal" aria-describedby="VelocPromHelp">
-                <p>Consumo de Combustible</p>
-                <label for="seco_normal" class="form-label">Seco</label>
-                <input type="number" class="form-control" id="seco_normal" name="seco_normal" aria-describedby="SecoHelp">
-                <label for="lluvioso_normal" class="form-label">Lluvioso</label>
-                <input type="number" class="form-control" id="lluvioso_normal" id="lluvioso_normal" aria-describedby="LluviosoHelp">
-                <label for="extremo_normal" class="form-label">Extremo</label>
-                <input type="number" class="form-control" id="extremo_normal" name="extremo_normal" aria-describedby="ExtremoHelp">
-                <p>Desgaste de Neumaticos</p>
-                <label for="seco_neumaticos" class="form-label">Seco</label>
-                <input type="number" class="form-control" id="seco_neumaticos" name="seco_neumaticos" aria-describedby="SecoHelp">
-                <label for="lluvioso_neumaticos" class="form-label">Lluvioso</label>
-                <input type="number" class="form-control" id="lluvioso_neumaticos" name="lluvioso_neumaticos" aria-describedby="LluviosoHelp">
-                <label for="extremo_neumaticos" class="form-label">Extremo</label>
-                <input type="number" class="form-control" id="extremo_neumaticos" name="extremo_neumaticos" aria-describedby="ExtremoHelp">
-                <div class="step-navigation">
-                    <button type="button" class="step-btn prev-step">Anterior</button>
-                    <button type="button" class="step-btn next-step">Siguiente: Conducción Agresiva</button>
-                </div>
-            </div>
+                <!-- Step 4: Conducción Agresiva -->
+                <div class="step-section" data-step="4">
+                    <h3>Conducción Agresiva</h3>
+                    <div class="form-group">
+                        <label class="form-label" for="velocidad_agresiva">Velocidad Promedio (km/h)</label>
+                        <input type="number" class="form-control" id="velocidad_agresiva" name="velocidad_agresiva">
+                    </div>
 
-            <!-- Step 4: Conducción Agresiva -->
-            <div class="step-section" data-step="4">
-                <h3>Conducción Agresiva</h3>
-                <label for="velocidad_agresiva" class="form-label">Velocidad Promedio</label>
-                <input type="number" class="form-control" id="velocidad_agresiva" name="velocidad_agresiva" aria-describedby="VelocPromHelp">
-                <p>Consumo de Combustible</p>
-                <label for="seco_agresiva" class="form-label">Seco</label>
-                <input type="number" class="form-control" id="seco_agresiva" name="seco_agresiva" aria-describedby="SecoHelp">
-                <label for="lluvioso_agresiva" class="form-label">Lluvioso</label>
-                <input type="number" class="form-control" id="lluvioso_agresiva" name="lluvioso_agresiva" aria-describedby="LluviosoHelp">
-                <label for="extremo_agresiva" class="form-label">Extremo</label>
-                <input type="number" class="form-control" id="extremo_agresiva" aria-describedby="ExtremoHelp">
-                <p>Desgaste de Neumaticos</p>
-                <label for="seco_agreneu" class="form-label">Seco</label>
-                <input type="number" class="form-control" id="seco_agreneu" name="seco_agreneu" aria-describedby="SecoHelp">
-                <label for="lluvioso_agreneu" class="form-label">Lluvioso</label>
-                <input type="number" class="form-control" id="lluvioso_agreneu" name="lluvioso_agreneu"  aria-describedby="LluviosoHelp">
-                <label for="extremo_agreneu" class="form-label">Extremo</label>
-                <input type="number" class="form-control" id="extremo_agreneu" name="extremo_agreneu"  aria-describedby="ExtremoHelp">
-                <div class="step-navigation">
-                    <button type="button" class="step-btn prev-step">Anterior</button>
-                    <button type="button" class="step-btn next-step">Siguiente: Ahorro de Combustible</button>
-                </div>
-            </div>
+                    <div class="section-group">
+                        <h4>Consumo de Combustible</h4>
+                        <div class="form-group">
+                            <label class="form-label" for="seco_agresiva">Condición Seca (L/100km)</label>
+                            <input type="number" class="form-control" id="seco_agresiva" name="seco_agresiva" step="0.1">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="lluvioso_agresiva">Condición Lluviosa (L/100km)</label>
+                            <input type="number" class="form-control" id="lluvioso_agresiva" name="lluvioso_agresiva" step="0.1">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="extremo_agresiva">Condición Extrema (L/100km)</label>
+                            <input type="number" class="form-control" id="extremo_agresiva" name="extremo_agresiva" step="0.1">
+                        </div>
+                    </div>
 
-            <!-- Step 5: Ahorro de Combustible -->
-            <div class="step-section" data-step="5">
-                <h3>Ahorro de Combustible</h3>
-                <label for="velocidad_combustible" class="form-label">Velocidad Promedio</label>
-                <input type="number" class="form-control" id="velocidad_combustible" name="velocidad_combustible"  aria-describedby="VelocPromHelp">
-                <p>Consumo de Combustible</p>
-                <label for="seco_ahorro" class="form-label">Seco</label>
-                <input type="number" class="form-control" id="seco_ahorro" name="seco_ahorro" aria-describedby="SecoHelp">
-                <label for="lluvioso_ahorro" class="form-label">Lluvioso</label>
-                <input type="number" class="form-control" id="lluvioso_ahorro" name="lluvioso_ahorro" aria-describedby="LluviosoHelp">
-                <label for="extremo_ahorro" class="form-label">Extremo</label>
-                <input type="number" class="form-control" id="extremo_ahorro" name="extremo_ahorro"  aria-describedby="ExtremoHelp">
-                <p>Desgaste de Neumaticos</p>
-                <label for="seco_ahorro_neu" class="form-label">Seco</label>
-                <input type="number" class="form-control" id="seco_ahorro_neu" name="seco_ahorro_neu" aria-describedby="SecoHelp">
-                <label for="lluvioso_ahorro_neu" class="form-label">Lluvioso</label>
-                <input type="number" class="form-control" id="lluvioso_ahorro_neu" name="lluvioso_ahorro_neu" aria-describedby="LluviosoHelp">
-                <label for="extremo_ahorro_neu" class="form-label">Extremo</label>
-                <input type="number" class="form-control" id="extremo_ahorro_neu" name="extremo_ahorro_neu" aria-describedby="ExtremoHelp">
-                <div class="step-navigation">
-                    <button type="button" class="step-btn prev-step">Anterior</button>
-                    <button type="button" id="btnRegistrarVehiculo" class="btn-submit">Guardar Vehículo</button>
+                    <div class="section-group">
+                        <h4>Desgaste de Neumáticos (%)</h4>
+                        <div class="form-group">
+                            <label class="form-label" for="seco_agreneu">Condición Seca</label>
+                            <input type="number" class="form-control" id="seco_agreneu" name="seco_agreneu" step="0.1">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="lluvioso_agreneu">Condición Lluviosa</label>
+                            <input type="number" class="form-control" id="lluvioso_agreneu" name="lluvioso_agreneu" step="0.1">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="extremo_agreneu">Condición Extrema</label>
+                            <input type="number" class="form-control" id="extremo_agreneu" name="extremo_agreneu" step="0.1">
+                        </div>
+                    </div>
+
+                    <div class="step-navigation">
+                        <button type="button" class="step-btn prev-step">Anterior</button>
+                        <button type="button" class="step-btn next-step">Siguiente</button>
+                    </div>
                 </div>
+
+                <!-- Step 5: Ahorro de Combustible -->
+                <div class="step-section" data-step="5">
+                    <h3>Ahorro de Combustible</h3>
+                    <div class="form-group">
+                        <label class="form-label" for="velocidad_combustible">Velocidad Promedio (km/h)</label>
+                        <input type="number" class="form-control" id="velocidad_combustible" name="velocidad_combustible">
+                    </div>
+
+                    <div class="section-group">
+                        <h4>Consumo de Combustible</h4>
+                        <div class="form-group">
+                            <label class="form-label" for="seco_ahorro">Condición Seca (L/100km)</label>
+                            <input type="number" class="form-control" id="seco_ahorro" name="seco_ahorro" step="0.1">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="lluvioso_ahorro">Condición Lluviosa (L/100km)</label>
+                            <input type="number" class="form-control" id="lluvioso_ahorro" name="lluvioso_ahorro" step="0.1">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="extremo_ahorro">Condición Extrema (L/100km)</label>
+                            <input type="number" class="form-control" id="extremo_ahorro" name="extremo_ahorro" step="0.1">
+                        </div>
+                    </div>
+
+                    <div class="section-group">
+                        <h4>Desgaste de Neumáticos (%)</h4>
+                        <div class="form-group">
+                            <label class="form-label" for="seco_ahorro_neu">Condición Seca</label>
+                            <input type="number" class="form-control" id="seco_ahorro_neu" name="seco_ahorro_neu" step="0.1">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="lluvioso_ahorro_neu">Condición Lluviosa</label>
+                            <input type="number" class="form-control" id="lluvioso_ahorro_neu" name="lluvioso_ahorro_neu" step="0.1">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="extremo_ahorro_neu">Condición Extrema</label>
+                            <input type="number" class="form-control" id="extremo_ahorro_neu" name="extremo_ahorro_neu" step="0.1">
+                        </div>
+                    </div>
+
+                    <div class="step-navigation">
+                        <button type="button" class="step-btn prev-step">Anterior</button>
+                        <button type="button" id="btnRegistrarVehiculo" class="btn-submit">Guardar Vehículo</button>
+                    </div>
+                </div>
+                <div id="statusMessage" class="status-message"></div>
+            </form>
+
+            <div class="list-header">
+                <h2>Vehículos Registrados</h2>
+                <button id="btnListarVehiculos" type="button">↓</button>
             </div>
-            <div id="statusMessage" class="status-message"></div>
-        </form>
-        <div class="card">
-            <h1>Conoce nuestros Vehiculos</h1>
-            <button id="btnListarVehiculos" type="button" class="btn-submit">↓</button>
-            <div id="vehiculosCards">
-                <!--Aquí se llamarán las cartas desde archivo JS-->
-            </div>
+            <div id="vehiculosCards"></div>
         </div>
         `;
 
-        fetch('../../../db.json')
-        .then(response => response.json()) 
-        .then(data => {
-            const equipoPiloto = this.shadowRoot.querySelector("#equipoPilotoVeh");
-            
-            data.equipos.forEach(equipo => {
-                const option = document.createElement("option");
-                option.value = equipo.id;
-                option.textContent = equipo.nombreEquipo;
-                equipoPiloto.appendChild(option);
-            });
-        })
-        .catch(error => {
-            console.error("Error al cargar los datos de equipos:", error);
-        });
+        this.loadTeamsAndPilots();
+    }
 
+    loadTeamsAndPilots() {
         fetch('../../../db.json')
-        .then(response => response.json()) 
-        .then(data => {
-            const nombrePiloto = this.shadowRoot.querySelector("#nombrePilotoVeh");
-            
-            data.pilotos.forEach(piloto => {
-                const option = document.createElement("option");
-                option.value = piloto.id;
-                option.textContent = piloto.nombrePiloto;
-                nombrePiloto.appendChild(option);
+            .then(response => response.json())
+            .then(data => {
+                const equipoPiloto = this.shadowRoot.querySelector("#equipoPilotoVeh");
+                const nombrePiloto = this.shadowRoot.querySelector("#nombrePilotoVeh");
+                
+                // Load teams
+                data.equipos.forEach(equipo => {
+                    const option = document.createElement("option");
+                    option.value = equipo.id;
+                    option.textContent = equipo.nombreEquipo;
+                    equipoPiloto.appendChild(option);
+                });
+
+                // Load pilots
+                data.pilotos.forEach(piloto => {
+                    const option = document.createElement("option");
+                    option.value = piloto.id;
+                    option.textContent = piloto.nombrePiloto;
+                    nombrePiloto.appendChild(option);
+                });
+            })
+            .catch(error => {
+                console.error("Error loading data:", error);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'No se pudieron cargar los datos',
+                });
             });
-        })
-        .catch(error => {
-            console.error("Error al cargar los datos de los vehículos:", error);
-        });
     }
 
     addEventListeners() {
         this.shadowRoot.querySelector('#btnRegistrarVehiculo').addEventListener("click", () => this.crearVehiculos());
         this.shadowRoot.querySelector('#btnListarVehiculos').addEventListener("click", () => this.mostrarVehiculos());
-    }    
+    }
 
     crearVehiculos = () => {
         const formCrearVehiculo = this.shadowRoot.querySelector('#formCrearVehiculo');
@@ -512,21 +725,30 @@ export class VehiculosAdmin extends HTMLElement {
         postVehiculos(vehiculo)
             .then(response => response.json())
             .then(responseData => {
-                statusMessage.textContent = '¡Vehículo registrado exitosamente!';
-                statusMessage.className = 'status-message success';
-                statusMessage.style.display = 'block';
+                Swal.fire({
+                    icon: 'success',
+                    title: '¡Éxito!',
+                    text: 'El vehículo ha sido registrado correctamente',
+                    timer: 2000,
+                    showConfirmButton: false
+                });
                 formCrearVehiculo.reset();
-                setTimeout(() => {
-                    statusMessage.style.display = 'none';
-                }, 3000);
+                this.currentStep = 1;
+                this.updateProgressBar();
+                const allSections = this.shadowRoot.querySelectorAll('.step-section');
+                allSections.forEach(section => section.style.display = 'none');
+                this.shadowRoot.querySelector('[data-step="1"]').style.display = 'block';
             })
             .catch(error => {
                 console.error('Error:', error);
-                statusMessage.textContent = 'Error al registrar el vehículo.';
-                statusMessage.className = 'status-message error';
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'No se pudo registrar el vehículo'
+                });
             });
     };
-    
+
     mostrarVehiculos = () => {
         getVehiculos()
         .then((vehiculos) => {
@@ -536,268 +758,211 @@ export class VehiculosAdmin extends HTMLElement {
             vehiculos.forEach((vehiculo) => {
                 const divItems = document.createElement('div');
                 divItems.classList.add('col');
-                divItems.innerHTML = /*html*/ `
+                divItems.innerHTML = `
                 <div id="card__listar" class="card">
-                    <img src="${vehiculo.imagenVehiculo}" alt="${vehiculo.nombreEquipo} Logo">
+                    <img src="${vehiculo.imagenVehiculo}" alt="${vehiculo.modelo}" onerror="this.src='https://via.placeholder.com/300x200?text=No+Image'">
                     <div class="card__content">
-                        <h1 class="card__title">${vehiculo.motor}</h1>
-                        <p class="card__pais">🌍 ${vehiculo.modelo}</p>
-                        <p class="card__motor">⚡ ${vehiculo.velocidadMaximaKmh}</p>
+                        <h3 class="card__title">${vehiculo.motor}</h3>
+                        <p class="card__pais">🏎️ ${vehiculo.modelo}</p>
+                        <p class="card__motor">⚡ ${vehiculo.velocidadMaximaKmh} km/h</p>
                     </div>
                     <div class="card__actions">
                         <button class="btnEditarForm" data-id="${vehiculo.id}">Editar</button>
                         <button class="btnEliminar" data-id="${vehiculo.id}">Eliminar</button>
                     </div>
                 </div>
-                <form id="formEditarVehiculo" style="display: none;">
-                </form>
                 `;
                 vehiculosCards.appendChild(divItems);
             });
 
-            this.eliminarVehiculo();
-            this.shadowRoot.querySelectorAll('.btnEditarForm').forEach((btnEditarForm) => {
-                btnEditarForm.addEventListener("click", (e) => {
-                    const id = e.target.getAttribute("data-id");
-                    this.mostrarFormularioEdit(id);
-                });
-            });
-        }).catch ((error) => {
-            console.error('Error en la solicitud GET:', error.message);
-        });
-    }
-
-    eliminarVehiculo(){
-        const vehiculosCards = this.shadowRoot.querySelector("#vehiculosCards");
-    
-        vehiculosCards.addEventListener("click", async (e) => {
-            if (e.target.classList.contains("btnEliminar")) {
-                const id = e.target.getAttribute("data-id");
-    
-                if (!id) {
-                    console.error("ID del equipo no encontrado.");
-                    return;
-                }
-    
-                const confirmacion = await Swal.fire({
-                    title: "¿Está seguro de eliminar el vehículo?",
-                    text: "Esta acción no se puede deshacer.",
-                    icon: "warning",
-                    showCancelButton: true,
-                    confirmButtonColor: "#3085d6",
-                    cancelButtonColor: "#d33",
-                    confirmButtonText: "Sí, eliminar",
-                    cancelButtonText: "Cancelar"
-                });
-    
-                if (confirmacion.isConfirmed) {
-                    try {
-                        const response = await deleteVehiculos(id);
-    
-                        if (!response || !response.ok) {
-                            throw new Error(`Error ${response ? response.status : "desconocido"}`);
-                        }
-    
-                        Swal.fire("Eliminado", "El vehículo ha sido eliminado.", "success");
-                        this.mostrarVehiculos();
-                    } catch (error) {
-                        console.error("Error al eliminar el vehículo:", error);
-                        Swal.fire("Error", "No se pudo eliminar el vehículo.", "error");
-                    }
-                }
-            }
-        });
-    }
-
-    mostrarFormularioEdit = (id) => {
-        const formEditarVehiculo = this.shadowRoot.querySelector('#formEditarVehiculo');
-        formEditarVehiculo.style.display = 'none';
-        
-        getVehiculos()
-        .then((vehiculos) => {
-            const vehiculo = vehiculos.find((vehiculo) => vehiculo.id === id);
-            if (vehiculo) {
-
-                formEditarVehiculo.innerHTML = /*html*/ `
-                <div class="steps-container">
-                    <h2>Registro de Vehículo</h2>
-                    <div class="progress-bar-container">
-                        <div class="progress-bar"></div>
-                    </div>
-                </div>
-
-                <!-- Step 1: Información Básica -->
-                <div class="step-section" data-step="1">
-                    <h3>Información Básica</h3>
-                    <div class="form-group">
-                            <label for="imagenVehiculo">Imagen (URL)</label>
-                            <input type="url" id="imagenVehiculo" name="imagenVehiculo" placeholder="URL de la imagen">
-                            </div>
-                    <div class="mb-3">
-                        <label for="motor" class="form-label">Motor</label>
-                        <input type="text" class="form-control" name="motor" id="motor" aria-describedby="NombreHelp">
-                    </div>
-                    <div class="mb-3">
-                        <label for="modelo" class="form-label">Modelo</label>
-                        <input type="text" class="form-control" id="modelo" name="modelo" aria-describedby="ModeloHelp">
-                    </div>
-                    <div class="form-group">
-                        <label for="equipoPiloto" class="form-label">Equipo</label>
-                        <select class="form-select" id="equipoPilotoVeh" name="equipoPiloto">
-                            <option value="">Seleccionar Equipo</option>
-                        </select>
-                    </div>
-                    <div class="step-navigation">
-                        <button type="button" class="step-btn next-step">Siguiente: Información Adicional</button>
-                    </div>
-                </div>
-
-                <!-- Step 2: Información -->
-                <div class="step-section" data-step="2">
-                    <h3>Información Adicional</h3>
-                    <div class="form-group">
-                        <label for="nombrePiloto" class="form-label">Piloto</label>
-                        <select class="form-select" id="nombrePilotoVeh" name="nombrePiloto">
-                            <option value="">Seleccionar Piloto</option>
-                        </select>
-                    </div>
-                    <div class="mb-3">
-                        <label for="velocidad_maxima_kmh" class="form-label">Velocidad Máxima</label>
-                        <input type="number" class="form-control" id="velocidad_maxima_kmh" name="velocidad_maxima_kmh" aria-describedby="ModeloHelp">
-                    </div>
-                    <div class="mb-3">
-                        <label for="aceleracion_0_100" class="form-label">Aceleración</label>
-                        <input type="number" class="form-control" id="aceleracion_0_100" name="aceleracion_0_100" aria-describedby="ModeloHelp">
-                    </div>
-                    <div class="step-navigation">
-                        <button type="button" class="step-btn prev-step">Anterior</button>
-                        <button type="button" class="step-btn next-step">Siguiente: Conducción Normal</button>
-                    </div>
-                </div>
-
-                <!--Step 3: Conducción Normal-->
-                <div class="step-section" data-step="3">
-                    <h3>Conducción Normal</h3>
-                    <label for="velocidad_normal" class="form-label">Velocidad Promedio</label>
-                    <input type="number" class="form-control" id="velocidad_normal" name="velocidad_normal" aria-describedby="VelocPromHelp">
-                    <p>Consumo de Combustible</p>
-                    <label for="seco_normal" class="form-label">Seco</label>
-                    <input type="number" class="form-control" id="seco_normal" name="seco_normal" aria-describedby="SecoHelp">
-                    <label for="lluvioso_normal" class="form-label">Lluvioso</label>
-                    <input type="number" class="form-control" id="lluvioso_normal" id="lluvioso_normal" aria-describedby="LluviosoHelp">
-                    <label for="extremo_normal" class="form-label">Extremo</label>
-                    <input type="number" class="form-control" id="extremo_normal" name="extremo_normal" aria-describedby="ExtremoHelp">
-                    <p>Desgaste de Neumaticos</p>
-                    <label for="seco_neumaticos" class="form-label">Seco</label>
-                    <input type="number" class="form-control" id="seco_neumaticos" name="seco_neumaticos" aria-describedby="SecoHelp">
-                    <label for="lluvioso_neumaticos" class="form-label">Lluvioso</label>
-                    <input type="number" class="form-control" id="lluvioso_neumaticos" name="lluvioso_neumaticos" aria-describedby="LluviosoHelp">
-                    <label for="extremo_neumaticos" class="form-label">Extremo</label>
-                    <input type="number" class="form-control" id="extremo_neumaticos" name="extremo_neumaticos" aria-describedby="ExtremoHelp">
-                    <div class="step-navigation">
-                        <button type="button" class="step-btn prev-step">Anterior</button>
-                        <button type="button" class="step-btn next-step">Siguiente: Conducción Agresiva</button>
-                    </div>
-                </div>
-
-                <!-- Step 4: Conducción Agresiva -->
-                <div class="step-section" data-step="4">
-                    <h3>Conducción Agresiva</h3>
-                    <label for="velocidad_agresiva" class="form-label">Velocidad Promedio</label>
-                    <input type="number" class="form-control" id="velocidad_agresiva" name="velocidad_agresiva" aria-describedby="VelocPromHelp">
-                    <p>Consumo de Combustible</p>
-                    <label for="seco_agresiva" class="form-label">Seco</label>
-                    <input type="number" class="form-control" id="seco_agresiva" name="seco_agresiva" aria-describedby="SecoHelp">
-                    <label for="lluvioso_agresiva" class="form-label">Lluvioso</label>
-                    <input type="number" class="form-control" id="lluvioso_agresiva" name="lluvioso_agresiva" aria-describedby="LluviosoHelp">
-                    <label for="extremo_agresiva" class="form-label">Extremo</label>
-                    <input type="number" class="form-control" id="extremo_agresiva" aria-describedby="ExtremoHelp">
-                    <p>Desgaste de Neumaticos</p>
-                    <label for="seco_agreneu" class="form-label">Seco</label>
-                    <input type="number" class="form-control" id="seco_agreneu" name="seco_agreneu" aria-describedby="SecoHelp">
-                    <label for="lluvioso_agreneu" class="form-label">Lluvioso</label>
-                    <input type="number" class="form-control" id="lluvioso_agreneu" name="lluvioso_agreneu"  aria-describedby="LluviosoHelp">
-                    <label for="extremo_agreneu" class="form-label">Extremo</label>
-                    <input type="number" class="form-control" id="extremo_agreneu" name="extremo_agreneu"  aria-describedby="ExtremoHelp">
-                    <div class="step-navigation">
-                        <button type="button" class="step-btn prev-step">Anterior</button>
-                        <button type="button" class="step-btn next-step">Siguiente: Ahorro de Combustible</button>
-                    </div>
-                </div>
-
-                <!-- Step 5: Ahorro de Combustible -->
-                <div class="step-section" data-step="5">
-                    <h3>Ahorro de Combustible</h3>
-                    <label for="velocidad_combustible" class="form-label">Velocidad Promedio</label>
-                    <input type="number" class="form-control" id="velocidad_combustible" name="velocidad_combustible"  aria-describedby="VelocPromHelp">
-                    <p>Consumo de Combustible</p>
-                    <label for="seco_ahorro" class="form-label">Seco</label>
-                    <input type="number" class="form-control" id="seco_ahorro" name="seco_ahorro" aria-describedby="SecoHelp">
-                    <label for="lluvioso_ahorro" class="form-label">Lluvioso</label>
-                    <input type="number" class="form-control" id="lluvioso_ahorro" name="lluvioso_ahorro" aria-describedby="LluviosoHelp">
-                    <label for="extremo_ahorro" class="form-label">Extremo</label>
-                    <input type="number" class="form-control" id="extremo_ahorro" name="extremo_ahorro"  aria-describedby="ExtremoHelp">
-                    <p>Desgaste de Neumaticos</p>
-                    <label for="seco_ahorro_neu" class="form-label">Seco</label>
-                    <input type="number" class="form-control" id="seco_ahorro_neu" name="seco_ahorro_neu" aria-describedby="SecoHelp">
-                    <label for="lluvioso_ahorro_neu" class="form-label">Lluvioso</label>
-                    <input type="number" class="form-control" id="lluvioso_ahorro_neu" name="lluvioso_ahorro_neu" aria-describedby="LluviosoHelp">
-                    <label for="extremo_ahorro_neu" class="form-label">Extremo</label>
-                    <input type="number" class="form-control" id="extremo_ahorro_neu" name="extremo_ahorro_neu" aria-describedby="ExtremoHelp">
-                    <div class="step-navigation">
-                        <button type="button" class="step-btn prev-step">Anterior</button>
-                        <button type="button" id="btnRegistrarVehiculo" class="btn-submit">Guardar Vehículo</button>
-                    </div>
-                </div>
-                <button id="btnEditar" data-id="${id}" type="submit" class="btn-submit">
-                    Editar Equipo
-                </button>
-                `;
-    
-                formEditarVehiculo.style.display = 'block';
-                this.editarVehiculo();
-            }
+            this.setupCardEventListeners();
         })
         .catch((error) => {
             console.error('Error en la solicitud GET:', error.message);
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'No se pudieron cargar los vehículos'
+            });
         });
     }
 
-    editarVehiculo() {
-        const formEditarVehiculo = this.shadowRoot.querySelector('#formEditarVehiculo');
-        
-        this.shadowRoot.querySelector('#btnEditar').addEventListener("click", (e) => {
-            e.preventDefault();
-            
-            const datos = Object.fromEntries(new FormData(formEditarVehiculo).entries());
-            const id = e.target.getAttribute("data-id");
-            
-            patchVehiculos(datos, id)
-                .then(response => {
-                    if (response.ok) {
-                        return response.json();
-                    } else {
-                        throw new Error(`Error en la solicitud PATCH: ${response.status} - ${response.statusText}`);
-                    }
-                })
-                .then(responseData => {
-                    console.log("Vehiculo actualizado:", responseData);
-                    Swal.fire({
-                        icon: 'success',
-                        title: '¡Éxito!',
-                        text: 'El vehiculo ha sido editado correctamente.',
-                    });
-                    this.mostrarVehiculos();
-                })
-                .catch(error => {
-                    console.error('Error en la solicitud PATCH:', error.message);
-                    Swal.fire({
-                        icon: 'error',
-                        title: '¡Error!',
-                        text: 'Hubo un problema al editar el vehiculo.',
-                    });
-                });
+    setupCardEventListeners() {
+        this.shadowRoot.querySelectorAll('.btnEliminar').forEach(btn => {
+            btn.addEventListener('click', (e) => this.eliminarVehiculo(e));
         });
+
+        this.shadowRoot.querySelectorAll('.btnEditarForm').forEach(btn => {
+            btn.addEventListener('click', (e) => this.mostrarFormularioEdit(e.target.dataset.id));
+        });
+    }
+
+    eliminarVehiculo = async (e) => {
+        const id = e.target.dataset.id;
+        
+        const result = await Swal.fire({
+            title: '¿Estás seguro?',
+            text: "Esta acción no se puede deshacer",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#751010',
+            cancelButtonColor: '#6B7280',
+            confirmButtonText: 'Sí, eliminar',
+            cancelButtonText: 'Cancelar'
+        });
+
+        if (result.isConfirmed) {
+            try {
+                await deleteVehiculos(id);
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Eliminado',
+                    text: 'El vehículo ha sido eliminado',
+                    timer: 1500,
+                    showConfirmButton: false
+                });
+                this.mostrarVehiculos();
+            } catch (error) {
+                console.error('Error:', error);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'No se pudo eliminar el vehículo'
+                });
+            }
+        }
+    }
+
+    mostrarFormularioEdit = (id) => {
+        getVehiculos()
+        .then((vehiculos) => {
+            const vehiculo = vehiculos.find(v => v.id === id);
+            if (!vehiculo) throw new Error('Vehículo no encontrado');
+
+            Swal.fire({
+                title: 'Editar Vehículo',
+                html: `
+                    <form id="formEditarVehiculo" class="edit-form">
+                        <div class="swal2-form-group">
+                            <label class="swal2-label">URL de Imagen</label>
+                            <input type="url" class="swal2-input" id="imagenEdit" value="${vehiculo.imagenVehiculo || ''}">
+                        </div>
+                        <div class="swal2-form-group">
+                            <label class="swal2-label">Motor</label>
+                            <input type="text" class="swal2-input" id="motorEdit" value="${vehiculo.motor || ''}">
+                        </div>
+                        <div class="swal2-form-group">
+                            <label class="swal2-label">Modelo</label>
+                            <input type="text" class="swal2-input" id="modeloEdit" value="${vehiculo.modelo || ''}">
+                        </div>
+                        <div class="swal2-form-group">
+                            <label class="swal2-label">Equipo</label>
+                            <input type="text" class="swal2-input" id="equipoEdit" value="${vehiculo.equipoPiloto || ''}">
+                        </div>
+                        <div class="swal2-form-group">
+                            <label class="swal2-label">Piloto</label>
+                            <input type="text" class="swal2-input" id="pilotoEdit" value="${vehiculo.nombrePiloto || ''}">
+                        </div>
+                        <div class="swal2-form-group">
+                            <label class="swal2-label">Velocidad Máxima (km/h)</label>
+                            <input type="number" class="swal2-input" id="velocidadEdit" value="${vehiculo.velocidadMaximaKmh || ''}">
+                        </div>
+                        <div class="swal2-form-group">
+                            <label class="swal2-label">Aceleración 0-100 km/h</label>
+                            <input type="number" class="swal2-input" id="aceleracionEdit" value="${vehiculo.aceleracion0a100 || ''}" step="0.1">
+                        </div>
+                    </form>
+                `,
+                customClass: {
+                    container: 'edit-form-container'
+                },
+                showCancelButton: true,
+                confirmButtonText: 'Guardar',
+                cancelButtonText: 'Cancelar',
+                confirmButtonColor: '#751010',
+                cancelButtonColor: '#6B7280',
+                width: '600px',
+                didRender: () => {
+                    // Agregar estilos específicos para el formulario de edición
+                    const style = document.createElement('style');
+                    style.textContent = `
+                        .edit-form-container .swal2-popup {
+                            padding: 2rem;
+                        }
+                        .edit-form {
+                            display: grid;
+                            gap: 1rem;
+                            max-height: 70vh;
+                            overflow-y: auto;
+                            padding: 1rem;
+                        }
+                        .swal2-form-group {
+                            display: flex;
+                            flex-direction: column;
+                            gap: 0.5rem;
+                            margin-bottom: 1rem;
+                        }
+                        .swal2-label {
+                            font-weight: 500;
+                            color: #374151;
+                            font-size: 0.9rem;
+                        }
+                        .swal2-input {
+                            height: 40px !important;
+                            margin: 0 !important;
+                            font-size: 0.9rem !important;
+                        }
+                    `;
+                    document.head.appendChild(style);
+                },
+                preConfirm: () => {
+                    return {
+                        imagenVehiculo: document.getElementById('imagenEdit').value,
+                        motor: document.getElementById('motorEdit').value,
+                        modelo: document.getElementById('modeloEdit').value,
+                        equipoPiloto: document.getElementById('equipoEdit').value,
+                        nombrePiloto: document.getElementById('pilotoEdit').value,
+                        velocidadMaximaKmh: document.getElementById('velocidadEdit').value,
+                        aceleracion0a100: document.getElementById('aceleracionEdit').value,
+                    };
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    this.editarVehiculo(id, result.value);
+                }
+            });
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'No se pudo cargar el vehículo para editar'
+            });
+        });
+    }
+
+    editarVehiculo = async (id, datos) => {
+        try {
+            const response = await patchVehiculos(datos, id);
+            if (!response.ok) throw new Error('Error al actualizar el vehículo');
+            
+            Swal.fire({
+                icon: 'success',
+                title: '¡Éxito!',
+                text: 'El vehículo ha sido actualizado',
+                timer: 1500,
+                showConfirmButton: false
+            });
+            this.mostrarVehiculos();
+        } catch (error) {
+            console.error('Error:', error);
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'No se pudo actualizar el vehículo'
+            });
+        }
     }
 }
 
