@@ -3,9 +3,9 @@ const myHeaders = new Headers({
     "Content-Type": "application/json"
 });
 
-const getVehiculo = async() => {
+const getCircuito = async() => {
     try {
-        const respuesta = await fetch(`${URL_API}/vehiculos`);
+        const respuesta = await fetch(`${URL_API}/circuitos`);
 		// Si la respuesta es correcta
 		if(respuesta.status === 200){
 			const datos = await respuesta.json();
@@ -22,10 +22,9 @@ const getVehiculo = async() => {
 	}
     
 }
-
-const postVehiculo = async (datos) => {
+const postCircuito = async (datos) => {
     try {
-        return await fetch(`${URL_API}/vehiculos`, {
+        return await fetch(`${URL_API}/circuitos`, {
             method: "POST",
             headers: myHeaders,
             body: JSON.stringify(datos)
@@ -34,11 +33,10 @@ const postVehiculo = async (datos) => {
         console.error('Error en la solicitud POST:', error.message);
     }
 }
-
-const patchVehiculo = async (datos,id) =>{
+const patchCircuito = async (datos,id) =>{
 
     try {
-        return await fetch(`${URL_API}/vehiculos/${id}`, {
+        return await fetch(`${URL_API}/circuitos/${id}`, {
             method: "PATCH",
             headers: myHeaders,
             body: JSON.stringify(datos)
@@ -48,21 +46,21 @@ const patchVehiculo = async (datos,id) =>{
     }
 
 }
-const deleteVehiculo = async (id) =>{
+const deleteCircuito = async (id) =>{
 
     try {
-        return await fetch(`${URL_API}/vehiculos/${id}`, {
+        return await fetch(`${URL_API}/circuitos/${id}`, {
             method: "DELETE",
             headers: myHeaders,
         });
     } catch (error) {
-        console.error('Error en la solicitud POST:', error.message);
+        console.error('Error en la solicitud DELETE:', error.message);
     }
 
 }
 export {
-    getVehiculo as getVehiculos,
-    postVehiculo as postVehiculos,
-    patchVehiculo as patchVehiculos,
-    deleteVehiculo as deleteVehiculos
+    getCircuito as getCircuitos,
+    postCircuito as postCircuitos,
+    patchCircuito as patchCircuitos,
+    deleteCircuito as deleteCircuitos
 };

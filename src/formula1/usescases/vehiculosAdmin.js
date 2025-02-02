@@ -1,6 +1,5 @@
-import { postVehiculos, getVehiculos, deleteVehiculos, patchVehiculos } from "../../Apis/vehiculosApis.js";
-import VehiculoModel from "../../Models/vehiculoModel.js";
-const divContainerProduct = document.querySelector('.containerRendimiento');
+import { deleteVehiculos, getVehiculos, patchVehiculos, postVehiculos } from "../../Apis/vehiculosApis.js";
+import Swal from 'sweetalert2';
 
 export class VehiculosAdmin extends HTMLElement {
     constructor() {
@@ -9,6 +8,7 @@ export class VehiculosAdmin extends HTMLElement {
         this.currentStep = 1;
         this.render();
         this.setupEventListeners();
+        this.addEventListeners();
     }
 
     setupEventListeners() {
@@ -282,10 +282,10 @@ export class VehiculosAdmin extends HTMLElement {
             <!-- Step 1: Información Básica -->
             <div class="step-section" data-step="1">
                 <h3>Información Básica</h3>
-                <div class="col">
-                    <label for="idVehiculo" class="form-label">COD</label>
-                    <input type="number" class="form-control" id="idVehiculo" name="idVehiculo" placeholder="${idVehiculo}" disabled>
-                </div>
+                <div class="form-group">
+                        <label for="imagenVehiculo">Imagen (URL)</label>
+                        <input type="url" id="imagenVehiculo" name="imagenVehiculo" placeholder="URL de la imagen">
+                        </div>
                 <div class="mb-3">
                     <label for="motor" class="form-label">Motor</label>
                     <input type="text" class="form-control" name="motor" id="motor" aria-describedby="NombreHelp">
@@ -294,13 +294,10 @@ export class VehiculosAdmin extends HTMLElement {
                     <label for="modelo" class="form-label">Modelo</label>
                     <input type="text" class="form-control" id="modelo" name="modelo" aria-describedby="ModeloHelp">
                 </div>
-                <div class="mb-3">
-                    <label for="exampleInputEquipos" class="form-label">Equipo</label>
-                    <select class="form-select">
-                        <option selected>Seleccionar Equipo</option>
-                        <option value="1">One</option>
-                        <option value="2">Two</option>
-                        <option value="3">Three</option>
+                <div class="form-group">
+                    <label for="equipoPiloto" class="form-label">Equipo</label>
+                    <select class="form-select" id="equipoPilotoVeh" name="equipoPiloto">
+                        <option value="">Seleccionar Equipo</option>
                     </select>
                 </div>
                 <div class="step-navigation">
@@ -311,31 +308,19 @@ export class VehiculosAdmin extends HTMLElement {
             <!-- Step 2: Información -->
             <div class="step-section" data-step="2">
                 <h3>Información Adicional</h3>
-                <div class="mb-3">
-                    <label for="exampleInputPilotos" class="form-label">Pilotos</label>
-                    <select class="form-select">
-                        <option selected>Seleccionar Piloto</option>
-                        <option value="1">One</option>
-                        <option value="2">Two</option>
-                        <option value="3">Three</option>
-                    </select>
-                </div>
-                <div class="mb-3">
-                    <label for="exampleInputPilotos" class="form-label">Pilotos</label>
-                    <select class="form-select">
-                        <option selected>Seleccionar Piloto</option>
-                        <option value="1">One</option>
-                        <option value="2">Two</option>
-                        <option value="3">Three</option>
+                <div class="form-group">
+                    <label for="nombrePiloto" class="form-label">Piloto</label>
+                    <select class="form-select" id="nombrePilotoVeh" name="nombrePiloto">
+                        <option value="">Seleccionar Piloto</option>
                     </select>
                 </div>
                 <div class="mb-3">
                     <label for="velocidad_maxima_kmh" class="form-label">Velocidad Máxima</label>
-                    <input type="text" class="form-control" id="velocidad_maxima_kmh" name="velocidad_maxima_kmh" aria-describedby="ModeloHelp">
+                    <input type="number" class="form-control" id="velocidad_maxima_kmh" name="velocidad_maxima_kmh" aria-describedby="ModeloHelp">
                 </div>
                 <div class="mb-3">
                     <label for="aceleracion_0_100" class="form-label">Aceleración</label>
-                    <input type="text" class="form-control" id="aceleracion_0_100" name="aceleracion_0_100" aria-describedby="ModeloHelp">
+                    <input type="number" class="form-control" id="aceleracion_0_100" name="aceleracion_0_100" aria-describedby="ModeloHelp">
                 </div>
                 <div class="step-navigation">
                     <button type="button" class="step-btn prev-step">Anterior</button>
@@ -347,21 +332,21 @@ export class VehiculosAdmin extends HTMLElement {
             <div class="step-section" data-step="3">
                 <h3>Conducción Normal</h3>
                 <label for="velocidad_normal" class="form-label">Velocidad Promedio</label>
-                <input type="text" class="form-control" id="velocidad_normal" name="velocidad_normal" aria-describedby="VelocPromHelp">
+                <input type="number" class="form-control" id="velocidad_normal" name="velocidad_normal" aria-describedby="VelocPromHelp">
                 <p>Consumo de Combustible</p>
                 <label for="seco_normal" class="form-label">Seco</label>
-                <input type="text" class="form-control" id="seco_normal" name="seco_normal" aria-describedby="SecoHelp">
+                <input type="number" class="form-control" id="seco_normal" name="seco_normal" aria-describedby="SecoHelp">
                 <label for="lluvioso_normal" class="form-label">Lluvioso</label>
-                <input type="text" class="form-control" id="lluvioso_normal" id="lluvioso_normal" aria-describedby="LluviosoHelp">
+                <input type="number" class="form-control" id="lluvioso_normal" id="lluvioso_normal" aria-describedby="LluviosoHelp">
                 <label for="extremo_normal" class="form-label">Extremo</label>
-                <input type="text" class="form-control" id="extremo_normal" name="extremo_normal" aria-describedby="ExtremoHelp">
+                <input type="number" class="form-control" id="extremo_normal" name="extremo_normal" aria-describedby="ExtremoHelp">
                 <p>Desgaste de Neumaticos</p>
                 <label for="seco_neumaticos" class="form-label">Seco</label>
-                <input type="text" class="form-control" id="seco_neumaticos" name="seco_neumaticos" aria-describedby="SecoHelp">
+                <input type="number" class="form-control" id="seco_neumaticos" name="seco_neumaticos" aria-describedby="SecoHelp">
                 <label for="lluvioso_neumaticos" class="form-label">Lluvioso</label>
-                <input type="text" class="form-control" id="lluvioso_neumaticos" name="lluvioso_neumaticos" aria-describedby="LluviosoHelp">
+                <input type="number" class="form-control" id="lluvioso_neumaticos" name="lluvioso_neumaticos" aria-describedby="LluviosoHelp">
                 <label for="extremo_neumaticos" class="form-label">Extremo</label>
-                <input type="text" class="form-control" id="extremo_<input type="text" class="form-control" id="extremo_neumaticos" name="extremo_neumaticos" aria-describedby="ExtremoHelp">
+                <input type="number" class="form-control" id="extremo_neumaticos" name="extremo_neumaticos" aria-describedby="ExtremoHelp">
                 <div class="step-navigation">
                     <button type="button" class="step-btn prev-step">Anterior</button>
                     <button type="button" class="step-btn next-step">Siguiente: Conducción Agresiva</button>
@@ -372,21 +357,21 @@ export class VehiculosAdmin extends HTMLElement {
             <div class="step-section" data-step="4">
                 <h3>Conducción Agresiva</h3>
                 <label for="velocidad_agresiva" class="form-label">Velocidad Promedio</label>
-                <input type="text" class="form-control" id="velocidad_agresiva" name="velocidad_agresiva" aria-describedby="VelocPromHelp">
+                <input type="number" class="form-control" id="velocidad_agresiva" name="velocidad_agresiva" aria-describedby="VelocPromHelp">
                 <p>Consumo de Combustible</p>
                 <label for="seco_agresiva" class="form-label">Seco</label>
-                <input type="text" class="form-control" id="seco_agresiva" name="seco_agresiva" aria-describedby="SecoHelp">
+                <input type="number" class="form-control" id="seco_agresiva" name="seco_agresiva" aria-describedby="SecoHelp">
                 <label for="lluvioso_agresiva" class="form-label">Lluvioso</label>
-                <input type="text" class="form-control" id="lluvioso_agresiva" name="lluvioso_agresiva" aria-describedby="LluviosoHelp">
+                <input type="number" class="form-control" id="lluvioso_agresiva" name="lluvioso_agresiva" aria-describedby="LluviosoHelp">
                 <label for="extremo_agresiva" class="form-label">Extremo</label>
-                <input type="text" class="form-control" id="extremo_agresiva" aria-describedby="ExtremoHelp">
+                <input type="number" class="form-control" id="extremo_agresiva" aria-describedby="ExtremoHelp">
                 <p>Desgaste de Neumaticos</p>
                 <label for="seco_agreneu" class="form-label">Seco</label>
-                <input type="text" class="form-control" id="seco_agreneu" name="seco_agreneu" aria-describedby="SecoHelp">
+                <input type="number" class="form-control" id="seco_agreneu" name="seco_agreneu" aria-describedby="SecoHelp">
                 <label for="lluvioso_agreneu" class="form-label">Lluvioso</label>
-                <input type="text" class="form-control" id="lluvioso_agreneu" name="lluvioso_agreneu"  aria-describedby="LluviosoHelp">
+                <input type="number" class="form-control" id="lluvioso_agreneu" name="lluvioso_agreneu"  aria-describedby="LluviosoHelp">
                 <label for="extremo_agreneu" class="form-label">Extremo</label>
-                <input type="text" class="form-control" id="extremo_agreneu" name="extremo_agreneu"  aria-describedby="ExtremoHelp">
+                <input type="number" class="form-control" id="extremo_agreneu" name="extremo_agreneu"  aria-describedby="ExtremoHelp">
                 <div class="step-navigation">
                     <button type="button" class="step-btn prev-step">Anterior</button>
                     <button type="button" class="step-btn next-step">Siguiente: Ahorro de Combustible</button>
@@ -397,35 +382,422 @@ export class VehiculosAdmin extends HTMLElement {
             <div class="step-section" data-step="5">
                 <h3>Ahorro de Combustible</h3>
                 <label for="velocidad_combustible" class="form-label">Velocidad Promedio</label>
-                <input type="text" class="form-control" id="velocidad_combustible" name="velocidad_combustible"  aria-describedby="VelocPromHelp">
+                <input type="number" class="form-control" id="velocidad_combustible" name="velocidad_combustible"  aria-describedby="VelocPromHelp">
                 <p>Consumo de Combustible</p>
                 <label for="seco_ahorro" class="form-label">Seco</label>
-                <input type="text" class="form-control" id="seco_ahorro" name="seco_ahorro" aria-describedby="SecoHelp">
+                <input type="number" class="form-control" id="seco_ahorro" name="seco_ahorro" aria-describedby="SecoHelp">
                 <label for="lluvioso_ahorro" class="form-label">Lluvioso</label>
-                <input type="text" class="form-control" id="lluvioso_ahorro" name="lluvioso_ahorro" aria-describedby="LluviosoHelp">
+                <input type="number" class="form-control" id="lluvioso_ahorro" name="lluvioso_ahorro" aria-describedby="LluviosoHelp">
                 <label for="extremo_ahorro" class="form-label">Extremo</label>
-                <input type="text" class="form-control" id="extremo_ahorro" name="extremo_ahorro"  aria-describedby="ExtremoHelp">
+                <input type="number" class="form-control" id="extremo_ahorro" name="extremo_ahorro"  aria-describedby="ExtremoHelp">
                 <p>Desgaste de Neumaticos</p>
                 <label for="seco_ahorro_neu" class="form-label">Seco</label>
-                <input type="text" class="form-control" id="seco_ahorro_neu" name="seco_ahorro_neu" aria-describedby="SecoHelp">
+                <input type="number" class="form-control" id="seco_ahorro_neu" name="seco_ahorro_neu" aria-describedby="SecoHelp">
                 <label for="lluvioso_ahorro_neu" class="form-label">Lluvioso</label>
-                <input type="text" class="form-control" id="lluvioso_ahorro_neu" name="lluvioso_ahorro_neu" aria-describedby="LluviosoHelp">
+                <input type="number" class="form-control" id="lluvioso_ahorro_neu" name="lluvioso_ahorro_neu" aria-describedby="LluviosoHelp">
                 <label for="extremo_ahorro_neu" class="form-label">Extremo</label>
-                <input type="text" class="form-control" id="extremo_ahorro_neu" name="extremo_ahorro_neu" aria-describedby="ExtremoHelp">
+                <input type="number" class="form-control" id="extremo_ahorro_neu" name="extremo_ahorro_neu" aria-describedby="ExtremoHelp">
                 <div class="step-navigation">
                     <button type="button" class="step-btn prev-step">Anterior</button>
-                    <button type="submit" btn="btnRegistrarVehiculo" class="step-btn">Guardar Vehículo</button>
+                    <button type="button" id="btnRegistrarVehiculo" class="btn-submit">Guardar Vehículo</button>
                 </div>
             </div>
+            <div id="statusMessage" class="status-message"></div>
         </form>
         <div class="card">
             <h1>Conoce nuestros Vehiculos</h1>
-            <button id="btnListarVehiculos" type="submit" class="btn-submit">↓</button>
+            <button id="btnListarVehiculos" type="button" class="btn-submit">↓</button>
             <div id="vehiculosCards">
                 <!--Aquí se llamarán las cartas desde archivo JS-->
             </div>
         </div>
         `;
+
+        fetch('../../../db.json')
+        .then(response => response.json()) 
+        .then(data => {
+            const equipoPiloto = this.shadowRoot.querySelector("#equipoPilotoVeh");
+            
+            data.equipos.forEach(equipo => {
+                const option = document.createElement("option");
+                option.value = equipo.id;
+                option.textContent = equipo.nombreEquipo;
+                equipoPiloto.appendChild(option);
+            });
+        })
+        .catch(error => {
+            console.error("Error al cargar los datos de equipos:", error);
+        });
+
+        fetch('../../../db.json')
+        .then(response => response.json()) 
+        .then(data => {
+            const nombrePiloto = this.shadowRoot.querySelector("#nombrePilotoVeh");
+            
+            data.pilotos.forEach(piloto => {
+                const option = document.createElement("option");
+                option.value = piloto.id;
+                option.textContent = piloto.nombrePiloto;
+                nombrePiloto.appendChild(option);
+            });
+        })
+        .catch(error => {
+            console.error("Error al cargar los datos de los vehículos:", error);
+        });
+    }
+
+    addEventListeners() {
+        this.shadowRoot.querySelector('#btnRegistrarVehiculo').addEventListener("click", () => this.crearVehiculos());
+        this.shadowRoot.querySelector('#btnListarVehiculos').addEventListener("click", () => this.mostrarVehiculos());
+    }    
+
+    crearVehiculos = () => {
+        const formCrearVehiculo = this.shadowRoot.querySelector('#formCrearVehiculo');
+        const statusMessage = this.shadowRoot.querySelector('#statusMessage');
+    
+        const formData = new FormData(formCrearVehiculo);
+        const datos = Object.fromEntries(formData.entries());
+    
+        const vehiculo = {
+            imagenVehiculo: datos.imagenVehiculo,
+            motor: datos.motor,
+            modelo: datos.modelo,
+            equipoPiloto: datos.equipoPiloto,
+            nombrePiloto: datos.nombrePiloto,
+            velocidadMaximaKmh: datos.velocidad_maxima_kmh,
+            aceleracion0a100: datos.aceleracion_0_100,
+            rendimiento: {
+                conduccionNormal: {
+                    velocidadNormal: datos.velocidad_normal,
+                    consumoCombustible: {
+                        seco: datos.seco_normal,
+                        lluvioso: datos.lluvioso_normal,
+                        extremo: datos.extremo_normal
+                    },
+                    desgasteNeumaticos: {
+                        seco: datos.seco_neumaticos,
+                        lluvioso: datos.lluvioso_neumaticos,
+                        extremo: datos.extremo_neumaticos
+                    }
+                },
+                conduccionAgresiva: {
+                    velocidadAgresiva: datos.velocidad_agresiva,
+                    consumoCombustible: {
+                        seco: datos.seco_agresiva,
+                        lluvioso: datos.lluvioso_agresiva,
+                        extremo: datos.extremo_agresiva
+                    },
+                    desgasteNeumaticos: {
+                        seco: datos.seco_agreneu,
+                        lluvioso: datos.lluvioso_agreneu,
+                        extremo: datos.extremo_agreneu
+                    }
+                },
+                ahorroCombustible: {
+                    velocidadPromedio: datos.velocidad_combustible,
+                    consumoCombustible: {
+                        seco: datos.seco_ahorro,
+                        lluvioso: datos.lluvioso_ahorro,
+                        extremo: datos.extremo_ahorro
+                    },
+                    desgasteNeumaticos: {
+                        seco: datos.seco_ahorro_neu,
+                        lluvioso: datos.lluvioso_ahorro_neu,
+                        extremo: datos.extremo_ahorro_neu
+                    }
+                }
+            }
+        };
+
+        postVehiculos(vehiculo)
+            .then(response => response.json())
+            .then(responseData => {
+                statusMessage.textContent = '¡Vehículo registrado exitosamente!';
+                statusMessage.className = 'status-message success';
+                statusMessage.style.display = 'block';
+                formCrearVehiculo.reset();
+                setTimeout(() => {
+                    statusMessage.style.display = 'none';
+                }, 3000);
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                statusMessage.textContent = 'Error al registrar el vehículo.';
+                statusMessage.className = 'status-message error';
+            });
+    };
+    
+    mostrarVehiculos = () => {
+        getVehiculos()
+        .then((vehiculos) => {
+            const vehiculosCards = this.shadowRoot.querySelector('#vehiculosCards');
+            vehiculosCards.innerHTML = '';
+            
+            vehiculos.forEach((vehiculo) => {
+                const divItems = document.createElement('div');
+                divItems.classList.add('col');
+                divItems.innerHTML = /*html*/ `
+                <div id="card__listar" class="card">
+                    <img src="${vehiculo.imagenVehiculo}" alt="${vehiculo.nombreEquipo} Logo">
+                    <div class="card__content">
+                        <h1 class="card__title">${vehiculo.motor}</h1>
+                        <p class="card__pais">🌍 ${vehiculo.modelo}</p>
+                        <p class="card__motor">⚡ ${vehiculo.velocidadMaximaKmh}</p>
+                    </div>
+                    <div class="card__actions">
+                        <button class="btnEditarForm" data-id="${vehiculo.id}">Editar</button>
+                        <button class="btnEliminar" data-id="${vehiculo.id}">Eliminar</button>
+                    </div>
+                </div>
+                <form id="formEditarVehiculo" style="display: none;">
+                </form>
+                `;
+                vehiculosCards.appendChild(divItems);
+            });
+
+            this.eliminarVehiculo();
+            this.shadowRoot.querySelectorAll('.btnEditarForm').forEach((btnEditarForm) => {
+                btnEditarForm.addEventListener("click", (e) => {
+                    const id = e.target.getAttribute("data-id");
+                    this.mostrarFormularioEdit(id);
+                });
+            });
+        }).catch ((error) => {
+            console.error('Error en la solicitud GET:', error.message);
+        });
+    }
+
+    eliminarVehiculo(){
+        const vehiculosCards = this.shadowRoot.querySelector("#vehiculosCards");
+    
+        vehiculosCards.addEventListener("click", async (e) => {
+            if (e.target.classList.contains("btnEliminar")) {
+                const id = e.target.getAttribute("data-id");
+    
+                if (!id) {
+                    console.error("ID del equipo no encontrado.");
+                    return;
+                }
+    
+                const confirmacion = await Swal.fire({
+                    title: "¿Está seguro de eliminar el vehículo?",
+                    text: "Esta acción no se puede deshacer.",
+                    icon: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#3085d6",
+                    cancelButtonColor: "#d33",
+                    confirmButtonText: "Sí, eliminar",
+                    cancelButtonText: "Cancelar"
+                });
+    
+                if (confirmacion.isConfirmed) {
+                    try {
+                        const response = await deleteVehiculos(id);
+    
+                        if (!response || !response.ok) {
+                            throw new Error(`Error ${response ? response.status : "desconocido"}`);
+                        }
+    
+                        Swal.fire("Eliminado", "El vehículo ha sido eliminado.", "success");
+                        this.mostrarVehiculos();
+                    } catch (error) {
+                        console.error("Error al eliminar el vehículo:", error);
+                        Swal.fire("Error", "No se pudo eliminar el vehículo.", "error");
+                    }
+                }
+            }
+        });
+    }
+
+    mostrarFormularioEdit = (id) => {
+        const formEditarVehiculo = this.shadowRoot.querySelector('#formEditarVehiculo');
+        formEditarVehiculo.style.display = 'none';
+        
+        getVehiculos()
+        .then((vehiculos) => {
+            const vehiculo = vehiculos.find((vehiculo) => vehiculo.id === id);
+            if (vehiculo) {
+
+                formEditarVehiculo.innerHTML = /*html*/ `
+                <div class="steps-container">
+                    <h2>Registro de Vehículo</h2>
+                    <div class="progress-bar-container">
+                        <div class="progress-bar"></div>
+                    </div>
+                </div>
+
+                <!-- Step 1: Información Básica -->
+                <div class="step-section" data-step="1">
+                    <h3>Información Básica</h3>
+                    <div class="form-group">
+                            <label for="imagenVehiculo">Imagen (URL)</label>
+                            <input type="url" id="imagenVehiculo" name="imagenVehiculo" placeholder="URL de la imagen">
+                            </div>
+                    <div class="mb-3">
+                        <label for="motor" class="form-label">Motor</label>
+                        <input type="text" class="form-control" name="motor" id="motor" aria-describedby="NombreHelp">
+                    </div>
+                    <div class="mb-3">
+                        <label for="modelo" class="form-label">Modelo</label>
+                        <input type="text" class="form-control" id="modelo" name="modelo" aria-describedby="ModeloHelp">
+                    </div>
+                    <div class="form-group">
+                        <label for="equipoPiloto" class="form-label">Equipo</label>
+                        <select class="form-select" id="equipoPilotoVeh" name="equipoPiloto">
+                            <option value="">Seleccionar Equipo</option>
+                        </select>
+                    </div>
+                    <div class="step-navigation">
+                        <button type="button" class="step-btn next-step">Siguiente: Información Adicional</button>
+                    </div>
+                </div>
+
+                <!-- Step 2: Información -->
+                <div class="step-section" data-step="2">
+                    <h3>Información Adicional</h3>
+                    <div class="form-group">
+                        <label for="nombrePiloto" class="form-label">Piloto</label>
+                        <select class="form-select" id="nombrePilotoVeh" name="nombrePiloto">
+                            <option value="">Seleccionar Piloto</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="velocidad_maxima_kmh" class="form-label">Velocidad Máxima</label>
+                        <input type="number" class="form-control" id="velocidad_maxima_kmh" name="velocidad_maxima_kmh" aria-describedby="ModeloHelp">
+                    </div>
+                    <div class="mb-3">
+                        <label for="aceleracion_0_100" class="form-label">Aceleración</label>
+                        <input type="number" class="form-control" id="aceleracion_0_100" name="aceleracion_0_100" aria-describedby="ModeloHelp">
+                    </div>
+                    <div class="step-navigation">
+                        <button type="button" class="step-btn prev-step">Anterior</button>
+                        <button type="button" class="step-btn next-step">Siguiente: Conducción Normal</button>
+                    </div>
+                </div>
+
+                <!--Step 3: Conducción Normal-->
+                <div class="step-section" data-step="3">
+                    <h3>Conducción Normal</h3>
+                    <label for="velocidad_normal" class="form-label">Velocidad Promedio</label>
+                    <input type="number" class="form-control" id="velocidad_normal" name="velocidad_normal" aria-describedby="VelocPromHelp">
+                    <p>Consumo de Combustible</p>
+                    <label for="seco_normal" class="form-label">Seco</label>
+                    <input type="number" class="form-control" id="seco_normal" name="seco_normal" aria-describedby="SecoHelp">
+                    <label for="lluvioso_normal" class="form-label">Lluvioso</label>
+                    <input type="number" class="form-control" id="lluvioso_normal" id="lluvioso_normal" aria-describedby="LluviosoHelp">
+                    <label for="extremo_normal" class="form-label">Extremo</label>
+                    <input type="number" class="form-control" id="extremo_normal" name="extremo_normal" aria-describedby="ExtremoHelp">
+                    <p>Desgaste de Neumaticos</p>
+                    <label for="seco_neumaticos" class="form-label">Seco</label>
+                    <input type="number" class="form-control" id="seco_neumaticos" name="seco_neumaticos" aria-describedby="SecoHelp">
+                    <label for="lluvioso_neumaticos" class="form-label">Lluvioso</label>
+                    <input type="number" class="form-control" id="lluvioso_neumaticos" name="lluvioso_neumaticos" aria-describedby="LluviosoHelp">
+                    <label for="extremo_neumaticos" class="form-label">Extremo</label>
+                    <input type="number" class="form-control" id="extremo_neumaticos" name="extremo_neumaticos" aria-describedby="ExtremoHelp">
+                    <div class="step-navigation">
+                        <button type="button" class="step-btn prev-step">Anterior</button>
+                        <button type="button" class="step-btn next-step">Siguiente: Conducción Agresiva</button>
+                    </div>
+                </div>
+
+                <!-- Step 4: Conducción Agresiva -->
+                <div class="step-section" data-step="4">
+                    <h3>Conducción Agresiva</h3>
+                    <label for="velocidad_agresiva" class="form-label">Velocidad Promedio</label>
+                    <input type="number" class="form-control" id="velocidad_agresiva" name="velocidad_agresiva" aria-describedby="VelocPromHelp">
+                    <p>Consumo de Combustible</p>
+                    <label for="seco_agresiva" class="form-label">Seco</label>
+                    <input type="number" class="form-control" id="seco_agresiva" name="seco_agresiva" aria-describedby="SecoHelp">
+                    <label for="lluvioso_agresiva" class="form-label">Lluvioso</label>
+                    <input type="number" class="form-control" id="lluvioso_agresiva" name="lluvioso_agresiva" aria-describedby="LluviosoHelp">
+                    <label for="extremo_agresiva" class="form-label">Extremo</label>
+                    <input type="number" class="form-control" id="extremo_agresiva" aria-describedby="ExtremoHelp">
+                    <p>Desgaste de Neumaticos</p>
+                    <label for="seco_agreneu" class="form-label">Seco</label>
+                    <input type="number" class="form-control" id="seco_agreneu" name="seco_agreneu" aria-describedby="SecoHelp">
+                    <label for="lluvioso_agreneu" class="form-label">Lluvioso</label>
+                    <input type="number" class="form-control" id="lluvioso_agreneu" name="lluvioso_agreneu"  aria-describedby="LluviosoHelp">
+                    <label for="extremo_agreneu" class="form-label">Extremo</label>
+                    <input type="number" class="form-control" id="extremo_agreneu" name="extremo_agreneu"  aria-describedby="ExtremoHelp">
+                    <div class="step-navigation">
+                        <button type="button" class="step-btn prev-step">Anterior</button>
+                        <button type="button" class="step-btn next-step">Siguiente: Ahorro de Combustible</button>
+                    </div>
+                </div>
+
+                <!-- Step 5: Ahorro de Combustible -->
+                <div class="step-section" data-step="5">
+                    <h3>Ahorro de Combustible</h3>
+                    <label for="velocidad_combustible" class="form-label">Velocidad Promedio</label>
+                    <input type="number" class="form-control" id="velocidad_combustible" name="velocidad_combustible"  aria-describedby="VelocPromHelp">
+                    <p>Consumo de Combustible</p>
+                    <label for="seco_ahorro" class="form-label">Seco</label>
+                    <input type="number" class="form-control" id="seco_ahorro" name="seco_ahorro" aria-describedby="SecoHelp">
+                    <label for="lluvioso_ahorro" class="form-label">Lluvioso</label>
+                    <input type="number" class="form-control" id="lluvioso_ahorro" name="lluvioso_ahorro" aria-describedby="LluviosoHelp">
+                    <label for="extremo_ahorro" class="form-label">Extremo</label>
+                    <input type="number" class="form-control" id="extremo_ahorro" name="extremo_ahorro"  aria-describedby="ExtremoHelp">
+                    <p>Desgaste de Neumaticos</p>
+                    <label for="seco_ahorro_neu" class="form-label">Seco</label>
+                    <input type="number" class="form-control" id="seco_ahorro_neu" name="seco_ahorro_neu" aria-describedby="SecoHelp">
+                    <label for="lluvioso_ahorro_neu" class="form-label">Lluvioso</label>
+                    <input type="number" class="form-control" id="lluvioso_ahorro_neu" name="lluvioso_ahorro_neu" aria-describedby="LluviosoHelp">
+                    <label for="extremo_ahorro_neu" class="form-label">Extremo</label>
+                    <input type="number" class="form-control" id="extremo_ahorro_neu" name="extremo_ahorro_neu" aria-describedby="ExtremoHelp">
+                    <div class="step-navigation">
+                        <button type="button" class="step-btn prev-step">Anterior</button>
+                        <button type="button" id="btnRegistrarVehiculo" class="btn-submit">Guardar Vehículo</button>
+                    </div>
+                </div>
+                <button id="btnEditar" data-id="${id}" type="submit" class="btn-submit">
+                    Editar Equipo
+                </button>
+                `;
+    
+                formEditarVehiculo.style.display = 'block';
+                this.editarVehiculo();
+            }
+        })
+        .catch((error) => {
+            console.error('Error en la solicitud GET:', error.message);
+        });
+    }
+
+    editarVehiculo() {
+        const formEditarVehiculo = this.shadowRoot.querySelector('#formEditarVehiculo');
+        
+        this.shadowRoot.querySelector('#btnEditar').addEventListener("click", (e) => {
+            e.preventDefault();
+            
+            const datos = Object.fromEntries(new FormData(formEditarVehiculo).entries());
+            const id = e.target.getAttribute("data-id");
+            
+            patchVehiculos(datos, id)
+                .then(response => {
+                    if (response.ok) {
+                        return response.json();
+                    } else {
+                        throw new Error(`Error en la solicitud PATCH: ${response.status} - ${response.statusText}`);
+                    }
+                })
+                .then(responseData => {
+                    console.log("Vehiculo actualizado:", responseData);
+                    Swal.fire({
+                        icon: 'success',
+                        title: '¡Éxito!',
+                        text: 'El vehiculo ha sido editado correctamente.',
+                    });
+                    this.mostrarVehiculos();
+                })
+                .catch(error => {
+                    console.error('Error en la solicitud PATCH:', error.message);
+                    Swal.fire({
+                        icon: 'error',
+                        title: '¡Error!',
+                        text: 'Hubo un problema al editar el vehiculo.',
+                    });
+                });
+        });
     }
 }
 
