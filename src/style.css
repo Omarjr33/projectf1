@@ -14,7 +14,7 @@ body {
   overflow-x: hidden; /* Esto está bien para evitar el scroll horizontal */
   position: relative; /* Cambia a relative o elimina esta línea */
   width: 100%;
-  height: 100%;
+  height: 40%;
 }
 
 nav {

@@ -238,7 +238,7 @@ export class mainFormula extends HTMLElement{
                      updateCarousel(section);
                  }
              });
-         }, 3000);
+         }, 4000);
         this.addEventListener();
     }
 
