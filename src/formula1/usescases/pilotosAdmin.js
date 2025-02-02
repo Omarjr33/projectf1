@@ -619,17 +619,6 @@ export class pilotosAdmin extends HTMLElement {
                         <option value="">Seleccionar Equipo</option>
                     </select>
                 </div>
-                <div class="form-group">
-                    <label for="imagenPiloto" class="form-label">Imagen del Piloto</label>
-                    <div class="image-upload-container" id="dropZone">
-                        <i>📁</i>
-                        <p class="image-upload-text">Arrastra una imagen aquí o haz clic para seleccionar</p>
-                        <input type="file" class="file-input" id="imagenPiloto" name="imagenPiloto" accept="image/*">
-                    </div>
-                    <div class="preview-container" style="display: block;">
-                        <img class="preview-image" id="imagePreview" src="${imagenPiloto}" alt="Preview">
-                    </div>
-                </div>
 
                 <button type="submit" class="btn-submit" id="btnEditarPiloto" data-id="${id}">
                     Editar Piloto
