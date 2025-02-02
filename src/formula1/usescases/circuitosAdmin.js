@@ -78,11 +78,6 @@ export class circuitosAdmin extends HTMLElement {
             <style>${styles}</style>
             <div class="card">
                 <form id="formCrearCircuito">
-                    <div class="form-group">
-                        <label for="idCircuito">ID</label>
-                        <input type="number" id="idCircuito" name="idCircuito" value="${idCircuito}" disabled>
-                    </div>
-
                     <div class="row">
                         <div class="form-group">
                             <label for="nombreCircuito">Nombre Circuito</label>
@@ -138,7 +133,7 @@ export class circuitosAdmin extends HTMLElement {
                         </div>
                         <div class="form-group">
                             <label for="nombrePiloto" class="form-label">Piloto</label>
-                            <select class="form-select" class="nombrePilotoVeh" name="nombrePiloto">
+                            <select class="nombrePilotoVeh" name="nombrePiloto1">
                                 <option value="">Seleccionar Piloto</option>
                             </select>
                         </div>
@@ -148,7 +143,7 @@ export class circuitosAdmin extends HTMLElement {
                         </div>
                         <div class="form-group">
                             <label for="nombrePiloto" class="form-label">Piloto</label>
-                            <select class="form-select" class="nombrePilotoVeh" name="nombrePiloto">
+                            <select class="nombrePilotoVeh" name="nombrePiloto2">
                                 <option value="">Seleccionar Piloto</option>
                             </select>
                         </div>
@@ -158,7 +153,7 @@ export class circuitosAdmin extends HTMLElement {
                         </div>
                         <div class="form-group">
                             <label for="nombrePiloto" class="form-label">Piloto</label>
-                            <select class="form-select" class="nombrePilotoVeh" name="nombrePiloto">
+                            <select class="nombrePilotoVeh" name="nombrePiloto3">
                                 <option value="">Seleccionar Piloto</option>
                             </select>
                         </div>
@@ -182,17 +177,20 @@ export class circuitosAdmin extends HTMLElement {
         fetch('../../../db.json')
         .then(response => response.json()) 
         .then(data => {
-            const nombrePiloto = this.shadowRoot.querySelectorAll(".nombrePilotoVeh");
-            
-            data.pilotos.forEach(piloto => {
-                const option = document.createElement("option");
-                option.value = piloto.id;
-                option.textContent = piloto.nombrePiloto;
-                nombrePiloto.appendChild(option);
+            const selectsPilotos = this.shadowRoot.querySelectorAll(".nombrePilotoVeh"); // Selecciona todos los <select>
+
+            // Iterar sobre cada <select> y añadir los pilotos
+            selectsPilotos.forEach(select => {
+                data.pilotos.forEach(piloto => {
+                    const option = document.createElement("option");
+                    option.value = piloto.id;
+                    option.textContent = piloto.nombrePiloto;
+                    select.appendChild(option); // Agregar opción al select correspondiente
+                });
             });
         })
         .catch(error => {
-            console.error("Error al cargar los datos de los vehículos:", error);
+            console.error("Error al cargar los datos de los pilotos:", error);
         });
     }
 
@@ -208,7 +206,22 @@ export class circuitosAdmin extends HTMLElement {
         const formData = new FormData(formCrearCircuito);
         const datos = Object.fromEntries(formData.entries());
 
-        postCircuitos(datos)
+        const circuito = {
+            nombreCircuito: datos.nombreCircuito,
+            paisCircuito: datos.paisCircuito,
+            longitud: datos.longitud,
+            vueltas: datos.vueltas,
+            descripcion: datos.descripcion,
+            record_vuelta: { tiempo: datos.tiempo, piloto: datos.piloto, año: datos.año },
+            ganadores: [
+            { temporada: datos.temporada1, piloto: datos.nombrePiloto1 },
+            { temporada: datos.temporada2, piloto: datos.nombrePiloto2 },
+            { temporada: datos.temporada3, piloto: datos.nombrePiloto3 }
+            ],
+            imagen: datos.imageCircuito
+        }
+
+        postCircuitos(circuito)
             .then(response => response.json())
             .then(responseData => {
                 statusMessage.textContent = '¡Circuito registrado exitosamente!';
@@ -228,47 +241,42 @@ export class circuitosAdmin extends HTMLElement {
 
     mostrarCircuitos = () => {
         getCircuitos()
-            .then((circuitos) => {
-                if (!Array.isArray(circuitos)) {
-                    console.error("Los datos recibidos no son un array:", circuitos);
-                    return;
-                }
+        .then((circuitos) => {
+            const circuitosCards = this.shadowRoot.querySelector('#circuitosCards');
+            circuitosCards.innerHTML = '';
+            
+            circuitos.forEach((circuito) => {
+                const divItems = document.createElement('div');
+                divItems.classList.add('col');
+                divItems.innerHTML = /*html*/ `
+                <div id="card__listar" class="card">
+                    <img src="${circuito.imageCircuito}" alt="${circuito.nombreCircuito} Logo">
+                    <div class="card__content">
+                        <h1 class="card__title">${circuito.paisCircuito}</h1>
+                        <p class="card__pais">🌍 ${circuito.longitud}</p>
+                        <p class="card__motor">⚡ ${circuito.descripcion}</p>
+                    </div>
+                    <div class="card__actions">
+                        <button class="btnEditarForm" data-id="${circuito.id}">Editar</button>
+                        <button class="btnEliminar" data-id="${circuito.id}">Eliminar</button>
+                    </div>
+                </div>
+                <form id="formEditarCircuito" style="display: none;">
+                </form>
+                `;
+                circuitosCards.appendChild(divItems);
+            });
 
-                const circuitosCards = this.shadowRoot.querySelector('#circuitosCards');
-                circuitosCards.innerHTML = '';
-
-                circuitos.forEach((circuito) => {
-                    const divItems = document.createElement('div');
-                    divItems.classList.add('col');
-                    divItems.innerHTML = `
-                        <div class="card">
-                            <img src="${circuito.imageCircuito}" alt="${circuito.nombreCircuito}">
-                            <div class="card__content">
-                                <h1>${circuito.nombreCircuito}</h1>
-                                <p>🌍 ${circuito.paisCircuito}</p>
-                                <p>⚡ ${circuito.vueltas} vueltas</p>
-                                <p>📏 ${circuito.longitud} km</p>
-                                <p>${circuito.descripcion}</p>
-                            </div>
-                            <div class="card__actions">
-                                <button class="btnEditarForm" data-id="${circuito.id}">Editar</button>
-                                <button class="btnEliminar" data-id="${circuito.id}">Eliminar</button>
-                            </div>
-                        </div>
-                         <form id="formEditarCircuito" style="display: none;">
-                        </form>
-                    `;
-                    circuitosCards.appendChild(divItems);
+            this.eliminarVehiculo();
+            this.shadowRoot.querySelectorAll('.btnEditarForm').forEach((btnEditarForm) => {
+                btnEditarForm.addEventListener("click", (e) => {
+                    const id = e.target.getAttribute("data-id");
+                    this.mostrarFormularioEdit(id);
                 });
-
-                this.shadowRoot.querySelectorAll('.btnEditarForm').forEach((btnEditarForm) => {
-                    btnEditarForm.addEventListener("click", (e) => {
-                        const id = e.target.getAttribute("data-id");
-                        this.mostrarFormularioEdit(id);
-                    });
-                });
-            })
-            .catch((error) => console.error('Error en la solicitud GET:', error));
+            });
+        }).catch ((error) => {
+            console.error('Error en la solicitud GET:', error.message);
+        });
     }
 
     eliminarCircuitos() {

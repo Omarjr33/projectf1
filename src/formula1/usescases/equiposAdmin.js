@@ -319,7 +319,18 @@ export class equiposAdmin extends HTMLElement {
                         <label class="form-label" for="motorEquipo">Motor</label>
                         <input type="text" class="form-control" id="motorEquipo" name="motorEquipo" placeholder="Especifique el motor">
                     </div>
-                    
+                    <div class="form-group">
+                        <label for="nombrePiloto" class="form-label">Piloto</label>
+                        <select class="nombrePilotoVeh" name="nombrePiloto1">
+                            <option value="">Seleccionar Piloto</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="nombrePiloto" class="form-label">Piloto</label>
+                        <select class="nombrePilotoVeh" name="nombrePiloto2">
+                            <option value="">Seleccionar Piloto</option>
+                        </select>
+                    </div>
                     <div class="form-group">
                         <label class="form-label" for="imagenEquipo">Imagen del Equipo</label>
                         <div class="image-upload-container" id="dropZone">
@@ -348,6 +359,25 @@ export class equiposAdmin extends HTMLElement {
         </div>
         `;
         this.addEventListener();
+
+        fetch('../../../db.json')
+        .then(response => response.json()) 
+        .then(data => {
+            const selectsPilotos = this.shadowRoot.querySelectorAll(".nombrePilotoVeh"); // Selecciona todos los <select>
+
+            // Iterar sobre cada <select> y añadir los pilotos
+            selectsPilotos.forEach(select => {
+                data.pilotos.forEach(piloto => {
+                    const option = document.createElement("option");
+                    option.value = piloto.id;
+                    option.textContent = piloto.nombrePiloto;
+                    select.appendChild(option); // Agregar opción al select correspondiente
+                });
+            });
+        })
+        .catch(error => {
+            console.error("Error al cargar los datos de los pilotos:", error);
+        });
     }
 
     addEventListener(){
@@ -420,8 +450,16 @@ export class equiposAdmin extends HTMLElement {
                 reader.onloadend = () => {
                     const datos = Object.fromEntries(formData.entries());
                     datos.imagenEquipo = reader.result;
+
+                    const equipo = {
+                        nombreEquipo: datos.nombreEquipo,
+                        paisEquipo: datos.paisEquipo,
+                        motorEquipo: datos.motorEquipo,
+                        pilotos: [datos.nombrePiloto1, datos.nombrePiloto2], // IDs de pilotos
+                        imagenEquipo: datos.imagenEquipo
+                    }
                     
-                    postEquipos(datos)
+                    postEquipos(equipo)
                         .then(response => {
                             if (response.ok) {
                                 return response.json();

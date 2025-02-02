@@ -509,7 +509,6 @@ export class pilotosAdmin extends HTMLElement {
 
                 pilotos.forEach((piloto) => {
                     const { equipoPiloto } = piloto;
-                    const equipoNombre = equiposMap[equipoPiloto];
 
                     const divItems = document.createElement('div');
                     divItems.classList.add('col');
@@ -521,7 +520,7 @@ export class pilotosAdmin extends HTMLElement {
                             </div>
                             <div class="card__info">
                                 <h1 class="card__title">${piloto.nombrePiloto}</h1>
-                                <p class="card__pais">${equipoNombre}</p>
+                                <p class="card__pais">${equipoPiloto}</p>
                                 <p class="card__rol">${piloto.rolPiloto}</p>
                                 <div>
                                     <button class="btnEditarForm" data-id="${piloto.id}">Editar</button>
