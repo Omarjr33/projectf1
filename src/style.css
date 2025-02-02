@@ -6,16 +6,15 @@
 }
 
 body {
-margin: 0;
-font-family: 'Arial', sans-serif;
-background-color: var(--background-dark);
-color: var(--text-color);
-min-height: 100vh;
-overflow-x: hidden;
-/* Eliminar cualquier scroll vertical por defecto */
-position: fixed;
-width: 100%;
-height: 100%;
+  margin: 0;
+  font-family: 'Arial', sans-serif;
+  background-color: var(--background-dark);
+  color: var(--text-color);
+  min-height: 100vh; /* Esto asegura que el body tenga al menos la altura de la ventana */
+  overflow-x: hidden; /* Esto está bien para evitar el scroll horizontal */
+  position: relative; /* Cambia a relative o elimina esta línea */
+  width: 100%;
+  height: 100%;
 }
 
 nav {
