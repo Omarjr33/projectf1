@@ -5,11 +5,14 @@ export class pilotosAdmin extends HTMLElement {
     constructor() {
         super();
         this.attachShadow({ mode: 'open' });
+        this.REMOVE_BG_API_KEY = "aY8rAuiaWeD67yde5B1z9hyJ";
         this.render();
         this.crearPilotos();
         this.eliminarPiloto();
         this.editarPiloto();
+        this.setupBackgroundRemoval();
     }
+
     render() {
         this.shadowRoot.innerHTML = /*html*/ `
         <style>
@@ -176,7 +179,6 @@ export class pilotosAdmin extends HTMLElement {
                 color: white;
             }
 
-            /* Estilos para las tarjetas 3D */
             #pilotosCards {
                 display: flex;
                 flex-wrap: wrap;
@@ -396,11 +398,42 @@ export class pilotosAdmin extends HTMLElement {
         });
     }
 
+    setupBackgroundRemoval() {
+        // Method to initialize background removal functionality
+    }
+
+    async removeBackground(file) {
+        const formData = new FormData();
+        formData.append('image_file', file);
+        formData.append('size', 'auto');
+
+        try {
+            const response = await fetch("https://api.remove.bg/v1.0/removebg", {
+                method: "POST",
+                headers: { 
+                    "X-Api-Key": this.REMOVE_BG_API_KEY 
+                },
+                body: formData
+            });
+
+            if (!response.ok) {
+                throw new Error('Background removal failed');
+            }
+
+            const blob = await response.blob();
+            return blob;
+        } catch (error) {
+            console.error('Error removing background:', error);
+            throw error;
+        }
+    }
+
     addEventListener() {
         this.shadowRoot.querySelector('#btnListarPilotos').addEventListener("click", (e) => {
             this.mostrarPilotos();
         });
     }
+
 
     crearPilotos() {
         const formCrearPiloto = this.shadowRoot.querySelector('#formCrearPiloto');
@@ -427,6 +460,7 @@ export class pilotosAdmin extends HTMLElement {
             e.preventDefault();
             dropZone.style.borderColor = 'var(--accent-color)';
             dropZone.style.backgroundColor = 'rgba(99, 102, 241, 0.1)';
+            dropZone.style.backgroundColor = 'rgba(99, 102, 241, 0.1)';
         });
 
         dropZone.addEventListener('dragleave', (e) => {
@@ -451,7 +485,8 @@ export class pilotosAdmin extends HTMLElement {
             if (file) {
                 handleImageDisplay(file);
             }
-        });// Manejo del envío del formulario
+        });
+
         this.shadowRoot.querySelector('#btnRegistrarPiloto').addEventListener("click", (e) => {
             e.preventDefault();
             const formData = new FormData(formCrearPiloto);
@@ -459,34 +494,74 @@ export class pilotosAdmin extends HTMLElement {
             const file = fileInput.files[0];
             if (file) {
                 const reader = new FileReader();
-                reader.onloadend = () => {
+                reader.onloadend = async () => {
                     const datos = Object.fromEntries(formData.entries());
-                    datos.imagenPiloto = reader.result;
+                    
+                    try {
+                        // Attempt to remove background
+                        const backgroundRemovedBlob = await this.removeBackground(file);
+                        
+                        // Convert blob to base64
+                        const backgroundRemovedReader = new FileReader();
+                        backgroundRemovedReader.onloadend = () => {
+                            datos.imagenPiloto = backgroundRemovedReader.result;
 
-                    postPilotos(datos)
-                        .then(response => {
-                            if (response.ok) {
-                                return response.json();
-                            }
-                            throw new Error(`Error: ${response.status} - ${response.statusText}`);
-                        })
-                        .then(responseData => {
-                            console.log('Respuesta exitosa:', responseData);
-                            statusMessage.textContent = '¡Piloto registrado exitosamente!';
-                            statusMessage.className = 'status-message success';
-                            statusMessage.style.display = 'block';
-                            formCrearPiloto.reset();
-                            previewContainer.style.display = 'none';
-                            setTimeout(() => {
-                                statusMessage.style.display = 'none';
-                            }, 3000);
-                        })
-                        .catch(error => {
-                            console.error('Error:', error.message);
-                            statusMessage.textContent = 'Error al registrar el piloto. Por favor, intente nuevamente.';
-                            statusMessage.className = 'status-message error';
-                            statusMessage.style.display = 'block';
-                        });
+                            postPilotos(datos)
+                                .then(response => {
+                                    if (response.ok) {
+                                        return response.json();
+                                    }
+                                    throw new Error(`Error: ${response.status} - ${response.statusText}`);
+                                })
+                                .then(responseData => {
+                                    console.log('Respuesta exitosa:', responseData);
+                                    statusMessage.textContent = '¡Piloto registrado exitosamente con imagen sin fondo!';
+                                    statusMessage.className = 'status-message success';
+                                    statusMessage.style.display = 'block';
+                                    formCrearPiloto.reset();
+                                    previewContainer.style.display = 'none';
+                                    setTimeout(() => {
+                                        statusMessage.style.display = 'none';
+                                    }, 3000);
+                                })
+                                .catch(error => {
+                                    console.error('Error:', error.message);
+                                    statusMessage.textContent = 'Error al registrar el piloto. Por favor, intente nuevamente.';
+                                    statusMessage.className = 'status-message error';
+                                    statusMessage.style.display = 'block';
+                                });
+                        };
+                        backgroundRemovedReader.readAsDataURL(backgroundRemovedBlob);
+                    } catch (error) {
+                        // Fallback to original image if background removal fails
+                        console.warn('Background removal failed, using original image:', error);
+                        datos.imagenPiloto = reader.result;
+
+                        postPilotos(datos)
+                            .then(response => {
+                                if (response.ok) {
+                                    return response.json();
+                                }
+                                throw new Error(`Error: ${response.status} - ${response.statusText}`);
+                            })
+                            .then(responseData => {
+                                console.log('Respuesta exitosa:', responseData);
+                                statusMessage.textContent = '¡Piloto registrado exitosamente!';
+                                statusMessage.className = 'status-message success';
+                                statusMessage.style.display = 'block';
+                                formCrearPiloto.reset();
+                                previewContainer.style.display = 'none';
+                                setTimeout(() => {
+                                    statusMessage.style.display = 'none';
+                                }, 3000);
+                            })
+                            .catch(error => {
+                                console.error('Error:', error.message);
+                                statusMessage.textContent = 'Error al registrar el piloto. Por favor, intente nuevamente.';
+                                statusMessage.className = 'status-message error';
+                                statusMessage.style.display = 'block';
+                            });
+                    }
                 };
                 reader.readAsDataURL(file);
             }
@@ -601,7 +676,7 @@ export class pilotosAdmin extends HTMLElement {
         .then((pilotos) => {
             const piloto = pilotos.find((piloto) => piloto.id === id);
             if (piloto) {
-                const {nombrePiloto, rolPiloto, equipoPiloto, imagenPiloto } = piloto;
+                const {nombrePiloto, rolPiloto, equipoPiloto } = piloto;
 
                 formEditarPiloto.innerHTML = /*html*/ `
                 <div class="form-group">
