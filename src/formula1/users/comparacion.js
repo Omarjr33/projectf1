@@ -58,9 +58,16 @@ export class CompararVehiculos extends HTMLElement {
             infoDiv.classList.add("car-info");
             infoDiv.innerHTML = `
                 <h3>Información del Vehículo</h3>
-                <p><strong>Motor:</strong> ${selectedVehicle.motor}</p>
-                <p><strong>Equipo</strong> ${selectedVehicle.equipoPiloto}</p>
-                <p><strong>Modelo:</strong> ${selectedVehicle.modelo}</p>
+                <img src="${selectedVehicle.imagenVehiculo}" alt="${selectedVehicle.motor}" class="modal__car-image">
+                <p>Velocidad Maxima:</strong> ${selectedVehicle.velocidadMaximaKmh}</p>
+                <h3> Consumo de Combustible </h3>
+                <span>Seco: ${selectedVehicle.rendimiento.conduccionAgresiva.consumoCombustible.seco}</span>
+                <span>Lluvia: ${selectedVehicle.rendimiento.conduccionAgresiva.consumoCombustible.lluvioso}</span>
+                <span>Extremo: ${selectedVehicle.rendimiento.conduccionAgresiva.consumoCombustible.extremo}</span>
+                <h3> Desgaste de Neumáticos</h3>
+                <span>Seco: ${selectedVehicle.rendimiento.conduccionNormal.desgasteNeumaticos.seco}</span>
+                <span>Lluvia: ${selectedVehicle.rendimiento.conduccionNormal.desgasteNeumaticos.lluvioso}</span>
+                <span>Extremo: ${selectedVehicle.rendimiento.conduccionNormal.desgasteNeumaticos.extremo}</span>
             `;
             container.appendChild(infoDiv);
         }

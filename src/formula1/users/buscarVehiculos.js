@@ -1,5 +1,6 @@
 import { getVehiculos } from "../../Apis/vehiculosApis.js";
 import { getPilotos } from "../../Apis/pilotosApis.js";
+import "./comparacion.js"
 
 export class BuscarVehiculos extends HTMLElement {
     constructor() {
@@ -282,8 +283,13 @@ export class BuscarVehiculos extends HTMLElement {
                 <div id="modalContent"></div>
             </div>
         </div>
+        <div class="card">
+        <h1>Compara nuestros Vehiculos</h1>
+        <button id="btnListar" type="button">comparar</button>
+        <div id="circuitosCards"></div>
+    </div>
         `;
-
+        this.addEventListener();
         const searchBar = this.shadowRoot.getElementById("search");
         searchBar.addEventListener("input", (e) => {
             this.renderGallery(e.target.value);
@@ -302,6 +308,15 @@ export class BuscarVehiculos extends HTMLElement {
         });
     }
 
+    addEventListener() {
+        this.shadowRoot.querySelector('#btnListar').addEventListener("click", () => {
+            this.comparacion();
+        });
+    }
+
+    comparacion(){
+       this.shadowRoot.innerHTML= `<comparar-vehiculos> </comparar-vehiculos>`;
+    }
     showModal(vehiculo) {
         const modal = this.shadowRoot.getElementById("vehicleModal");
         const modalContent = this.shadowRoot.getElementById("modalContent");
