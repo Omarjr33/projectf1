@@ -9,7 +9,7 @@ export class adminIndex extends HTMLElement {
         this.render();
     }
 
-    render() {
+    render(){
         this.innerHTML = /*html*/ `
         <style>
             :host {
