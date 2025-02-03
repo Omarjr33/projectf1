@@ -1,5 +1,7 @@
 import { getUsuarios } from "../../Apis/usuariosApis.js";
+
 import Swal from 'sweetalert2';
+import "./usersIndex.js";
 
 export class loginUser extends HTMLElement {
     constructor() {
@@ -186,7 +188,7 @@ export class loginUser extends HTMLElement {
     adminUsers() {
         //Component Página Pilotos
         this.innerHTML = `
-        
+        <users-index></users-index>
         `;
     }
 }
