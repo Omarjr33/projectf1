@@ -1,23 +1,13 @@
 {
   "users": [
     {
-      "id": "1",
-      "usuario": "John Doe",
-      "contraseña": "12345678"
-    },
-    {
-      "id": "c45e",
+      "id": "636c",
       "usuario": "valentina",
       "contraseña": "12345678"
     },
     {
-      "id": "41ad",
-      "usuario": "Mariana",
-      "contraseña": "12345678"
-    },
-    {
-      "id": "63b4",
-      "usuario": "Omar ",
+      "id": "d5f3",
+      "usuario": "Omar",
       "contraseña": "12345678"
     }
   ]
