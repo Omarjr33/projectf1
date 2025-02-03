@@ -105,7 +105,6 @@ export class mainFormula extends HTMLElement{
                 </div>
             </div>
         </section>
-
         <footer class="footer">
             <div class="contact-info">
                 <section class="botao-2">
