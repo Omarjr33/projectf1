@@ -155,26 +155,23 @@ export class loginUser extends HTMLElement {
                         text: "Usuario no registrado!",
                     });
                     return;
-                }
-
-                // Verificar la contraseña
-                if (user.contraseña !== password) {
+                } else if (user.contraseña !== password) {
                     Swal.fire({
                         icon: "error",
                         title: "Oops...",
                         text: "Contraseña Incorrecta!",
                     });
                     return;
+                } else {
+                    Swal.fire({
+                        icon: "success",
+                        title: "Bienvenido!",
+                        text: "Ingreso Exitoso",
+                    });
+                    this.adminUsers();
+                    loginForm.reset();
+                    console.log('Usuario autenticado:', user);
                 }
-
-                Swal.fire({
-                    icon: "success",
-                    title: "Bienvenido!",
-                    text: "Ingreso Exitoso",
-                });
-                loginForm.reset();
-                console.log('Usuario autenticado:', user);
-
             } catch (error) {
                 console.error("Error al iniciar sesión:", error.message);
                 Swal.fire({
@@ -184,6 +181,13 @@ export class loginUser extends HTMLElement {
                 });
             }
         });
+    }
+
+    adminUsers() {
+        //Component Página Pilotos
+        this.innerHTML = `
+        
+        `;
     }
 }
 

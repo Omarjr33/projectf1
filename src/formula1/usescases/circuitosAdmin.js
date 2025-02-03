@@ -215,7 +215,7 @@ export class circuitosAdmin extends HTMLElement {
             { temporada: datos.temporada2, piloto: datos.nombrePiloto2 },
             { temporada: datos.temporada3, piloto: datos.nombrePiloto3 }
             ],
-            imagenCircuito: datos.imageCircuito
+            imageCircuito: datos.imageCircuito
         }
 
         postCircuitos(circuito)

@@ -148,5 +148,17 @@
         }
       }
     }
+  ],
+  "users": [
+    {
+      "id": "636c",
+      "usuario": "valentina",
+      "contraseña": "12345678"
+    },
+    {
+      "id": "d5f3",
+      "usuario": "Omar",
+      "contraseña": "12345678"
+    }
   ]
 }
