@@ -112,6 +112,7 @@
           "velocidadNormal": "320",
           "consumoCombustible": {
             "seco": "1.9",
+            "lluvioso": "1.9",
             "extremo": "2.4"
           },
           "desgasteNeumaticos": {
