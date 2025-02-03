@@ -186,16 +186,16 @@ export class buscarPilotos extends HTMLElement {
             }
 
             .elemento__personagem {
-                width: 100%;
-                height: 90%;
+                width: 120%;
+                height: 100%;
                 opacity: 0;
                 transition: all 0.5s;
                 position: absolute;
                 z-index: 3;
                 bottom: 0;
-                left: 0;
-                object-fit: contain;
-                object-position: bottom;
+                left: -10%;
+                object-fit: cover;
+                object-position: center;
             }
 
             .elemento__cartao:hover .elemento__personagem {
