@@ -1,18 +1,17 @@
+import { deleteCircuitos, getCircuitos, patchCircuitos, postCircuitos } from "../../Apis/circuitosApis.js";
 import Swal from 'sweetalert2';
-import { postCircuitos, getCircuitos, deleteCircuitos, patchCircuitos } from "../../Apis/circuitosApis.js";
 
-export class circuitosAdmin extends HTMLElement {
-    constructor() {
+export class CircuitosAdmin extends HTMLElement {
+    constructor(){
         super();
         this.attachShadow({ mode: 'open' });
         this.render();
-        this.eliminarCircuitos();
-        this.editarCircuito();
     }
 
-    render() {
+    render(){
         let idCircuito = Date.now();
-        const styles = `
+        this.shadowRoot.innerHTML = /*html*/`
+        <style>
             :host {
                 display: block;
                 font-family: 'Segoe UI', system-ui, sans-serif;
@@ -71,138 +70,150 @@ export class circuitosAdmin extends HTMLElement {
             button:hover {
                 background: rgb(93, 8, 8);
             }
-        `;
-
-        this.shadowRoot.innerHTML = `
-            <style>${styles}</style>
-            <div class="card">
-                <form id="formCrearCircuito">
-                    <div class="row">
-                        <div class="form-group">
-                            <label for="nombreCircuito">Nombre Circuito</label>
-                            <input type="text" id="nombreCircuito" name="nombreCircuito" placeholder="Ingrese nombre del circuito">
-                        </div>
-                        <div class="form-group">
-                            <label for="paisCircuito">País</label>
-                            <input type="text" id="paisCircuito" name="paisCircuito" placeholder="Ingrese país">
-                        </div>
+        </style>
+        <div class="card">
+            <form id="formCrearCircuito">
+                <div class="row">
+                    <div class="form-group">
+                        <label for="nombreCircuito">Nombre Circuito</label>
+                        <input type="text" id="nombreCircuito" name="nombreCircuito" placeholder="Ingrese nombre del circuito">
                     </div>
-
-                    <div class="row">
-                        <div class="form-group">
-                            <label for="vueltas">Vueltas</label>
-                            <input type="number" id="vueltas" name="vueltas" placeholder="Número de vueltas">
-                        </div>
-                        <div class="form-group">
-                            <label for="longitud">Longitud KM</label>
-                            <input type="number" id="longitud" name="longitud" placeholder="Longitud en kilómetros">
-                        </div>
+                    <div class="form-group">
+                        <label for="paisCircuito">País</label>
+                        <input type="text" id="paisCircuito" name="paisCircuito" placeholder="Ingrese país">
                     </div>
-
-                    <div class="row">
-                        <div class="form-group">
-                            <label for="imageCircuito">Imagen (URL)</label>
-                            <input type="url" id="imageCircuito" name="imageCircuito" placeholder="URL de la imagen">
-                        </div>
-                        <div class="form-group">
-                            <label for="descripcion">Descripción</label>
-                            <input type="text" id="descripcion" name="descripcion" placeholder="Descripción del circuito">
-                        </div>
-                    </div>
-                    <div class="row">
-                        <h1>Record Vuelta</h1>
-                        <div class="form-group">
-                            <label for="tiempo">Tiempo</label>
-                            <input type="text" id="tiempo" name="tiempo" placeholder="Tiempo">
-                        </div>
-                        <div class="form-group">
-                            <label for="piloto">Piloto</label>
-                            <input type="text" id="piloto" name="piloto" placeholder="Piloto">
-                        </div>
-                        <div class="form-group">
-                            <label for="año">Año</label>
-                            <input type="text" id="año" name="año" placeholder="Año">
-                        </div>
-                    </div>
-                    <div class="row">
-                        <h1>Ganadores</h1>
-                        <div class="form-group">
-                            <label for="temporada">Año Temporada</label>
-                            <input type="text" id="temporada1" name="temporada1" placeholder="Última temporada">
-                        </div>
-                        <div class="form-group">
-                            <label for="nombrePiloto" class="form-label">Piloto</label>
-                            <select class="nombrePilotoVeh" name="nombrePiloto1">
-                                <option value="">Seleccionar Piloto</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label for="temporada">Año Temporada</label>
-                            <input type="text" id="temporada2" name="temporada2" placeholder="Penúltima temporada">
-                        </div>
-                        <div class="form-group">
-                            <label for="nombrePiloto" class="form-label">Piloto</label>
-                            <select class="nombrePilotoVeh" name="nombrePiloto2">
-                                <option value="">Seleccionar Piloto</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label for="temporada">Año Temporada</label>
-                            <input type="text" id="temporada3" name="temporada3" placeholder="Antepenúltima temporada">
-                        </div>
-                        <div class="form-group">
-                            <label for="nombrePiloto" class="form-label">Piloto</label>
-                            <select class="nombrePilotoVeh" name="nombrePiloto3">
-                                <option value="">Seleccionar Piloto</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    <div class="row">
-                        <div class="form-group">
-                            <button id="btnRegistrarCircuito" type="button">Registrar Circuito</button>
-                            <div id="statusMessage" class="status-message"></div>
-                        </div>
-                    </div>
-                </form>
-
-                <div class="card">
-                    <h1>Conoce nuestros circuitos</h1>
-                    <button id="btnListar" type="button">↓</button>
-                    <div id="circuitosCards"></div>
                 </div>
+
+                <div class="row">
+                    <div class="form-group">
+                        <label for="vueltas">Vueltas</label>
+                        <input type="number" id="vueltas" name="vueltas" placeholder="Número de vueltas">
+                    </div>
+                    <div class="form-group">
+                        <label for="longitud">Longitud KM</label>
+                        <input type="number" id="longitud" name="longitud" placeholder="Longitud en kilómetros">
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="form-group">
+                        <label for="imagenCircuito">Imagen (URL)</label>
+                        <input type="url" id="imagenCircuito" name="imagenCircuito" placeholder="URL de la imagen">
+                    </div>
+                    <div class="form-group">
+                        <label for="descripcion">Descripción</label>
+                        <input type="text" id="descripcion" name="descripcion" placeholder="Descripción del circuito">
+                    </div>
+                </div>
+                <div class="row">
+                    <h1>Record Vuelta</h1>
+                    <div class="form-group">
+                        <label for="tiempo">Tiempo</label>
+                        <input type="text" id="tiempo" name="tiempo" placeholder="Tiempo">
+                    </div>
+                    <div class="form-group">
+                        <label for="piloto">Piloto</label>
+                        <input type="text" id="piloto" name="piloto" placeholder="Piloto">
+                    </div>
+                    <div class="form-group">
+                        <label for="año">Año</label>
+                        <input type="text" id="año" name="año" placeholder="Año">
+                    </div>
+                </div>
+                <div class="row">
+                    <h1>Ganadores</h1>
+                    <div class="form-group">
+                        <label for="temporada1">Año Temporada</label>
+                        <input type="text" id="temporada1" name="temporada1" placeholder="Última temporada">
+                    </div>
+                    <div class="form-group">
+                        <label for="nombrePiloto1" class="form-label">Piloto</label>
+                        <select class="nombrePilotoVeh" name="nombrePiloto1">
+                            <option value="">Seleccionar Piloto</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="temporada2">Año Temporada</label>
+                        <input type="text" id="temporada2" name="temporada2" placeholder="Penúltima temporada">
+                    </div>
+                    <div class="form-group">
+                        <label for="nombrePiloto2" class="form-label">Piloto</label>
+                        <select class="nombrePilotoVeh" name="nombrePiloto2">
+                            <option value="">Seleccionar Piloto</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="temporada3">Año Temporada</label>
+                        <input type="text" id="temporada3" name="temporada3" placeholder="Antepenúltima temporada">
+                    </div>
+                    <div class="form-group">
+                        <label for="nombrePiloto3" class="form-label">Piloto</label>
+                        <select class="nombrePilotoVeh" name="nombrePiloto3">
+                            <option value="">Seleccionar Piloto</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="form-group">
+                        <button id="btnRegistrarCircuito" type="submit">Registrar Circuito</button>
+                        <div id="statusMessage" class="status-message"></div>
+                    </div>
+                </div>
+            </form>
+
+            <div class="card">
+                <h1>Conoce nuestros circuitos</h1>
+                <button id="btnListar" type="button">↓</button>
+                <div id="circuitosCards"></div>
             </div>
+        </div>
         `;
+
+        this.addEventListener();
+        
+        // Cargar pilotos desde db.json
         fetch('../../../db.json')
-        .then(response => response.json()) 
-        .then(data => {
-            const nombrePiloto = this.shadowRoot.querySelectorAll(".nombrePilotoVeh");
-            
-            data.pilotos.forEach(piloto => {
-                const option = document.createElement("option");
-                option.value = piloto.id;
-                option.textContent = piloto.nombrePiloto;
-                nombrePiloto.appendChild(option);
+            .then(response => response.json())
+            .then(data => {
+                const selectsPilotos = this.shadowRoot.querySelectorAll(".nombrePilotoVeh");
+                selectsPilotos.forEach(select => {
+                    data.pilotos.forEach(piloto => {
+                        const option = document.createElement("option");
+                        option.value = piloto.id;
+                        option.textContent = piloto.nombrePiloto;
+                        select.appendChild(option);
+                    });
+                });
+            })
+            .catch(error => {
+                console.error("Error al cargar los datos de los pilotos:", error);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'No se pudieron cargar los pilotos. Por favor, recarga la página.',
+                });
             });
-        })
-        .catch(error => {
-            console.error("Error al cargar los datos de los vehículos:", error);
+    }
+
+    addEventListener() {
+        this.shadowRoot.querySelector('#btnListar').addEventListener("click", () => {
+            this.mostrarCircuitos();
+        });
+
+        this.shadowRoot.querySelector('#formCrearCircuito').addEventListener('submit', (e) => {
+            e.preventDefault(); // Evitar el comportamiento por defecto
+            this.crearCircuitos();
         });
     }
 
-    addEventListeners() {
-        this.shadowRoot.querySelector('#btnRegistrarCircuito').addEventListener("click", () => this.crearCircuito());
-        this.shadowRoot.querySelector('#btnListar').addEventListener("click", () => this.mostrarCircuitos());
-        this.shadowRoot.querySelector('#btnEditarForm').addEventListener("click", () => this.mostrarFormularioEdit());
-    }
-
-    crearCircuito = () => {
+    crearCircuitos = () => {
         const formCrearCircuito = this.shadowRoot.querySelector('#formCrearCircuito');
         const statusMessage = this.shadowRoot.querySelector('#statusMessage');
-
+    
         const formData = new FormData(formCrearCircuito);
         const datos = Object.fromEntries(formData.entries());
-
+    
         const circuito = {
             nombreCircuito: datos.nombreCircuito,
             paisCircuito: datos.paisCircuito,
@@ -215,7 +226,7 @@ export class circuitosAdmin extends HTMLElement {
             { temporada: datos.temporada2, piloto: datos.nombrePiloto2 },
             { temporada: datos.temporada3, piloto: datos.nombrePiloto3 }
             ],
-            imageCircuito: datos.imageCircuito
+            imagenCircuito: datos.imagenCircuito
         }
 
         postCircuitos(circuito)
@@ -234,16 +245,11 @@ export class circuitosAdmin extends HTMLElement {
                 statusMessage.textContent = 'Error al registrar el circuito.';
                 statusMessage.className = 'status-message error';
             });
-    }
+    };
 
     mostrarCircuitos = () => {
         getCircuitos()
             .then((circuitos) => {
-                if (!Array.isArray(circuitos)) {
-                    console.error("Los datos recibidos no son un array:", circuitos);
-                    return;
-                }
-
                 const circuitosCards = this.shadowRoot.querySelector('#circuitosCards');
                 circuitosCards.innerHTML = '';
 
@@ -252,7 +258,7 @@ export class circuitosAdmin extends HTMLElement {
                     divItems.classList.add('col');
                     divItems.innerHTML = `
                         <div class="card">
-                            <img src="${circuito.imageCircuito}" alt="${circuito.nombreCircuito}">
+                            <img src="${circuito.imagenCircuito}" alt="${circuito.nombreCircuito}">
                             <div class="card__content">
                                 <h1>${circuito.nombreCircuito}</h1>
                                 <p>🌍 ${circuito.paisCircuito}</p>
@@ -271,12 +277,14 @@ export class circuitosAdmin extends HTMLElement {
                     circuitosCards.appendChild(divItems);
                 });
 
-                this.shadowRoot.querySelectorAll('.btnEditarForm').forEach((btnEditarForm) => {
-                    btnEditarForm.addEventListener("click", (e) => {
+                this.shadowRoot.querySelectorAll('.btnEditarForm').forEach((btn) => {
+                    btn.addEventListener("click", (e) => {
                         const id = e.target.getAttribute("data-id");
                         this.mostrarFormularioEdit(id);
                     });
                 });
+
+                this.eliminarCircuitos();
             })
             .catch((error) => console.error('Error en la solicitud GET:', error));
     }
@@ -289,7 +297,7 @@ export class circuitosAdmin extends HTMLElement {
                 const id = e.target.getAttribute("data-id");
     
                 if (!id) {
-                    console.error("ID del circuitoo no encontrado.");
+                    console.error("ID del circuito no encontrado.");
                     return;
                 }
     
@@ -321,9 +329,9 @@ export class circuitosAdmin extends HTMLElement {
                 }
             }
         });
-    }   
-
-    mostrarFormularioEdit = (id) => {
+    } 
+    
+    mostrarFormularioEdit = async (id) => {
         const formEditarCircuito = this.shadowRoot.querySelector('#formEditarCircuito');
         formEditarCircuito.style.display = 'none';
         
@@ -373,7 +381,7 @@ export class circuitosAdmin extends HTMLElement {
             console.error('Error en la solicitud GET:', error.message);
         });
     }
-    
+
     editarCircuito() {
         const formEditarCircuito = this.shadowRoot.querySelector('#formEditarCircuito');
         
@@ -398,7 +406,7 @@ export class circuitosAdmin extends HTMLElement {
                         title: '¡Éxito!',
                         text: 'El circuito ha sido editado correctamente.',
                     });
-                    this.mostrarEquipos();
+                    this.mostrarCircuitos();
                 })
                 .catch(error => {
                     console.error('Error en la solicitud PATCH:', error.message);
@@ -410,7 +418,6 @@ export class circuitosAdmin extends HTMLElement {
                 });
         });
     }
-
 }
 
-customElements.define("circuitos-admin", circuitosAdmin);
+customElements.define("circuitos-admin", CircuitosAdmin);
