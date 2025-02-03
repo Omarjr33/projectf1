@@ -24,7 +24,7 @@ export class registroUser extends HTMLElement{
         this.querySelector('#btnRegistrarse').addEventListener('click', async (event) => {
             event.preventDefault(); // Evita que el botón active el envío automático del formulario
     
-            const username = this.querySelector('#username').value;
+            const username = this.querySelector('#username').value.toUpperCase();
             const password = this.querySelector('#password').value;
     
             if (!username || !password) {
@@ -50,7 +50,7 @@ export class registroUser extends HTMLElement{
                 const users = await getUsuarios();
 
                 // Verificar si el usuario ya está registrado
-                const userExists = users.some(user => user.usuario === username);
+                const userExists = users.some(user => user.usuario.toUpperCase() === username);
 
                 if (userExists) {
                     Swal.fire({

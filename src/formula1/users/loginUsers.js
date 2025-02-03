@@ -26,7 +26,7 @@ export class loginUser extends HTMLElement {
         this.querySelector('#btnIngresar').addEventListener('click', async (e) => {
             e.preventDefault();
 
-            const username = this.querySelector('#usernames').value.trim();
+            const username = this.querySelector('#usernames').value.trim().toUpperCase();
             const password = this.querySelector('#passwords').value.trim();
 
             if (!username || !password) {
@@ -46,7 +46,7 @@ export class loginUser extends HTMLElement {
                 }
 
                 // Verificar si el usuario existe
-                const user = users.find(user => user.usuario === username);
+                const user = users.find(user => user.usuario.toUpperCase() === username);
 
                 if (!user) {
                     Swal.fire({
