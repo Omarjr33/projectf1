@@ -147,6 +147,57 @@
           }
         }
       }
+    },
+    {
+      "id": "f771",
+      "imagenVehiculo": "https://upload.wikimedia.org/wikipedia/commons/9/99/Carlos_Sainz_Chinese_GP_2024.jpg",
+      "motor": "ferrari",
+      "modelo": "SF-24",
+      "equipoPiloto": "2c74",
+      "nombrePiloto": "0bb3",
+      "velocidadMaximaKmh": "375",
+      "aceleracion0a100": "2.6",
+      "rendimiento": {
+        "conduccionNormal": {
+          "velocidadNormal": "345",
+          "consumoCombustible": {
+            "seco": "2.0",
+            "lluvioso": "2.2",
+            "extremo": "2.3"
+          },
+          "desgasteNeumaticos": {
+            "seco": "2.3",
+            "lluvioso": "2.4",
+            "extremo": "2.6"
+          }
+        },
+        "conduccionAgresiva": {
+          "velocidadAgresiva": "320",
+          "consumoCombustible": {
+            "seco": "1.5",
+            "lluvioso": "2.3",
+            "extremo": "2.6"
+          },
+          "desgasteNeumaticos": {
+            "seco": "1.9",
+            "lluvioso": "2.7",
+            "extremo": "2.6"
+          }
+        },
+        "ahorroCombustible": {
+          "velocidadPromedio": "310",
+          "consumoCombustible": {
+            "seco": "2.0",
+            "lluvioso": "1.0",
+            "extremo": "3.2"
+          },
+          "desgasteNeumaticos": {
+            "seco": "1.4",
+            "lluvioso": "2.0",
+            "extremo": "1.9"
+          }
+        }
+      }
     }
   ],
   "users": [
