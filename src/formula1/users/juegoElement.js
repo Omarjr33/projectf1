@@ -1,32 +1,41 @@
+import { patchUsuarios, postUsuarios } from "../../Apis/usuariosApis.js";
+import Swal from 'sweetalert2';
+
 export class JuegoElement extends HTMLElement {
     constructor(){
         super();
         this.attachShadow({ mode: 'open' });
         this.render();
+        this.crearConfiguracion();
     }
 
     render(){
         this.shadowRoot.innerHTML = `
         <h1>Configuración Juego</h1>
-        <h2>Circuito</h2>
-        <div class="form-group">
-            <label for="nombreCircuito" class="form-label">Circuito</label>
-            <select id="circuitoSelect">
-                <option value="">Seleccionar Circuito</option>
-            </select>
-        </div>
-        <div class="circuitosInfo"></div>
+        <form id="formCrearConfig">
+            <h2>Circuito</h2>
+            <div class="form-group">
+                <label for="nombreCircuito" class="form-label">Circuito</label>
+                <select id="circuitoSelect">
+                    <option value="">Seleccionar Circuito</option>
+                </select>
+            </div>
+            <div class="circuitosInfo"></div>
 
-        <h2>Vehiculo</h2>
-        <div class="form-group">
-            <label for="vehiculo" class="form-label">Vehiculo</label>
-            <select id="vehiculoSelect">
-                <option value="">Seleccionar Vehiculo</option>
-            </select>
-        </div>
-        <div class="vehiculosInfo"></div>
+            <h2>Vehiculo</h2>
+            <div class="form-group">
+                <label for="vehiculo" class="form-label">Vehiculo</label>
+                <select id="vehiculoSelect">
+                    <option value="">Seleccionar Vehiculo</option>
+                </select>
+            </div>
+            <div class="vehiculosInfo"></div>
 
+        <button id="btnJugar" type="submit" class="btn-submit">Configuración</button>
+        </form>
         `;
+
+        this.addEventListeners();
 
         fetch('../../../db.json')
             .then(response => response.json()) 
@@ -61,6 +70,10 @@ export class JuegoElement extends HTMLElement {
             });
     }
 
+    addEventListeners() {
+        this.shadowRoot.querySelector('#btnJugar').addEventListener("click", () => this.crearConfiguracion());
+    }
+
     circuitoSelected(circuitos){
         const circuitoSelect = this.shadowRoot.getElementById("circuitoSelect");
         const circuitosInfoDiv = this.shadowRoot.querySelector(".circuitosInfo");
@@ -80,9 +93,9 @@ export class JuegoElement extends HTMLElement {
         if (circuito) {
             container.innerHTML = `
                 <label for="longitud">Longitud</label>
-                <input type="text" id="longitud" value="${circuito.longitud}" disabled>
+                <input type="text" id="longitud" name="longitud" value="${circuito.longitud}" disabled>
                 <label for="vueltas">Vueltas</label>
-                <input type="text" id="vueltas" value="${circuito.vueltas}" disabled>
+                <input type="text" id="vueltas" name="vueltas" value="${circuito.vueltas}" disabled>
             `;
         }
     }
@@ -106,13 +119,13 @@ export class JuegoElement extends HTMLElement {
         if (vehiculo) {
             container.innerHTML = `
                 <label for="motor">Motor</label>
-                <input type="text" id="motor" value="${vehiculo.motor}" disabled>
+                <input type="text" id="motor" name="motor" value="${vehiculo.motor}" disabled>
                 <label for="piloto">Piloto</label>
-                <input type="text" id="piloto" value="${vehiculo.nombrePiloto}" disabled>
-                <label for="longitud">Velocidad Máxima</label>
-                <input type="text" id="longitud" value="${vehiculo.velocidadMaximaKmh}" disabled>
+                <input type="text" id="piloto" name="piloto" value="${vehiculo.nombrePiloto}" disabled>
+                <label for="velocidadMaxima">Velocidad Máxima</label>
+                <input type="number" id="velocidadMaxima" name="velocidadMaxima" value="${vehiculo.velocidadMaximaKmh}" disabled>
                 <label for="aceleracion">Aceleración</label>
-                <input type="text" id="aceleracion" value="${vehiculo.aceleracion0a100}" disabled>
+                <input type="number" id="aceleracion" name="aceleracion" value="${vehiculo.aceleracion0a100}" disabled>
                 <div class="form-group">
                     <label for="vehiculosRendimiento" class="form-label">Rendimiento Vehiculo</label>
                     <select id="vehiculoRendimiento">
@@ -152,7 +165,7 @@ export class JuegoElement extends HTMLElement {
 
         container.innerHTML = `
         <label for="velocidad">Velocidad</label>
-        <input type="number" id="velocidad" value="${velocidad}" disabled>
+        <input type="number" id="velocidad" name="velocidad" value="${velocidad}" disabled>
         <h2>Consumo de Combustible</h2>
         <label for="consumoCombustible">Consumo de Combustible</label>
         <select id="climaSeleccionado">
@@ -190,7 +203,7 @@ export class JuegoElement extends HTMLElement {
         
         consumoDiv.innerHTML = `
             <label for="consumo">Consumo (L/100km)</label>
-            <input type="text" id="consumo" value="${consumo}" disabled>
+            <input type="text" id="consumo" name="consumo" value="${consumo}" disabled>
             <h2>Desgaste de Neumáticos</h2>
             <label for="desgasteNeumaticos">Desgaste de Neumáticos</label>
             <select id="desgasteSeleccionado">
@@ -228,8 +241,57 @@ export class JuegoElement extends HTMLElement {
 
         desgasteDiv.innerHTML = `
         <label for="desgaste">Desgaste</label>
-        <input type="text" id="desgaste" value="${desgasteNeu}" disabled>
+        <input type="text" id="desgaste" name="desgaste" value="${desgasteNeu}" disabled>
         `;
+    }
+
+    crearConfiguracion(){
+        const formCrearConfig = this.shadowRoot.querySelector('#formCrearConfig');
+
+        const formData = new FormData(formCrearConfig);
+        const datos = Object.fromEntries(formData.entries());
+
+        const usuario = {
+            configuracion: {
+                circuito: datos.nombreCircuito,
+                vueltas: datos.vueltas, 
+                longitud: datos.longitud,
+                aceleracion: datos.aceleracion,
+                velocidadMaxima: datos.velocidadMaxima,
+                velocidad: datos.velocidad,
+                consumo: datos.consumo,
+                desgaste: datos.desgaste,
+                piloto: datos.nombrePiloto,
+                motor: datos.motor
+            }
+        };
+
+        patchUsuarios(usuario, usuario.id)
+            .then(response => {
+                if (!response.ok) throw new Error(`Error: ${response.status}`);
+                return response.json();
+            })
+            .then(() => {
+                Swal.fire({
+                    icon: 'success',
+                    title: '¡Éxito!',
+                    text: 'Configuración registrada exitosamente',
+                    showConfirmButton: false,
+                    timer: 1500
+                });
+                alert("Configurado")
+                formCrearConfig.reset();
+                previewContainer.style.display = 'none';
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'No se pudo guardar la configuración. Por favor, intente nuevamente.',
+                });
+                alert("Error")
+            });
     }
 }
 

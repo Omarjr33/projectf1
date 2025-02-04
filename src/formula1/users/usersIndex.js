@@ -2,6 +2,7 @@ import './buscarCircuitos.js'
 import './buscarEquipos.js'
 import './buscarPilotos.js'
 import './buscarVehiculos.js'
+import './juegoElement.js'
 
 export class usersIndex extends HTMLElement {
     constructor() {
@@ -331,7 +332,7 @@ export class usersIndex extends HTMLElement {
                 const section = e.target.dataset.section;
 
                 // Cambiar secciones con animación
-                ['equipos', 'pilotos', 'circuitos', 'vehiculos'].forEach(containerName => {
+                ['equipos', 'pilotos', 'circuitos', 'vehiculos', 'juego'].forEach(containerName => {
                     const container = this.querySelector(`#${containerName}`);
                     if (containerName === section) {
                         container.style.display = 'block';
