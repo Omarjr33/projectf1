@@ -42,7 +42,7 @@ export class JuegoElement extends HTMLElement {
     }
 
     addEventListeners() {
-        this.shadowRoot.querySelector('#btnJugar').addEventListener("click", (event) => this.crearConfiguracion(event));
+        this.shadowRoot.querySelector('#btnJugar').addEventListener("click", (event) => this.crearConfiguracion(event) && this.simulacionJuego());
     }
 
     async fetchData() {
@@ -142,7 +142,7 @@ export class JuegoElement extends HTMLElement {
                 <label for="piloto">Piloto</label>
                 <input type="text" id="piloto" name="piloto" value="${vehiculo.nombrePiloto}">
                 <label for="velocidadMaxima">Velocidad Máxima</label>
-                <input type="text" id="velocidadMaximaKmh" name="velocidadMaximaKmh" value="${vehiculo.velocidadMaximaKmh}" disabled>
+                <input type="text" id="velocidadMaximaKmh" name="velocidadMaximaKmh" value="${vehiculo.velocidadMaximaKmh}">
                 <label for="aceleracion">Aceleración</label>
                 <input type="number" id="aceleracion" name="aceleracion" value="${vehiculo.aceleracion0a100}">
                 <div class="form-group">
@@ -286,20 +286,19 @@ export class JuegoElement extends HTMLElement {
     
         // Crear el objeto para enviar con los datos de la configuración
         const usuario = {
-                configuracion:
-                    {
-                    circuito: datos.circuitoSelect,
-                    vehiculo: datos.vehiculoSelect,
-                    vueltas: datos.vueltas,
-                    longitud: datos.longitud,
-                    aceleracion: datos.aceleracion,
-                    velocidadMaximaKmh: datos.velocidadMaximaKmh,
-                    velocidad: datos.velocidad,
-                    consumo: datos.consumo,
-                    desgaste: datos.desgaste,
-                    piloto: datos.nombrePiloto,
-                    motor: datos.motor,
-                }
+            configuracion: {
+                circuito: datos.circuitoSelect,
+                vehiculo: datos.vehiculoSelect,
+                vueltas: datos.vueltas,
+                longitud: datos.longitud,
+                aceleracion: datos.aceleracion,
+                velocidadMaximaKmh: datos.velocidadMaximaKmh,
+                velocidad: datos.velocidad,
+                consumo: datos.consumo,
+                desgaste: datos.desgaste,
+                piloto: datos.nombrePiloto,
+                motor: datos.motor,
+            }
         };
         
         try {
@@ -326,7 +325,13 @@ export class JuegoElement extends HTMLElement {
                 text: 'No se pudo guardar la configuración. Por favor, intente nuevamente.',
             });
         }
-    }    
+    }  
+    
+    simulacionJuego(){
+        this.shadowRoot.innerHTML = `
+        <simulacion-juego></simulacion-juego>
+        `
+    }
 }
 
 customElements.define("juego-element", JuegoElement);

@@ -1,4 +1,4 @@
-class Circuit {
+class Circuito {
     constructor(name, laps, length, weather) {
         this.name = name;
         this.laps = laps;
@@ -88,13 +88,82 @@ class SingleDriverRace {
     }
 }
 
+// Función para cargar los datos desde db.json
+function loadData() {
+    fetch('../../../db.json')
+        .then(response => response.json())
+        .then(data => {
+            populateCircuitos(data.circuitos);
+            populateVehiculos(data.vehiculos);
+            window.gameData = data; // Guardamos los datos en una variable global
+        });
+}
 
-// ejemplo de uso : 
-const monza = new Circuit("Monza", 2, 8.000, "dry");
-const car = new Car(2.6, 340, 450);
-const driver = new Driver("Max Verstappen", 1, car);
-const race = new SingleDriverRace(monza, driver);
+// Función para llenar el select de circuitos
+function populateCircuitos(circuitos) {
+    const circuitoSelect = document.querySelector("#circuitoSelect");
+    circuitoSelect.innerHTML = `<option value="">Seleccionar Circuito</option>`;
 
+    circuitos.forEach(circuito => {
+        const option = document.createElement("option");
+        option.value = circuito.id;
+        option.textContent = circuito.nombreCircuito;
+        circuitoSelect.appendChild(option);
+    });
+}
 
-race.simulate();
-console.log(race.getResults());
+// Función para llenar el select de vehículos
+function populateVehiculos(vehiculos) {
+    const vehiculoSelect = document.querySelector("#vehiculoSelect");
+    vehiculoSelect.innerHTML = `<option value="">Seleccionar Vehiculo</option>`;
+
+    vehiculos.forEach(vehiculo => {
+        const option = document.createElement("option");
+        option.value = vehiculo.id;
+        option.textContent = vehiculo.motor;
+        vehiculoSelect.appendChild(option);
+    });
+}
+
+// Evento para iniciar la simulación cuando se hace clic en el botón "Jugar"
+document.querySelector('#btnJugar').addEventListener("click", (event) => {
+    event.preventDefault();
+
+    const circuitoId = document.querySelector("#circuitoSelect").value;
+    const vehiculoId = document.querySelector("#vehiculoSelect").value;
+
+    if (!circuitoId || !vehiculoId) {
+        alert("Selecciona un circuito y un vehículo");
+        return;
+    }
+
+    const circuitoData = window.gameData.circuitos.find(c => c.id === circuitoId);
+    const vehiculoData = window.gameData.vehiculos.find(v => v.id === vehiculoId);
+
+    // Crear instancias de las clases con los datos seleccionados
+    const circuito = new Circuit(circuitoData.nombreCircuito, circuitoData.vueltas, circuitoData.longitud, "dry");
+    const car = new Car(vehiculoData.aceleracion0a100, vehiculoData.velocidadMaximaKmh, vehiculoData.velocidad);
+    const driver = new Driver(vehiculoData.nombrePiloto, vehiculoId, car);
+
+    const race = new SingleDriverRace(circuito, driver);
+    race.simulate();
+    
+    displayResults(race.getResults());
+});
+
+// Función para mostrar los resultados en la interfaz
+function displayResults(results) {
+    const resultsDiv = document.querySelector(".raceResults");
+    resultsDiv.innerHTML = `
+        <h2>Resultados</h2>
+        <p>Piloto: ${results.driverName}</p>
+        <p>Tiempo Total: ${results.totalTime}</p>
+        <h3>Vueltas:</h3>
+        <ul>
+            ${results.lapTimes.map(lap => `<li>Vuelta ${lap.lap}: ${lap.time}</li>`).join("")}
+        </ul>
+    `;
+}
+
+// Cargar los datos cuando la página se carga
+loadData();
