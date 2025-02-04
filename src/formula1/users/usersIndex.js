@@ -2,6 +2,7 @@ import './buscarCircuitos.js'
 import './buscarEquipos.js'
 import './buscarPilotos.js'
 import './buscarVehiculos.js'
+import './juegoElement.js'
 
 export class usersIndex extends HTMLElement {
     constructor() {
@@ -279,8 +280,14 @@ export class usersIndex extends HTMLElement {
                             <li class="nav-item">
                                 <a class="nav-link" href="#" data-section="vehiculos">Vehículos</a>
                             </li>
-                        </ul>
-                    </div>
+                            <li class="nav-item">
+                                <a class="nav-link" href="#" data-section="juego">Juego</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="#" data-section="perfil">👤</a>
+                            </li>
+                        </ul>   
+                    </div>                     
                 </nav>
 
                 <div class="content-container">
@@ -295,6 +302,12 @@ export class usersIndex extends HTMLElement {
                     </div>
                     <div id="vehiculos" style="display:none;">
                         <buscar-vehiculos></buscar-vehiculos>
+                    </div>
+                    <div id="juego" style="display:none;">
+                        <juego-element></juego-element>
+                    </div>
+                     <div id="perfil" style="display:none;">
+                        <perfil-users></perfil-users>
                     </div>
                 </div>
             </div>
@@ -325,7 +338,7 @@ export class usersIndex extends HTMLElement {
                 const section = e.target.dataset.section;
 
                 // Cambiar secciones con animación
-                ['equipos', 'pilotos', 'circuitos', 'vehiculos'].forEach(containerName => {
+                ['equipos', 'pilotos', 'circuitos', 'vehiculos', 'juego'].forEach(containerName => {
                     const container = this.querySelector(`#${containerName}`);
                     if (containerName === section) {
                         container.style.display = 'block';
