@@ -357,10 +357,6 @@ export class JuegoElement extends HTMLElement {
         this.fetchData();
     }
 
-    addEventListeners() {
-        this.shadowRoot.querySelector('#btnJugar').addEventListener("click", (event) => this.crearConfiguracion(event));
-    }
-
     async fetchData() {
         try {
             const loadingIndicator = this.shadowRoot.querySelector('#loadingIndicator');
@@ -464,22 +460,39 @@ export class JuegoElement extends HTMLElement {
     displayVehiculoInfo(vehiculo, container) {
         if (vehiculo) {
             container.innerHTML = `
-                <label for="motor">Motor</label>
-                <input type="text" id="motor" name="motor" value="${vehiculo.motor}">
-                <label for="piloto">Piloto</label>
-                <input type="text" id="piloto" name="piloto" value="${vehiculo.nombrePiloto}">
-                <label for="velocidadMaxima">Velocidad Máxima</label>
-                <input type="text" id="velocidadMaximaKmh" name="velocidadMaximaKmh" value="${vehiculo.velocidadMaximaKmh}" disabled>
-                <label for="aceleracion">Aceleración</label>
-                <input type="number" id="aceleracion" name="aceleracion" value="${vehiculo.aceleracion0a100}">
-                <div class="form-group">
-                    <label for="vehiculosRendimiento" class="form-label">Rendimiento Vehiculo</label>
-                    <select id="vehiculoRendimiento">
-                        <option selected>Seleccionar Rendimiento</option>
-                        <option value="conduccionNormal">Conducción Normal</option>
-                        <option value="conduccionAgresiva">Conducción Agresiva</option>
-                        <option value="ahorroCombustible">Ahorro de Combustible</option>
-                    </select>
+                <div class="info-card">
+                    <div class="stat-group">
+                        <div class="stat-label">Motor</div>
+                        <div class="stat-value">${vehiculo.motor}</div>
+                        <input type="hidden" id="motor" name="motor" value="${vehiculo.motor}">
+                    </div>
+                    <div class="stat-group">
+                        <div class="stat-label">Piloto</div>
+                        <div class="stat-value">${vehiculo.nombrePiloto}</div>
+                        <input type="hidden" id="piloto" name="piloto" value="${vehiculo.nombrePiloto}">
+                    </div>
+                    <div class="stat-group">
+                        <div class="stat-label">Velocidad Máxima</div>
+                        <div class="stat-value">${vehiculo.velocidadMaximaKmh} km/h</div>
+                        <input type="hidden" id="velocidadMaximaKmh" name="velocidadMaximaKmh" value="${vehiculo.velocidadMaximaKmh}">
+                    </div>
+                    <div class="stat-group">
+                        <div class="stat-label">Aceleración 0-100</div>
+                        <div class="stat-value">${vehiculo.aceleracion0a100}s</div>
+                        <input type="hidden" id="aceleracion" name="aceleracion" value="${vehiculo.aceleracion0a100}">
+                    </div>
+                </div>
+
+                <div class="configuration-controls">
+                    <div class="control-group">
+                        <label for="vehiculoRendimiento">Estilo de Conducción</label>
+                        <select id="vehiculoRendimiento" class="styled-select">
+                            <option value="">Seleccionar Estilo</option>
+                            <option value="conduccionNormal">🚗 Normal</option>
+                            <option value="conduccionAgresiva">🏎️ Agresivo</option>
+                            <option value="ahorroCombustible">🌱 Eco</option>
+                        </select>
+                    </div>
                 </div>
                 <div class="vehiculosRendimiento"></div>
             `;
@@ -655,7 +668,38 @@ export class JuegoElement extends HTMLElement {
                 color: '#ffffff'
             });
         }
-    }    
+    }
+
+    validarDatos(datos) {
+        if (!datos.circuitoSelect || !datos.vehiculoSelect) {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Configuración Incompleta',
+                text: 'Por favor, selecciona un circuito y un vehículo',
+                background: '#2d2d2d',
+                color: '#ffffff'
+            });
+            return false;
+        }
+
+        if (!datos.velocidad || !datos.consumo || !datos.desgaste) {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Configuración Incompleta',
+                text: 'Por favor, selecciona el estilo de conducción y las condiciones climáticas',
+                background: '#2d2d2d',
+                color: '#ffffff'
+            });
+            return false;
+        }
+
+        return true;
+    }
+
+    limpiarSelecciones() {
+        this.shadowRoot.querySelector('.circuitosInfo').innerHTML = '';
+        this.shadowRoot.querySelector('.vehiculosInfo').innerHTML = '';
+    }
 }
 
 customElements.define("juego-element", JuegoElement);
