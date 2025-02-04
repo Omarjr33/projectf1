@@ -283,8 +283,11 @@ export class usersIndex extends HTMLElement {
                             <li class="nav-item">
                                 <a class="nav-link" href="#" data-section="juego">Juego</a>
                             </li>
-                        </ul>
-                    </div>
+                            <li class="nav-item">
+                                <a class="nav-link" href="#" data-section="perfil">👤</a>
+                            </li>
+                        </ul>   
+                    </div>                     
                 </nav>
 
                 <div class="content-container">
@@ -302,6 +305,9 @@ export class usersIndex extends HTMLElement {
                     </div>
                     <div id="juego" style="display:none;">
                         <juego-element></juego-element>
+                    </div>
+                     <div id="perfil" style="display:none;">
+                        <perfil-users></perfil-users>
                     </div>
                 </div>
             </div>
