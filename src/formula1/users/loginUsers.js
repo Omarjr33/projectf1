@@ -170,6 +170,7 @@ export class loginUser extends HTMLElement {
                         title: "Bienvenido!",
                         text: "Ingreso Exitoso",
                     });
+                    window.idUser = user.id;
                     this.adminUsers();
                     loginForm.reset();
                     console.log('Usuario autenticado:', user);
