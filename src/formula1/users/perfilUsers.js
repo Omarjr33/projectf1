@@ -12,7 +12,7 @@ export class perfilUsers extends HTMLElement {
                 <div class="content" id="info">
                     <p>Bienvenido, <span id="username">Usuario</span></p>
                     <h3>Configuración del Juego</h3>
-                   <table>
+                <table>
         <thead>
             <tr>
                 <th>#</th>
@@ -31,7 +31,7 @@ export class perfilUsers extends HTMLElement {
         </tbody>
     </table>         
                 </div>
-             `;
+            `;
 
     }
 }
