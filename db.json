@@ -330,25 +330,42 @@
     {
       "id": "636c",
       "usuario": "valentina",
-      "contraseña": "12345678"
+      "contraseña": "12345678",
+      "configuracion": [
+        {
+          "circuito": "8e6b",
+          "vehiculo": "f771",
+          "vueltas": "24",
+          "longitud": "234",
+          "aceleracion": "2.6",
+          "velocidadMaximaKmh": null,
+          "velocidad": "320",
+          "consumo": "2.3",
+          "desgaste": "1.9",
+          "piloto": "0bb3",
+          "motor": "ferrari"
+        }
+      ]
     },
     {
       "id": "d5f3",
       "usuario": "Omar",
       "contraseña": "12345678",
-      "configuracion": {
-        "circuito": null,
-        "vehiculo": null,
-        "vueltas": "78",
-        "longitud": "3.34",
-        "aceleracion": "2.5",
-        "velocidadMaxima": null,
-        "velocidad": "320",
-        "consumo": "1.9",
-        "desgaste": "1.5",
-        "piloto": "0d49",
-        "motor": "Honda"
-      }
+      "configuracion": [
+        {
+          "circuito": null,
+          "vehiculo": null,
+          "vueltas": "78",
+          "longitud": "3.34",
+          "aceleracion": "2.5",
+          "velocidadMaxima": null,
+          "velocidad": "320",
+          "consumo": "1.9",
+          "desgaste": "1.5",
+          "piloto": "0d49",
+          "motor": "Honda"
+        }
+      ]
     }
   ]
 }

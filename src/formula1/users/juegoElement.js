@@ -16,7 +16,7 @@ export class JuegoElement extends HTMLElement {
             <h2>Circuito</h2>
             <div class="form-group">
                 <label for="nombreCircuito" class="form-label">Circuito</label>
-                <select id="circuitoSelect" required>
+                <select id="circuitoSelect" name="circuitoSelect" required>
                     <option value="">Seleccionar Circuito</option>
                 </select>
             </div>
@@ -25,7 +25,7 @@ export class JuegoElement extends HTMLElement {
             <h2>Vehiculo</h2>
             <div class="form-group">
                 <label for="vehiculo" class="form-label">Vehiculo</label>
-                <select id="vehiculoSelect" required>
+                <select id="vehiculoSelect" name="vehiculoSelect" required>
                     <option value="">Seleccionar Vehiculo</option>
                 </select>
             </div>
@@ -142,7 +142,7 @@ export class JuegoElement extends HTMLElement {
                 <label for="piloto">Piloto</label>
                 <input type="text" id="piloto" name="piloto" value="${vehiculo.nombrePiloto}">
                 <label for="velocidadMaxima">Velocidad Máxima</label>
-                <input type="number" id="velocidadMaxima" name="velocidadMaxima" value="${vehiculo.velocidadMaximaKmh}" disabled>
+                <input type="text" id="velocidadMaximaKmh" name="velocidadMaximaKmh" value="${vehiculo.velocidadMaximaKmh}" disabled>
                 <label for="aceleracion">Aceleración</label>
                 <input type="number" id="aceleracion" name="aceleracion" value="${vehiculo.aceleracion0a100}">
                 <div class="form-group">
@@ -184,7 +184,7 @@ export class JuegoElement extends HTMLElement {
 
         container.innerHTML = `
             <label for="velocidad">Velocidad</label>
-            <input type="number" id="velocidad" name="velocidad" value="${velocidad}">
+            <input type="text" id="velocidad" name="velocidad" value="${velocidad}">
             <h2>Consumo de Combustible</h2>
             <label for="consumoCombustible">Consumo de Combustible</label>
             <select id="climaSeleccionado">
@@ -276,7 +276,7 @@ export class JuegoElement extends HTMLElement {
             vueltas: formData.get('vueltas'),
             longitud: formData.get('longitud'),
             aceleracion: formData.get('aceleracion'),
-            velocidadMaxima: formData.get('velocidadMaxima'),
+            velocidadMaximaKmh: formData.get('velocidadMaximaKmh'),
             velocidad: formData.get('velocidad'),
             consumo: formData.get('consumo'),
             desgaste: formData.get('desgaste'),
@@ -286,19 +286,20 @@ export class JuegoElement extends HTMLElement {
     
         // Crear el objeto para enviar con los datos de la configuración
         const usuario = {
-            configuracion: {
-                circuito: datos.circuitoSelect,
-                vehiculo: datos.vehiculoSelect,
-                vueltas: datos.vueltas,
-                longitud: datos.longitud,
-                aceleracion: datos.aceleracion,
-                velocidadMaxima: datos.velocidadMaxima,
-                velocidad: datos.velocidad,
-                consumo: datos.consumo,
-                desgaste: datos.desgaste,
-                piloto: datos.nombrePiloto,
-                motor: datos.motor,
-            }
+                configuracion:
+                    {
+                    circuito: datos.circuitoSelect,
+                    vehiculo: datos.vehiculoSelect,
+                    vueltas: datos.vueltas,
+                    longitud: datos.longitud,
+                    aceleracion: datos.aceleracion,
+                    velocidadMaximaKmh: datos.velocidadMaximaKmh,
+                    velocidad: datos.velocidad,
+                    consumo: datos.consumo,
+                    desgaste: datos.desgaste,
+                    piloto: datos.nombrePiloto,
+                    motor: datos.motor,
+                }
         };
         
         try {
