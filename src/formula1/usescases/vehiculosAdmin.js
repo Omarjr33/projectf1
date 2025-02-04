@@ -58,7 +58,7 @@ export class VehiculosAdmin extends HTMLElement {
         this.shadowRoot.innerHTML = `
         <style>
             :host {
-                --primary-bg: #1a1a1a;
+                --primary-bg: #1e1e1e;
                 --secondary-bg: #2d2d2d;
                 --input-bg: #333333;
                 --text-primary: #ffffff;

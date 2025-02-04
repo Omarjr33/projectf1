@@ -26,12 +26,11 @@ export class adminIndex extends HTMLElement {
                 background: linear-gradient(180deg, rgba(0, 0, 0, 0.9) 0%, rgba(0, 0, 0, 0.8) 100%);
                 padding: 15px 0;
                 position: fixed;
-                width: 90%;
-                right: 10px;
-                left: 90px;
+                width: 100%;
                 top: 0;
+                left: 0;
+                right: 0;
                 z-index: 100;
-                border-radius: 0 0 25px 25px;
             }
 
             .container-fluid {
@@ -43,9 +42,20 @@ export class adminIndex extends HTMLElement {
                 align-items: center;
             }
 
+            .navbar-brand {
+                display: flex;
+                align-items: center;
+                cursor: pointer;
+            }
+
             .navbar-brand img {
                 height: 40px;
                 width: auto;
+                transition: transform 0.2s ease;
+            }
+
+            .navbar-brand img:hover {
+                transform: scale(1.05);
             }
 
             .navbar-collapse {
@@ -96,6 +106,11 @@ export class adminIndex extends HTMLElement {
 
             .navbar-toggler {
                 display: none;
+                background: none;
+                border: none;
+                color: white;
+                font-size: 24px;
+                cursor: pointer;
             }
 
             .container {
@@ -110,14 +125,28 @@ export class adminIndex extends HTMLElement {
                 pointer-events: none;
             }
 
-            /* Responsive design */
+            /* Responsive Breakpoints */
+            @media (max-width: 992px) {
+                .navbar {
+                    padding: 10px 0;
+                }
+
+                .container-fluid {
+                    padding: 0 15px;
+                }
+
+                .navbar-nav {
+                    gap: 20px;
+                }
+
+                .nav-link {
+                    font-size: 16px;
+                }
+            }
+
             @media (max-width: 768px) {
                 .navbar-toggler {
                     display: block;
-                    background: none;
-                    border: none;
-                    color: white;
-                    cursor: pointer;
                 }
 
                 .navbar-collapse {
@@ -128,6 +157,7 @@ export class adminIndex extends HTMLElement {
                     right: 0;
                     background-color: rgba(0,0,0,0.95);
                     padding: 20px;
+                    text-align: center;
                 }
 
                 .navbar-nav {
@@ -141,14 +171,31 @@ export class adminIndex extends HTMLElement {
 
                 .container {
                     margin-top: 80px;
+                    padding: 0 15px;
+                }
+
+                .nav-link {
+                    font-size: 14px;
+                }
+            }
+
+            @media (max-width: 576px) {
+                .navbar-brand img {
+                    height: 35px;
+                }
+
+                .container-fluid {
+                    padding: 0 10px;
                 }
             }
         </style>
-        <nav class="navbar navbar-expand-lg bg-body-tertiary">
+        <nav class="navbar navbar-expand-lg">
             <div class="container-fluid">
-                <a class="navbar-brand" href="#"><img class="img-fluid" src="src/img/f1.png" alt="F1 Logo"></a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
+                <div class="navbar-brand" id="logo-btn">
+                    <img class="img-fluid" src="src/img/f1.png" alt="F1 Logo">
+                </div>
+                <button class="navbar-toggler" type="button">
+                    <span>&#9776;</span>
                 </button>
                 <div class="navbar-collapse" id="navbarSupportedContent">
                     <ul class="navbar-nav me-auto mb-2 mb-lg-0">
@@ -182,35 +229,50 @@ export class adminIndex extends HTMLElement {
         </div>
         `;
 
-        // Agregar event listeners a los enlaces de navegación
+        // Navigation logic
+        this.setupNavigation();
+    }
+
+    setupNavigation() {
+        // Logo navigation (back button)
+        const logoBtn = this.querySelector('#logo-btn');
+        logoBtn?.addEventListener('click', () => {
+            // Dispatch a custom event to navigate back
+            this.dispatchEvent(new CustomEvent('navigate-back', {
+                bubbles: true,
+                composed: true
+            }));
+        });
+
+        // Navigation menu logic
         this.querySelectorAll('.nav-link').forEach(link => {
             link.addEventListener('click', (e) => {
                 e.preventDefault();
 
-                // Remover clase 'active' de todos los enlaces
+                // Remove 'active' class from all links
                 this.querySelectorAll('.nav-link').forEach(navLink => {
                     navLink.classList.remove('active');
                 });
 
-                // Añadir clase 'active' al enlace clickeado
+                // Add 'active' class to clicked link
                 e.target.classList.add('active');
 
-                // Obtener la sección a mostrar
+                // Get section to show
                 const section = e.target.dataset.section;
 
-                // Ocultar todos los contenedores
+                // Hide/show containers
                 ['equipos', 'pilotos', 'circuitos', 'vehiculos'].forEach(containerName => {
                     const container = this.querySelector(`#${containerName}`);
                     container.style.display = containerName === section ? 'block' : 'none';
                 });
 
-                // Cerrar el menú móvil si está abierto
+                // Close mobile menu if open
                 const collapse = this.querySelector('.navbar-collapse');
                 collapse.classList.remove('show');
             });
         });
 
-        // Agregar toggle para menú móvil
+        // Mobile menu toggle
         const toggler = this.querySelector('.navbar-toggler');
         const collapse = this.querySelector('.navbar-collapse');
         
