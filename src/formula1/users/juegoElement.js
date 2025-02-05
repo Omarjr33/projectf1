@@ -439,6 +439,7 @@ export class JuegoElement extends HTMLElement {
             <div id="loadingIndicator" class="loading-indicator" style="display:none;">
                 Cargando datos del simulador...
             </div>
+            <div id="juegoSimulacion"></div>
         </div>
         `;
 
@@ -760,31 +761,24 @@ export class JuegoElement extends HTMLElement {
             
             const driver = new Driver(datos.nombrePiloto, 1, car);
             const race = new SingleDriverRace(circuit, driver);
-            
+
             // Simular la carrera
             race.simulate();
             const results = race.getResults();
-            
+            const juegoSimulacion = this.shadowRoot.querySelector('#juegoSimulacion');
             // Mostrar resultados
-            await Swal.fire({
-                title: '¡Carrera Finalizada!',
-                html: `
-                    <div class="results-container">
-                        <p><strong>Piloto:</strong> ${results.driverName}</p>
-                        <p><strong>Tiempo Total:</strong> ${results.totalTime}</p>
-                        <p><strong>Tiempos por Vuelta:</strong></p>
-                        <div class="lap-times">
-                            ${results.lapTimes.map(lap => 
-                                `<p>Vuelta ${lap.lap}: ${lap.time}</p>`
-                            ).join('')}
-                        </div>
+            juegoSimulacion.innerHTML = `
+                <div class="results-container">
+                    <p><strong>Piloto:</strong> ${results.driverName}</p>
+                    <p><strong>Tiempo Total:</strong> ${results.totalTime}</p>
+                    <p><strong>Tiempos por Vuelta:</strong></p>
+                    <div class="lap-times">
+                        ${results.lapTimes.map(lap => 
+                            `<p>Vuelta ${lap.lap}: ${lap.time}</p>`
+                        ).join('')}
                     </div>
-                `,
-                confirmButtonText: 'Continuar',
-                background: '#2d2d2d',
-                color: '#ffffff',
-                confirmButtonColor: '#751010'
-            });
+                </div>
+            `;
     
             const usuario = {
                 idUser: idUser,
@@ -822,6 +816,7 @@ export class JuegoElement extends HTMLElement {
                 color: '#ffffff',
                 confirmButtonColor: '#751010'
             });
+
             
         } catch (error) {
             console.error('Error:', error);
