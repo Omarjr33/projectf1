@@ -1,4 +1,4 @@
-import { patchUsuarios, postUsuarios } from "../../Apis/usuariosApis.js";
+import { postJuegos } from "../../Apis/juegoApis.js";
 import Swal from 'sweetalert2';
 
 class Circuit {
@@ -691,9 +691,9 @@ export class JuegoElement extends HTMLElement {
         });
     }
 
-    postUsuarios = async (datos, idUser) => {
+    postJuegos = async (datos, idUser) => {
         try {
-            const response = await fetch(`/users/${idUser}`, {  // Aquí usamos el idUser correctamente
+            const response = await fetch(`/juegos/${idUser}`, {  // Aquí usamos el idUser correctamente
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -787,7 +787,7 @@ export class JuegoElement extends HTMLElement {
             });
     
             const usuario = {
-                id: idUser,
+                idUser: idUser,
                 configuracion: [
                     { ...datos }
                 ],
@@ -802,7 +802,7 @@ export class JuegoElement extends HTMLElement {
             }
     
             // Enviar la configuración y resultados del usuario
-            const response = await postUsuarios(usuario, window.idUser);
+            const response = await postJuegos(usuario, window.idUser);
     
             // Verificar si la respuesta fue exitosa
             if (response && response.error) {
