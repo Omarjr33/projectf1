@@ -171,14 +171,13 @@ export class loginUser extends HTMLElement {
                         text: "Ingreso Exitoso",
                     });
                     window.idUser = user.id;
-                    window.constraseñaUser = user.contraseña;
-                    window.nombreUser = user.usuario;
+                    window.user = user.usuario;
                     this.adminUsers();
                     loginForm.reset();
-                    console.log('Usuario autenticado:', user);
+                    //console.log('Usuario autenticado:', user);
                 }
             } catch (error) {
-                console.error("Error al iniciar sesión:", error.message);
+                //console.error("Error al iniciar sesión:", error.message);
                 Swal.fire({
                     icon: "error",
                     title: "Oops...",
