@@ -1362,22 +1362,22 @@ export class JuegoElement extends HTMLElement {
   <div class="dashboard">
     <div class="grid">
       <div>
-        <div class="label">POSITION</div>
+        <div class="label">POSICION</div>
         <div class="position">1</div>
         <div class="gap">${results.gap}</div>
         <div class="lap-times">
           <div>
-            <div class="label">CURRENT LAP</div>
-            <div>${results.currentLap}</div>
+            <div class="label">Aceleración</div>
+            <div>${datos.aceleracion}</div>
           </div>
           <div>
-            <div class="label">BEST LAP</div>
-            <div>${results.bestLap}</div>
+            <div class="label">Velocidad Máxima</div>
+            <div>${datos.velocidadMaximaKmh}</div>
           </div>
         </div>
         <div class="speed">
-          <div class="label">TOP LAP SPEED</div>
-          <div class="speed-value">${results.topSpeed}</div>
+          <div class="label">Desgaste Neumáticos</div>
+          <div class="speed-value">${datos.desgaste}</div>
           <div class="speed-unit">km/h</div>
         </div>
       </div>
@@ -1394,26 +1394,26 @@ export class JuegoElement extends HTMLElement {
       </div>
       <div>
         <div class="driver-info">
-          <div class="label">DRIVER</div>
+          <div class="label">PILOTO</div>
           <div class="driver-name">${results.driverName.toUpperCase()}</div>
           <div class="driver-number">${circuit.laps}</div>
         </div>
         <div class="safety-car">
-          <div class="label">SAFETY CAR</div>
-          <div class="safety-message">${results.safetyCar ? 'DEPLOYED' : 'NOT DEPLOYED'}</div>
+          <div class="label">Consumo Combustible</div>
+          <div class="safety-message">${datos.consumo}</div>
         </div>
       </div>
     </div>
     <div class="grid bottom-grid">
       <div>
-        <div class="label">LAPS COMPLETED</div>
+        <div class="label">VUELTAS COMPLETADAS</div>
         <div class="laps-circle">
           <div class="laps-number">${circuit.laps}</div>
           <div class="laps-label">LAPS</div>
         </div>
       </div>
       <div>
-        <div class="label">TOTAL TIME</div>
+        <div class="label">TIEMPO TOTAL</div>
         <div class="laps-circle">
           <div class="laps-number">${results.totalTime}</div>
         </div>
@@ -1427,15 +1427,15 @@ export class JuegoElement extends HTMLElement {
         <div class="circuit-data">
           <div class="circuit-name">${circuit.name}</div>
           <div class="circuit-stat">
-            <div class="label">LENGTH</div>
+            <div class="label">LONGITUD</div>
             <div class="stat-value">${circuit.length} km</div>
           </div>
           <div class="circuit-stat">
-            <div class="label">LAPS</div>
+            <div class="label">VUELTAS</div>
             <div class="stat-value">${circuit.laps}</div>
           </div>
           <div class="circuit-stat"> 
-            <div class="label">RACE DISTANCE</div>
+            <div class="label">DISTANCIA TOTAL</div>
             <div class="stat-value">${circuit.length * circuit.laps} km</div>
           </div>
         </div>
@@ -1475,8 +1475,8 @@ export class JuegoElement extends HTMLElement {
             // Mostrar mensaje de éxito
             await Swal.fire({
                 icon: 'success',
-                title: '¡Configuración Guardada!',
-                text: 'Los datos se han guardado correctamente',
+                title: '¡Carrera Terminada!',
+                text: 'Se ha guardado tu historial de jugadas',
                 background: '#2d2d2d',
                 color: '#ffffff',
                 confirmButtonColor: '#751010'
