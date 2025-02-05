@@ -691,97 +691,153 @@ export class JuegoElement extends HTMLElement {
         });
     }
 
-    async crearConfiguracion(event) {
-        event.preventDefault();
-    
-        const formCrearConfig = this.shadowRoot.querySelector('#formCrearConfig');
-        const formData = new FormData(formCrearConfig);
-        
-        const datos = {
-            circuitoSelect: formData.get('circuitoSelect'),
-            vehiculoSelect: formData.get('vehiculoSelect'),
-            vueltas: parseInt(formData.get('vueltas')),
-            longitud: parseFloat(formData.get('longitud')),
-            aceleracion: parseFloat(formData.get('aceleracion')),
-            velocidadMaximaKmh: parseFloat(formData.get('velocidadMaximaKmh')),
-            velocidad: parseFloat(formData.get('velocidad')),
-            consumo: parseFloat(formData.get('consumo')),
-            desgaste: parseFloat(formData.get('desgaste')),
-            nombrePiloto: formData.get('piloto'),
-            motor: formData.get('motor'),
-        };
-
-        if (!this.validarDatos(datos)) {
-            return;
-        }
-
-        // Crear instancias para la simulación
-        const weatherOption = this.shadowRoot.querySelector('.weather-option.active');
-        const clima = weatherOption ? weatherOption.dataset.clima : 'seco';
-
-        const circuit = new Circuit(
-            datos.circuitoSelect,
-            datos.vueltas,
-            datos.longitud,
-            clima
-        );
-
-        const car = new Car(
-            datos.aceleracion,
-            datos.velocidadMaximaKmh,
-            datos.velocidad
-        );
-
-        const driver = new Driver(datos.nombrePiloto, 1, car);
-        const race = new SingleDriverRace(circuit, driver);
-
-        // Simular la carrera
-        race.simulate();
-        const results = race.getResults();
-
-        // Mostrar resultados
-        await Swal.fire({
-            title: '¡Carrera Finalizada!',
-            html: `
-                <div style="text-align: left;">
-                    <p>Piloto: ${results.driverName}</p>
-                    <p>Tiempo Total: ${results.totalTime}</p>
-                    <h4>Tiempos por Vuelta:</h4>
-                    ${results.lapTimes.map(lap => 
-                        `<p>Vuelta ${lap.lap}: ${lap.time}</p>`
-                    ).join('')}
-                </div>
-            `,
-            confirmButtonText: 'Continuar',
-            background: '#2d2d2d',
-            color: '#ffffff',
-            confirmButtonColor: '#751010'
-        });
-
-        const usuario = {
-            configuracion: {
-                ...datos,
-                resultados: results
-            }
-        };
-
+    postUsuarios = async (datos, idUser) => {
         try {
-            const response = await patchUsuarios(usuario, window.idUser);
-            if (!response.ok) throw new Error(`Error: ${response.status}`);
+            const response = await fetch(`/users/${idUser}`, {  // Aquí usamos el idUser correctamente
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    // Otros encabezados que puedas necesitar
+                },
+                body: JSON.stringify(datos), // Asegúrate de que `datos` esté bien formateado
+            });
+    
+            if (!response.ok) {
+                throw new Error(`Error en la solicitud: ${response.statusText}`);
+            }
+    
+            return await response.json();  // Retorna la respuesta en formato JSON
+        } catch (error) {
+            console.error('Error en la solicitud POST:', error.message);
+            return { error: error.message };  // Retorna el error de forma controlada
+        }
+    };    
+
+    async crearConfiguracion(e) {
+        e.preventDefault();
+        
+        try {
+            const formCrearConfig = this.shadowRoot.querySelector('#formCrearConfig');
+            const formData = new FormData(formCrearConfig);
             
+            // Recopilar datos del formulario
+            const datos = {
+                circuitoSelect: formData.get('circuitoSelect'),
+                vehiculoSelect: formData.get('vehiculoSelect'),
+                vueltas: parseInt(formData.get('vueltas')),
+                longitud: parseFloat(formData.get('longitud')),
+                aceleracion: parseFloat(formData.get('aceleracion')),
+                velocidadMaximaKmh: parseFloat(formData.get('velocidadMaximaKmh')),
+                velocidad: parseFloat(formData.get('velocidad')),
+                consumo: parseFloat(formData.get('consumo')),
+                desgaste: parseFloat(formData.get('desgaste')),
+                nombrePiloto: formData.get('piloto'),
+                motor: formData.get('motor'),
+            };
+            
+            // Validación de datos
+            if (!this.validarDatos(datos)) {
+                throw new Error('Datos inválidos');
+            }
+            
+            // Configuración del clima
+            const weatherOption = this.shadowRoot.querySelector('.weather-option.active');
+            const clima = weatherOption ? weatherOption.dataset.clima : 'seco';
+            
+            // Crear instancias para la simulación
+            const circuit = new Circuit(
+                datos.circuitoSelect,
+                datos.vueltas,
+                datos.longitud,
+                clima
+            );
+            
+            const car = new Car(
+                datos.aceleracion,
+                datos.velocidadMaximaKmh,
+                datos.velocidad
+            );
+            
+            const driver = new Driver(datos.nombrePiloto, 1, car);
+            const race = new SingleDriverRace(circuit, driver);
+            
+            // Simular la carrera
+            race.simulate();
+            const results = race.getResults();
+            
+            // Mostrar resultados
+            await Swal.fire({
+                title: '¡Carrera Finalizada!',
+                html: `
+                    <div class="results-container">
+                        <p><strong>Piloto:</strong> ${results.driverName}</p>
+                        <p><strong>Tiempo Total:</strong> ${results.totalTime}</p>
+                        <p><strong>Tiempos por Vuelta:</strong></p>
+                        <div class="lap-times">
+                            ${results.lapTimes.map(lap => 
+                                `<p>Vuelta ${lap.lap}: ${lap.time}</p>`
+                            ).join('')}
+                        </div>
+                    </div>
+                `,
+                confirmButtonText: 'Continuar',
+                background: '#2d2d2d',
+                color: '#ffffff',
+                confirmButtonColor: '#751010'
+            });
+    
+            const usuario = {
+                id: idUser,
+                configuracion: [
+                    { ...datos }
+                ],
+                resultados: [
+                    { ...results }
+                ]
+            };
+    
+            // Verificar que idUser esté disponible antes de enviarlo
+            if (!window.idUser) {
+                throw new Error("ID de usuario no disponible");
+            }
+    
+            // Enviar la configuración y resultados del usuario
+            const response = await postUsuarios(usuario, window.idUser);
+    
+            // Verificar si la respuesta fue exitosa
+            if (response && response.error) {
+                throw new Error(response.error);  // Lanzar error si existe un error en la respuesta
+            }
+            
+            // Limpiar formulario después de éxito
             formCrearConfig.reset();
             this.limpiarSelecciones();
+            
+            // Mostrar mensaje de éxito
+            await Swal.fire({
+                icon: 'success',
+                title: '¡Configuración Guardada!',
+                text: 'Los datos se han guardado correctamente',
+                background: '#2d2d2d',
+                color: '#ffffff',
+                confirmButtonColor: '#751010'
+            });
+            
         } catch (error) {
             console.error('Error:', error);
-            Swal.fire({
+            
+            // Mostrar mensaje de error
+            await Swal.fire({
                 icon: 'error',
                 title: 'Error',
-                text: 'No se pudo guardar la configuración',
+                text: 'No se pudo guardar la configuración: ' + error.message,
                 background: '#2d2d2d',
-                color: '#ffffff'
+                color: '#ffffff',
+                confirmButtonColor: '#751010'
             });
         }
     }
+    
 
     validarDatos(datos) {
         if (!datos.circuitoSelect || !datos.vehiculoSelect) {

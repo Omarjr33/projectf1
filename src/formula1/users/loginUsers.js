@@ -171,6 +171,8 @@ export class loginUser extends HTMLElement {
                         text: "Ingreso Exitoso",
                     });
                     window.idUser = user.id;
+                    window.constraseñaUser = user.contraseña;
+                    window.nombreUser = user.usuario;
                     this.adminUsers();
                     loginForm.reset();
                     console.log('Usuario autenticado:', user);
