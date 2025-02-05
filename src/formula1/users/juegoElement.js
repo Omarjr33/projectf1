@@ -1364,7 +1364,6 @@ export class JuegoElement extends HTMLElement {
       <div>
         <div class="label">POSICION</div>
         <div class="position">1</div>
-        <div class="gap">${results.gap}</div>
         <div class="lap-times">
           <div>
             <div class="label">Aceleración</div>
@@ -1378,7 +1377,6 @@ export class JuegoElement extends HTMLElement {
         <div class="speed">
           <div class="label">Desgaste Neumáticos</div>
           <div class="speed-value">${datos.desgaste}</div>
-          <div class="speed-unit">km/h</div>
         </div>
       </div>
       <div class="car-view highlight">
@@ -1409,7 +1407,7 @@ export class JuegoElement extends HTMLElement {
         <div class="label">VUELTAS COMPLETADAS</div>
         <div class="laps-circle">
           <div class="laps-number">${circuit.laps}</div>
-          <div class="laps-label">LAPS</div>
+          <div class="laps-label">VUELTAS</div>
         </div>
       </div>
       <div>
