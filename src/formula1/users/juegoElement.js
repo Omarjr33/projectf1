@@ -721,6 +721,112 @@ export class JuegoElement extends HTMLElement {
             const formCrearConfig = this.shadowRoot.querySelector('#formCrearConfig');
             const formData = new FormData(formCrearConfig);
             
+            // Create countdown container
+            const countdownContainer = document.createElement('div');
+            countdownContainer.classList.add('race-countdown');
+            countdownContainer.innerHTML = `
+                <style>
+                    .race-countdown {
+                        position: fixed;
+                        top: 0;
+                        left: 0;
+                        width: 100%;
+                        height: 100%;
+                        background: rgba(0, 0, 0, 0.9);
+                        display: flex;
+                        justify-content: center;
+                        align-items: center;
+                        z-index: 1000;
+                        font-family: 'monserrat', ;
+                    }
+
+                    .countdown-number {
+                        font-size: 20vw;
+                        color: #ff0000;
+                        opacity: 0;
+                        animation: countdownAnimation 1s forwards;
+                        text-shadow: 0 0 50px rgba(255, 0, 0, 0.5);
+                    }
+
+                    .countdown-text {
+                        position: absolute;
+                        bottom: 20%;
+                        font-size: 4vw;
+                        color: white;
+                        opacity: 0;
+                        animation: fadeInText 1s 3s forwards;
+                    }
+
+                    @keyframes countdownAnimation {
+                        0% { 
+                            opacity: 0; 
+                            transform: scale(5); 
+                        }
+                        50% { 
+                            opacity: 1; 
+                            transform: scale(1.2);
+                        }
+                        100% { 
+                            opacity: 1; 
+                            transform: scale(1);
+                        }
+                    }
+
+                    @keyframes fadeInText {
+                        from { 
+                            opacity: 0; 
+                            transform: translateY(50px);
+                        }
+                        to { 
+                            opacity: 1; 
+                            transform: translateY(0);
+                        }
+                    }
+
+                    .race-start-sound {
+                        position: absolute;
+                        top: -9999px;
+                        left: -9999px;
+                    }
+                </style>
+                <audio class="race-start-sound">
+                    <source src="src/audio/f1-start.mp3" type="audio/mpeg">
+                </audio>
+                <div class="countdown-number">3</div>
+                <div class="countdown-text">Simulacion terminada</div>
+            `;
+            
+            // Add countdown to body
+            document.body.appendChild(countdownContainer);
+            
+            // Play start sound
+            const startSound = countdownContainer.querySelector('.race-start-sound');
+            startSound.play();
+
+            // Countdown animation
+            const countdownElement = countdownContainer.querySelector('.countdown-number');
+            const countdownSequence = ['3', '2', '1', 'GO!'];
+            
+            for (let i = 1; i < countdownSequence.length; i++) {
+                await new Promise(resolve => {
+                    setTimeout(() => {
+                        countdownElement.textContent = countdownSequence[i];
+                        countdownElement.style.animation = 'none';
+                        void countdownElement.offsetWidth; // Trigger reflow
+                        countdownElement.style.animation = 'countdownAnimation 1s forwards';
+                        resolve();
+                    }, 1000);
+                });
+            }
+
+            // Remove countdown after GO!
+            await new Promise(resolve => {
+                setTimeout(() => {
+                    document.body.removeChild(countdownContainer);
+                    resolve();
+                }, 1000);
+            });
+            
             // Recopilar datos del formulario
             const datos = {
                 circuitoSelect: formData.get('circuitoSelect'),
@@ -768,16 +874,575 @@ export class JuegoElement extends HTMLElement {
             const juegoSimulacion = this.shadowRoot.querySelector('#juegoSimulacion');
             // Mostrar resultados
             juegoSimulacion.innerHTML = `
-                <div class="results-container">
-                    <p><strong>Piloto:</strong> ${results.driverName}</p>
-                    <p><strong>Tiempo Total:</strong> ${results.totalTime}</p>
-                    <p><strong>Tiempos por Vuelta:</strong></p>
-                    <div class="lap-times">
-                        ${results.lapTimes.map(lap => 
-                            `<p>Vuelta ${lap.lap}: ${lap.time}</p>`
-                        ).join('')}
-                    </div>
-                </div>
+                <style>
+  @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(-100%); }
+            to { transform: translateX(0); }
+        }
+
+        @keyframes glow {
+            0% { box-shadow: 0 0 5px #ff0000; }
+            50% { box-shadow: 0 0 20px #ff0000; }
+            100% { box-shadow: 0 0 5px #ff0000; }
+        }
+
+        @keyframes rotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @keyframes slideInRight {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        @keyframes bounceIn {
+            0% { transform: scale(0.3); opacity: 0; }
+            50% { transform: scale(1.05); }
+            70% { transform: scale(0.9); }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        @keyframes shimmer {
+            0% { background-position: -1000px 0; }
+            100% { background-position: 1000px 0; }
+        }
+
+        .circuit-section {
+            margin-top: 40px;
+            background: rgba(34, 34, 34, 0.5);
+            border-radius: 15px;
+            padding: 20px;
+            animation: fadeIn 1s ease-out;
+        }
+
+        .circuit-grid {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 20px;
+        }
+
+        .circuit-image-container {
+            position: relative;
+            overflow: hidden;
+            border-radius: 10px;
+            aspect-ratio: 16/9;
+        }
+
+        .circuit-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+
+        .circuit-image-container:hover .circuit-image {
+            transform: scale(1.1);
+        }
+
+        .circuit-data {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+        }
+
+        .circuit-stat {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 15px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        .circuit-stat:hover {
+            background: rgba(255, 215, 0, 0.1);
+            transform: translateY(-5px);
+        }
+
+        .stat-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: #ffffff;
+            margin-top: 5px;
+        }
+
+        .circuit-name {
+            font-size: 28px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            color: #ff0000;
+            grid-column: 1 / -1;
+            animation: slideInRight 1s ease-out;
+        }
+
+        .animated-border {
+            position: relative;
+        }
+
+        .animated-border::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            left: 0;
+            border: 2px solid transparent;
+            border-radius: 8px;
+            animation: borderGlow 2s infinite;
+        }
+
+        @keyframes borderGlow {
+            0% { border-color: transparent; }
+            50% { border-color: #ff0000; }
+            100% { border-color: transparent; }
+        }
+
+        .loading-indicator {
+            width: 50px;
+            height: 50px;
+            border: 3px solid #333;
+            border-top: 3px solid #ff0000;
+            border-radius: 50%;
+            animation: rotate 1s linear infinite;
+            margin: 20px auto;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background-color: #1a1a1a;
+            color: white;
+            padding: 20px;
+            line-height: 1.2;
+        }
+
+        .dashboard {
+            max-width: 1200px;
+            margin: 100px auto;
+            animation: fadeIn 1s ease-out;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 20px;
+            align-items: center;
+            justify-content: space-around;
+            
+        }
+
+        .label {
+            color: #666;
+            font-size: 12px;
+            margin-bottom: 5px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .position {
+            font-size: 70px;
+            font-weight: 800;
+            line-height: 1;
+            animation: pulse 2s infinite;
+        }
+
+        .gap {
+            color: #ff0000;
+            font-weight: 600;
+            animation: fadeIn 1s ease-out;
+        }
+
+        .lap-times {
+            margin-top: 30px;
+        }
+
+        .speed {
+            margin-top: 30px;
+        }
+
+        .speed-value {
+            font-size: 72px;
+            font-weight: 800;
+            line-height: 1;
+            animation: fadeIn 1.5s ease-out;
+        }
+
+        .speed-unit {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .car-view {
+            position: relative;
+            background: linear-gradient(180deg, #222 0%, #1a1a1a 100%);
+            height: 400px;
+            border-radius: 10px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .car-image-container {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.5s ease;
+        }
+
+        .car-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+
+        .driver-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(0deg, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.5) 50%, rgba(0,0,0,0) 100%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            padding: 20px;
+            color: white;
+            z-index: 10;
+        }
+
+        .car-view:hover .driver-overlay {
+            opacity: 1;
+        }
+
+        .car-view:hover .car-image {
+            transform: scale(1.1);
+        }
+
+        .team-logo {
+            width: 80px;
+            height: auto;
+            margin-bottom: 10px;
+        }
+
+        .driver-overlay-name {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: #ffffff;
+        }
+
+        .driver-overlay-team {
+            font-size: 16px;
+            opacity: 0.8;
+        }
+
+        .driver-image {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            width: 60%;
+            border-radius: 50%;
+            opacity: 0;
+            transform: translateY(-20px);
+            transition: all 0.3s ease;
+        }
+
+        .car-view:hover .driver-image {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .controls {
+            position: absolute;
+            bottom: 20px;
+            width: 100%;
+            padding: 0 20px;
+        }
+
+        .bar {
+            background: rgba(51, 51, 51, 0.5);
+            height: 8px;
+            border-radius: 4px;
+            margin: 10px 0;
+            overflow: hidden;
+        }
+
+        .bar-fill {
+            height: 100%;
+            border-radius: 4px;
+            transition: width 0.3s ease-out;
+        }
+
+        .brakes .bar-fill {
+            background: #ff0000;
+            animation: slideIn 1s ease-out;
+        }
+
+        .throttle .bar-fill {
+            background: white;
+            animation: slideIn 1.2s ease-out;
+        }
+
+        .driver-info {
+            text-align: right;
+            animation: fadeIn 1s ease-out;
+        }
+
+        .driver-name {
+            color: #ff0000;
+            font-size: 24px;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+        }
+
+        .driver-number {
+            color: #ff0000;
+            font-size: 32px;
+            font-weight: 800;
+            animation: pulse 2s infinite;
+        }
+
+        .coords {
+            margin-top: 30px;
+            animation: fadeIn 1.5s ease-out;
+        }
+
+        .safety-car {
+            margin-top: 30px;
+        }
+
+        .safety-message {
+            color: #ffffff;
+            font-weight: 600;
+            animation: glow 2s infinite;
+        }
+
+        .battery-fuel .bar {
+            margin: 20px 0;
+        }
+
+        .battery .bar-fill {
+            background: #ff0000;
+            animation: slideIn 1.4s ease-out;
+        }
+
+        .fuel .bar-fill {
+            background: white;
+            animation: slideIn 1.6s ease-out;
+        }
+
+        .pit-window {
+            background: #ff0000;
+            color: black;
+            padding: 5px 15px;
+            display: inline-block;
+            margin-top: 10px;
+            border-radius: 4px;
+            font-weight: 600;
+            animation: pulse 2s infinite;
+        }
+
+        .tire-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .tire {
+            text-align: center;
+            animation: fadeIn 2s ease-out;
+        }
+
+        .tire-pressure {
+            font-size: 12px;
+            margin-bottom: 5px;
+            color: #999;
+        }
+
+        .tire-life {
+            background: rgba(51, 51, 51, 0.5);
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .tire-life:hover {
+            transform: scale(1.1);
+            background: rgba(255, 0, 0, 0.2);
+        }
+
+        .laps-circle {
+            width: 120px;
+            height: 120px;
+            border: 4px solid #333;
+            border-radius: 50%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            margin: 20px auto 0;
+            transition: all 0.3s ease;
+            animation: fadeIn 2s ease-out;
+        }
+
+        .laps-circle:hover {
+            border-color: #ff0000;
+            transform: scale(1.1);
+        }
+
+        .laps-number {
+            font-size: 36px;
+            font-weight: 800;
+        }
+
+        .laps-label {
+            color: #666;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .highlight {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .highlight::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(
+                45deg,
+                transparent,
+                rgba(255, 0, 0, 0.1),
+                transparent
+            );
+            transform: rotate(45deg);
+            animation: shine 3s infinite;
+        }
+
+        @keyframes shine {
+            0% { transform: translateX(-100%) rotate(45deg); }
+            100% { transform: translateX(100%) rotate(45deg); }
+        }
+</style>
+
+<div id="juegoSimulacion">
+  <div class="dashboard">
+    <div class="grid">
+      <div>
+        <div class="label">POSITION</div>
+        <div class="position">1</div>
+        <div class="gap">${results.gap}</div>
+        <div class="lap-times">
+          <div>
+            <div class="label">CURRENT LAP</div>
+            <div>${results.currentLap}</div>
+          </div>
+          <div>
+            <div class="label">BEST LAP</div>
+            <div>${results.bestLap}</div>
+          </div>
+        </div>
+        <div class="speed">
+          <div class="label">TOP LAP SPEED</div>
+          <div class="speed-value">${results.topSpeed}</div>
+          <div class="speed-unit">km/h</div>
+        </div>
+      </div>
+      <div class="car-view highlight">
+        <div class="car-image-container">
+          <img src="src/img/img2.png" class="car-image" alt="F1 Car">
+        </div>
+        <div class="driver-overlay">
+          <img src="src/img/liam-lawson.b09c773d.png" class="driver-image" alt="${results.driverName}">
+          <img src="src/img/f1.png" class="team-logo" alt="${results.team}">
+          <div class="driver-overlay-name">${results.driverName}</div>
+          <div class="driver-overlay-team">${results.team}</div>
+        </div>
+      </div>
+      <div>
+        <div class="driver-info">
+          <div class="label">DRIVER</div>
+          <div class="driver-name">${results.driverName.toUpperCase()}</div>
+          <div class="driver-number">${circuit.laps}</div>
+        </div>
+        <div class="safety-car">
+          <div class="label">SAFETY CAR</div>
+          <div class="safety-message">${results.safetyCar ? 'DEPLOYED' : 'NOT DEPLOYED'}</div>
+        </div>
+      </div>
+    </div>
+    <div class="grid bottom-grid">
+      <div>
+        <div class="label">LAPS COMPLETED</div>
+        <div class="laps-circle">
+          <div class="laps-number">${circuit.laps}</div>
+          <div class="laps-label">LAPS</div>
+        </div>
+      </div>
+      <div>
+        <div class="label">TOTAL TIME</div>
+        <div class="laps-circle">
+          <div class="laps-number">${results.totalTime}</div>
+        </div>
+      </div>
+    </div>
+    <div class="circuit-section">
+      <div class="circuit-grid">
+        <div class="circuit-image-container animated-border">
+          <img src="src/img/circuito1.png" alt="${circuit.name} Layout" class="circuit-image">
+        </div>
+        <div class="circuit-data">
+          <div class="circuit-name">${circuit.name}</div>
+          <div class="circuit-stat">
+            <div class="label">LENGTH</div>
+            <div class="stat-value">${circuit.length} km</div>
+          </div>
+          <div class="circuit-stat">
+            <div class="label">LAPS</div>
+            <div class="stat-value">${circuit.laps}</div>
+          </div>
+          <div class="circuit-stat"> 
+            <div class="label">RACE DISTANCE</div>
+            <div class="stat-value">${circuit.length * circuit.laps} km</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
             `;
     
             const usuario = {
