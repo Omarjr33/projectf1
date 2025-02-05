@@ -1,6 +1,95 @@
 import { patchUsuarios, postUsuarios } from "../../Apis/usuariosApis.js";
 import Swal from 'sweetalert2';
 
+class Circuit {
+    constructor(name, laps, length, weather) {
+        this.name = name;
+        this.laps = laps;
+        this.length = length;
+        this.weather = weather;
+    }
+}
+
+class Car {
+    constructor(acceleration, maxSpeed, normalSpeed) {
+        this.acceleration = acceleration;
+        this.maxSpeed = maxSpeed;
+        this.normalSpeed = normalSpeed;
+        this.fuelConsumption = {
+            seco: 1.9,
+            lluvioso: 2.1,
+            extremo: 2.4
+        };
+        this.tireWear = {
+            seco: 1.5,
+            lluvioso: 0.8,
+            extremo: 2.5
+        };
+    }
+}
+
+class Driver {
+    constructor(name, number, car) {
+        this.name = name;
+        this.number = number;
+        this.car = car;
+        this.lapTimes = [];
+        this.totalTime = 0;
+    }
+}
+
+class SingleDriverRace {
+    constructor(circuit, driver) {
+        this.circuit = circuit;
+        this.driver = driver;
+    }
+
+    calculateLapTime() {
+        const baseTime = (this.circuit.length / this.driver.car.normalSpeed) * 3600;
+        const currentLap = this.driver.lapTimes.length + 1;
+        const weatherEffect = {
+            seco: 1,
+            lluvioso: 1.2,
+            extremo: 1.4
+        }[this.circuit.weather];
+        
+        const tireWear = this.driver.car.tireWear[this.circuit.weather] * (currentLap / this.circuit.laps);
+        const fuelEffect = this.driver.car.fuelConsumption[this.circuit.weather] * (currentLap / this.circuit.laps);
+        const randomFactor = 0.95 + Math.random() * 0.1;
+
+        return baseTime * weatherEffect * (1 + tireWear) * (1 + fuelEffect) * randomFactor;
+    }
+
+    simulate() {
+        this.driver.lapTimes = [];
+        this.driver.totalTime = 0;
+
+        for (let lap = 1; lap <= this.circuit.laps; lap++) {
+            const lapTime = this.calculateLapTime();
+            this.driver.lapTimes.push(lapTime);
+            this.driver.totalTime += lapTime;
+        }
+    }
+
+    getResults() {
+        const formatTime = (seconds) => {
+            const mins = Math.floor(seconds / 60);
+            const secs = (seconds % 60).toFixed(3);
+            return `${mins}:${secs.padStart(6, '0')}`;
+        };
+
+        return {
+            driverName: this.driver.name,
+            number: this.driver.number,
+            totalTime: formatTime(this.driver.totalTime),
+            lapTimes: this.driver.lapTimes.map((time, index) => ({
+                lap: index + 1,
+                time: formatTime(time)
+            }))
+        };
+    }
+}
+
 export class JuegoElement extends HTMLElement {
     constructor() {
         super();
@@ -611,13 +700,13 @@ export class JuegoElement extends HTMLElement {
         const datos = {
             circuitoSelect: formData.get('circuitoSelect'),
             vehiculoSelect: formData.get('vehiculoSelect'),
-            vueltas: formData.get('vueltas'),
-            longitud: formData.get('longitud'),
-            aceleracion: formData.get('aceleracion'),
-            velocidadMaximaKmh: formData.get('velocidadMaximaKmh'),
-            velocidad: formData.get('velocidad'),
-            consumo: formData.get('consumo'),
-            desgaste: formData.get('desgaste'),
+            vueltas: parseInt(formData.get('vueltas')),
+            longitud: parseFloat(formData.get('longitud')),
+            aceleracion: parseFloat(formData.get('aceleracion')),
+            velocidadMaximaKmh: parseFloat(formData.get('velocidadMaximaKmh')),
+            velocidad: parseFloat(formData.get('velocidad')),
+            consumo: parseFloat(formData.get('consumo')),
+            desgaste: parseFloat(formData.get('desgaste')),
             nombrePiloto: formData.get('piloto'),
             motor: formData.get('motor'),
         };
@@ -625,37 +714,61 @@ export class JuegoElement extends HTMLElement {
         if (!this.validarDatos(datos)) {
             return;
         }
-    
+
+        // Crear instancias para la simulación
+        const weatherOption = this.shadowRoot.querySelector('.weather-option.active');
+        const clima = weatherOption ? weatherOption.dataset.clima : 'seco';
+
+        const circuit = new Circuit(
+            datos.circuitoSelect,
+            datos.vueltas,
+            datos.longitud,
+            clima
+        );
+
+        const car = new Car(
+            datos.aceleracion,
+            datos.velocidadMaximaKmh,
+            datos.velocidad
+        );
+
+        const driver = new Driver(datos.nombrePiloto, 1, car);
+        const race = new SingleDriverRace(circuit, driver);
+
+        // Simular la carrera
+        race.simulate();
+        const results = race.getResults();
+
+        // Mostrar resultados
+        await Swal.fire({
+            title: '¡Carrera Finalizada!',
+            html: `
+                <div style="text-align: left;">
+                    <p>Piloto: ${results.driverName}</p>
+                    <p>Tiempo Total: ${results.totalTime}</p>
+                    <h4>Tiempos por Vuelta:</h4>
+                    ${results.lapTimes.map(lap => 
+                        `<p>Vuelta ${lap.lap}: ${lap.time}</p>`
+                    ).join('')}
+                </div>
+            `,
+            confirmButtonText: 'Continuar',
+            background: '#2d2d2d',
+            color: '#ffffff',
+            confirmButtonColor: '#751010'
+        });
+
         const usuario = {
             configuracion: {
-                circuito: datos.circuitoSelect,
-                vehiculo: datos.vehiculoSelect,
-                vueltas: datos.vueltas,
-                longitud: datos.longitud,
-                aceleracion: datos.aceleracion,
-                velocidadMaximaKmh: datos.velocidadMaximaKmh,
-                velocidad: datos.velocidad,
-                consumo: datos.consumo,
-                desgaste: datos.desgaste,
-                piloto: datos.nombrePiloto,
-                motor: datos.motor,
+                ...datos,
+                resultados: results
             }
         };
-        
+
         try {
             const response = await patchUsuarios(usuario, window.idUser);
             if (!response.ok) throw new Error(`Error: ${response.status}`);
             
-            await Swal.fire({
-                icon: 'success',
-                title: '¡Configuración Lista!',
-                text: '¡Prepárate para la carrera!',
-                confirmButtonText: '¡Vamos!',
-                background: '#2d2d2d',
-                color: '#ffffff',
-                confirmButtonColor: '#751010'
-            });
-    
             formCrearConfig.reset();
             this.limpiarSelecciones();
         } catch (error) {

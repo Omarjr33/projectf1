@@ -328,40 +328,130 @@
   ],
   "users": [
     {
-      "id": "636c",
-      "usuario": "valentina",
+      "id": "132c",
+      "usuario": "Mariana",
       "contraseña": "12345678",
       "configuracion": {
-        "circuito": "8e6b",
-        "vehiculo": "4689",
-        "vueltas": "24",
-        "longitud": "234",
-        "aceleracion": "2.5",
-        "velocidadMaximaKmh": "380",
-        "velocidad": "320",
-        "consumo": "1.9",
-        "desgaste": "1.5",
-        "piloto": "0d49",
-        "motor": "Honda"
+        "circuitoSelect": "8e6b",
+        "vehiculoSelect": "f771",
+        "vueltas": 24,
+        "longitud": 234,
+        "aceleracion": 2.6,
+        "velocidadMaximaKmh": 375,
+        "velocidad": 345,
+        "consumo": 2,
+        "desgaste": 2.3,
+        "nombrePiloto": "0bb3",
+        "motor": "ferrari",
+        "resultados": {
+          "driverName": "0bb3",
+          "number": 1,
+          "totalTime": "3696:51.177",
+          "lapTimes": [
+            {
+              "lap": 1,
+              "time": "48:59.422"
+            },
+            {
+              "lap": 2,
+              "time": "54:49.630"
+            },
+            {
+              "lap": 3,
+              "time": "57:50.815"
+            },
+            {
+              "lap": 4,
+              "time": "66:47.925"
+            },
+            {
+              "lap": 5,
+              "time": "76:01.690"
+            },
+            {
+              "lap": 6,
+              "time": "86:27.932"
+            },
+            {
+              "lap": 7,
+              "time": "95:22.117"
+            },
+            {
+              "lap": 8,
+              "time": "95:12.927"
+            },
+            {
+              "lap": 9,
+              "time": "108:51.225"
+            },
+            {
+              "lap": 10,
+              "time": "113:02.014"
+            },
+            {
+              "lap": 11,
+              "time": "128:30.220"
+            },
+            {
+              "lap": 12,
+              "time": "139:01.027"
+            },
+            {
+              "lap": 13,
+              "time": "146:34.383"
+            },
+            {
+              "lap": 14,
+              "time": "166:11.907"
+            },
+            {
+              "lap": 15,
+              "time": "178:58.497"
+            },
+            {
+              "lap": 16,
+              "time": "184:26.355"
+            },
+            {
+              "lap": 17,
+              "time": "189:38.875"
+            },
+            {
+              "lap": 18,
+              "time": "208:34.339"
+            },
+            {
+              "lap": 19,
+              "time": "223:38.171"
+            },
+            {
+              "lap": 20,
+              "time": "241:06.217"
+            },
+            {
+              "lap": 21,
+              "time": "242:12.384"
+            },
+            {
+              "lap": 22,
+              "time": "264:29.974"
+            },
+            {
+              "lap": 23,
+              "time": "291:28.823"
+            },
+            {
+              "lap": 24,
+              "time": "288:34.307"
+            }
+          ]
+        }
       }
     },
     {
-      "id": "d5f3",
+      "id": "ea35",
       "usuario": "Omar",
-      "contraseña": "12345678",
-      "configuracion": {
-        "circuito": "ef13",
-        "vehiculo": "4689",
-        "vueltas": "78",
-        "longitud": "3.34",
-        "aceleracion": "2.5",
-        "velocidadMaximaKmh": "380",
-        "velocidad": "340",
-        "consumo": "2.4",
-        "desgaste": "1.5",
-        "piloto": "0d49",
-        "motor": "Honda"
-      }
+      "contraseña": "12345678"
     }
   ]
 }
