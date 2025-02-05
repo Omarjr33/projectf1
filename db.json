@@ -349,6 +349,11 @@
       "id": "e4de",
       "usuario": "valentina",
       "contraseña": "12345678"
+    },
+    {
+      "id": "6f73",
+      "usuario": "admin",
+      "contraseña": "admin123"
     }
   ],
   "juego": [
