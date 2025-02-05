@@ -336,6 +336,11 @@
       "id": "31cd",
       "usuario": "Omar",
       "contraseña": "12345678"
+    },
+    {
+      "id": "e4de",
+      "usuario": "valentina",
+      "contraseña": "12345678"
     }
   ],
   "juego": [
@@ -458,6 +463,381 @@
             {
               "lap": 24,
               "time": "342:01.775"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "1a13",
+      "idUser": "e4de",
+      "configuracion": [
+        {
+          "circuitoSelect": "8e6b",
+          "vehiculoSelect": "f771",
+          "vueltas": 24,
+          "longitud": 234,
+          "aceleracion": 2.6,
+          "velocidadMaximaKmh": 375,
+          "velocidad": 320,
+          "consumo": 1.5,
+          "desgaste": 1.9,
+          "nombrePiloto": "0bb3",
+          "motor": "ferrari"
+        }
+      ],
+      "resultados": [
+        {
+          "driverName": "0bb3",
+          "number": 1,
+          "totalTime": "3968:48.609",
+          "lapTimes": [
+            {
+              "lap": 1,
+              "time": "52:29.268"
+            },
+            {
+              "lap": 2,
+              "time": "56:50.778"
+            },
+            {
+              "lap": 3,
+              "time": "65:39.090"
+            },
+            {
+              "lap": 4,
+              "time": "73:24.377"
+            },
+            {
+              "lap": 5,
+              "time": "80:02.713"
+            },
+            {
+              "lap": 6,
+              "time": "85:44.258"
+            },
+            {
+              "lap": 7,
+              "time": "94:11.188"
+            },
+            {
+              "lap": 8,
+              "time": "109:54.994"
+            },
+            {
+              "lap": 9,
+              "time": "122:58.314"
+            },
+            {
+              "lap": 10,
+              "time": "126:08.849"
+            },
+            {
+              "lap": 11,
+              "time": "143:57.504"
+            },
+            {
+              "lap": 12,
+              "time": "143:33.054"
+            },
+            {
+              "lap": 13,
+              "time": "167:42.972"
+            },
+            {
+              "lap": 14,
+              "time": "174:45.496"
+            },
+            {
+              "lap": 15,
+              "time": "179:55.381"
+            },
+            {
+              "lap": 16,
+              "time": "201:51.704"
+            },
+            {
+              "lap": 17,
+              "time": "206:08.637"
+            },
+            {
+              "lap": 18,
+              "time": "229:58.572"
+            },
+            {
+              "lap": 19,
+              "time": "239:08.780"
+            },
+            {
+              "lap": 20,
+              "time": "259:53.986"
+            },
+            {
+              "lap": 21,
+              "time": "259:34.542"
+            },
+            {
+              "lap": 22,
+              "time": "283:06.520"
+            },
+            {
+              "lap": 23,
+              "time": "304:42.545"
+            },
+            {
+              "lap": 24,
+              "time": "307:05.086"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "1669"
+    },
+    {
+      "id": "519e",
+      "idUser": "e4de",
+      "configuracion": [
+        {
+          "circuitoSelect": "8e6b",
+          "vehiculoSelect": "f771",
+          "vueltas": 24,
+          "longitud": 234,
+          "aceleracion": 2.6,
+          "velocidadMaximaKmh": 375,
+          "velocidad": 345,
+          "consumo": 2,
+          "desgaste": 2.3,
+          "nombrePiloto": "0bb3",
+          "motor": "ferrari"
+        }
+      ],
+      "resultados": [
+        {
+          "driverName": "0bb3",
+          "number": 1,
+          "totalTime": "3671:43.280",
+          "lapTimes": [
+            {
+              "lap": 1,
+              "time": "45:47.014"
+            },
+            {
+              "lap": 2,
+              "time": "52:35.345"
+            },
+            {
+              "lap": 3,
+              "time": "61:33.907"
+            },
+            {
+              "lap": 4,
+              "time": "64:41.776"
+            },
+            {
+              "lap": 5,
+              "time": "77:03.207"
+            },
+            {
+              "lap": 6,
+              "time": "82:13.207"
+            },
+            {
+              "lap": 7,
+              "time": "88:22.559"
+            },
+            {
+              "lap": 8,
+              "time": "95:27.628"
+            },
+            {
+              "lap": 9,
+              "time": "107:36.231"
+            },
+            {
+              "lap": 10,
+              "time": "113:21.682"
+            },
+            {
+              "lap": 11,
+              "time": "133:58.294"
+            },
+            {
+              "lap": 12,
+              "time": "132:33.041"
+            },
+            {
+              "lap": 13,
+              "time": "155:02.423"
+            },
+            {
+              "lap": 14,
+              "time": "157:24.184"
+            },
+            {
+              "lap": 15,
+              "time": "170:23.678"
+            },
+            {
+              "lap": 16,
+              "time": "181:35.231"
+            },
+            {
+              "lap": 17,
+              "time": "190:21.316"
+            },
+            {
+              "lap": 18,
+              "time": "217:18.338"
+            },
+            {
+              "lap": 19,
+              "time": "214:51.625"
+            },
+            {
+              "lap": 20,
+              "time": "231:33.327"
+            },
+            {
+              "lap": 21,
+              "time": "250:05.834"
+            },
+            {
+              "lap": 22,
+              "time": "274:05.906"
+            },
+            {
+              "lap": 23,
+              "time": "282:27.119"
+            },
+            {
+              "lap": 24,
+              "time": "291:20.407"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "d93e",
+      "idUser": "e4de",
+      "configuracion": [
+        {
+          "circuitoSelect": "8e6b",
+          "vehiculoSelect": "4689",
+          "vueltas": 24,
+          "longitud": 234,
+          "aceleracion": 2.5,
+          "velocidadMaximaKmh": 380,
+          "velocidad": 320,
+          "consumo": 1.9,
+          "desgaste": 0.8,
+          "nombrePiloto": "0d49",
+          "motor": "Honda"
+        }
+      ],
+      "resultados": [
+        {
+          "driverName": "0d49",
+          "number": 1,
+          "totalTime": "3906:28.846",
+          "lapTimes": [
+            {
+              "lap": 1,
+              "time": "56:18.393"
+            },
+            {
+              "lap": 2,
+              "time": "69:03.439"
+            },
+            {
+              "lap": 3,
+              "time": "72:55.215"
+            },
+            {
+              "lap": 4,
+              "time": "80:18.983"
+            },
+            {
+              "lap": 5,
+              "time": "88:20.421"
+            },
+            {
+              "lap": 6,
+              "time": "99:55.288"
+            },
+            {
+              "lap": 7,
+              "time": "100:17.068"
+            },
+            {
+              "lap": 8,
+              "time": "118:26.124"
+            },
+            {
+              "lap": 9,
+              "time": "124:54.837"
+            },
+            {
+              "lap": 10,
+              "time": "133:19.112"
+            },
+            {
+              "lap": 11,
+              "time": "141:20.929"
+            },
+            {
+              "lap": 12,
+              "time": "146:17.450"
+            },
+            {
+              "lap": 13,
+              "time": "161:00.885"
+            },
+            {
+              "lap": 14,
+              "time": "172:42.187"
+            },
+            {
+              "lap": 15,
+              "time": "173:35.652"
+            },
+            {
+              "lap": 16,
+              "time": "189:24.548"
+            },
+            {
+              "lap": 17,
+              "time": "209:05.062"
+            },
+            {
+              "lap": 18,
+              "time": "206:18.334"
+            },
+            {
+              "lap": 19,
+              "time": "225:16.761"
+            },
+            {
+              "lap": 20,
+              "time": "237:11.715"
+            },
+            {
+              "lap": 21,
+              "time": "251:39.426"
+            },
+            {
+              "lap": 22,
+              "time": "267:01.057"
+            },
+            {
+              "lap": 23,
+              "time": "282:41.112"
+            },
+            {
+              "lap": 24,
+              "time": "299:04.847"
             }
           ]
         }

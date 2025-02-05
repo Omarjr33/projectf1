@@ -1,116 +1,112 @@
+import { getJuegos } from "../../Apis/juegoApis.js";
+
 export class perfilUsers extends HTMLElement {
-    constructor() {
-        super();
-        this.attachShadow({ mode: 'open' });
-        this.userData = null;
-        this.render();
-        this.loadData();
+  constructor() {
+    super();
+    this.attachShadow({ mode: 'open' });
+    this.render();
+  }
+
+  // Método para obtener el nombre del usuario a partir del idUser
+  getUserName(userId, juegos) {
+    // Buscar el juego para obtener el nombre del usuario desde el idUser
+    const juego = juegos.find(game => game.idUser === userId);
+    if (juego) {
+      // Puedes devolver el id o lo que necesites, por ejemplo, si en el JSON hay un campo "nombrePiloto" dentro de "resultados"
+      return juego.resultados[0].driverName; // o el campo correspondiente para el nombre
     }
+    return "Usuario no encontrado"; // En caso de que no se encuentre el usuario
+  }
 
-    async loadData() {
-        try {
-            const response = await fetch('./db.json');
-            const data = await response.json();
-            console.log("Datos cargados:", data);
+  async fetchJuegoData() {
+    try {
+      // Obtener los juegos
+      const juegos = await getJuegos();
 
-            let usuarioActual = localStorage.getItem('usuario');
+      // Simulamos que el usuario logueado tiene el id "31cd"
+      const userId = "31cd"; // Aquí debería ir tu lógica de autenticación
 
-            // Si no hay usuario en localStorage, tomar el primer usuario del JSON
-            if (!usuarioActual && data.users.length > 0) {
-                usuarioActual = data.users[0].usuario;
-                localStorage.setItem('usuario', usuarioActual); // Guardar en localStorage
-                console.log("Usuario por defecto guardado:", usuarioActual);
-            }
+      // Buscar el nombre del usuario logueado
+      const userName = this.getUserName(userId, juegos);
 
-            console.log("Usuario actual en localStorage:", usuarioActual);
+      // Filtrar el juego correspondiente al usuario logueado
+      const juegoData = juegos.find(game => game.idUser === userId);
+      if (!juegoData) {
+        this.shadowRoot.innerHTML = '<p>No se encontraron datos para este usuario.</p>';
+        return;
+      }
 
-            const usuario = data.users.find(user => user.usuario === usuarioActual);
+      const { configuracion, resultados } = juegoData;
 
-            if (usuario) {
-                this.userData = usuario;
-                this.updateInfo();
-            } else {
-                this.showError(`Usuario "${usuarioActual}" no encontrado`);
-            }
-        } catch (error) {
-            console.error('Error cargando datos:', error);
-            this.showError('Error al cargar los datos');
-        }
+      // Generar las tablas con los datos del juego
+      this.shadowRoot.innerHTML = `
+        <h2>Bienvenido, ${window.user}</h2> <!-- Mostrar el nombre del usuario -->
+        <h2>Configuración del Juego</h2>
+        <table border="1">
+          <tr>
+            <th>Circuito</th>
+            <th>Vehículo</th>
+            <th>Vueltas</th>
+            <th>Longitud</th>
+            <th>Aceleración</th>
+            <th>Velocidad Máxima</th>
+            <th>Velocidad</th>
+            <th>Consumo</th>
+            <th>Desgaste</th>
+            <th>Motor</th>
+          </tr>
+          <tr>
+            <td>${configuracion[0].circuitoSelect}</td>
+            <td>${configuracion[0].vehiculoSelect}</td>
+            <td>${configuracion[0].vueltas}</td>
+            <td>${configuracion[0].longitud}</td>
+            <td>${configuracion[0].aceleracion}</td>
+            <td>${configuracion[0].velocidadMaximaKmh}</td>
+            <td>${configuracion[0].velocidad}</td>
+            <td>${configuracion[0].consumo}</td>
+            <td>${configuracion[0].desgaste}</td>
+            <td>${configuracion[0].motor}</td>
+          </tr>
+        </table>
+
+        <h2>Resultados del Piloto</h2>
+        <table border="1">
+          <tr>
+            <th>Posición</th>
+            <th>Nombre Piloto</th>
+            <th>Tiempo Total</th>
+          </tr>
+          <tr>
+            <td>${resultados[0].number}</td>
+            <td>${resultados[0].driverName}</td>
+            <td>${resultados[0].totalTime}</td>
+          </tr>
+        </table>
+
+        <h3>Tiempos por Vuelta</h3>
+        <table border="1">
+          <tr>
+            <th>Vuelta</th>
+            <th>Tiempo</th>
+          </tr>
+          ${resultados[0].lapTimes.map(lap => `
+            <tr>
+              <td>${lap.lap}</td>
+              <td>${lap.time}</td>
+            </tr>
+          `).join('')}
+        </table>
+      `;
+    } catch (error) {
+      this.shadowRoot.innerHTML = '<p>Error al obtener los datos del juego.</p>';
     }
+  }
 
-    updateInfo() {
-        if (!this.userData) {
-            console.error("No hay datos de usuario para actualizar");
-            return;
-        }
-
-        console.log("Actualizando información con:", this.userData);
-        const username = this.shadowRoot.querySelector('#username');
-        const tbody = this.shadowRoot.querySelector('tbody');
-        
-        if (this.userData) {
-            // Actualizar nombre de usuario
-            username.textContent = this.userData.usuario;
-            
-            // Actualizar tabla con configuraciones
-            const config = this.userData.configuracion;
-            tbody.innerHTML = Object.entries(config)
-                .map(([key, value], index) => `
-                    <tr>
-                        <td>${index + 1}</td>
-                        <td>${this.formatKey(key)}</td>
-                        <td>${value}</td>
-                    </tr>
-                `).join('');
-        }
-    }
-
-    formatKey(key) {
-        return key
-            .replace(/([A-Z])/g, ' $1') // Agrega espacio antes de mayúsculas
-            .split(/(?=[A-Z])/).join(' ') // Separa camelCase
-            .replace(/^./, str => str.toUpperCase()) // Primera letra mayúscula
-            .replace('Kmh', 'KM/H'); // Caso especial para KM/H
-    }
-
-    showError(message) {
-        console.error("Error mostrado:", message);
-        const tbody = this.shadowRoot.querySelector('tbody');
-        if (tbody) {
-            tbody.innerHTML = `
-                <tr>
-                    <td colspan="3" class="error-message">
-                        ${message}
-                    </td>
-                </tr>`;
-        }
-    }
-
-    render() {
-        this.shadowRoot.innerHTML = `    
-        <div class="perfil-container">
-            <div class="content" id="info">
-                <p>Bienvenido, <span id="username">Usuario</span></p>
-                <h3>Configuración del Juego</h3>
-                <table>
-                    <thead>
-                        <tr>
-                            <th>#</th>
-                            <th>Parámetro</th>
-                            <th>Valor</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td colspan="3" style="text-align: center;">
-                                Cargando datos...
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>         
-            </div>
-        </div>`;
-    }
+  render() {
+    // Inicializar el Web Component
+    this.shadowRoot.innerHTML = `<p>Cargando los resultados...</p>`;
+    this.fetchJuegoData();
+  }
 }
 
 customElements.define("perfil-users", perfilUsers);
