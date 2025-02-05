@@ -7,104 +7,118 @@ export class perfilUsers extends HTMLElement {
     this.render();
   }
 
-  // Método para obtener el nombre del usuario a partir del idUser
-  getUserName(userId, juegos) {
-    // Buscar el juego para obtener el nombre del usuario desde el idUser
-    const juego = juegos.find(game => game.idUser === userId);
-    if (juego) {
-      // Puedes devolver el id o lo que necesites, por ejemplo, si en el JSON hay un campo "nombrePiloto" dentro de "resultados"
-      return juego.resultados[0].driverName; // o el campo correspondiente para el nombre
-    }
-    return "Usuario no encontrado"; // En caso de que no se encuentre el usuario
-  }
-
   async fetchJuegoData() {
     try {
-      // Obtener los juegos
       const juegos = await getJuegos();
 
-      // Simulamos que el usuario logueado tiene el id "31cd"
-      const userId = "31cd"; // Aquí debería ir tu lógica de autenticación
+      if (!window.idUser) {
+        this.shadowRoot.innerHTML = '<p>No hay usuario logueado.</p>';
+        return;
+      }
 
-      // Buscar el nombre del usuario logueado
-      const userName = this.getUserName(userId, juegos);
+      // Filtrar los juegos por el idUser
+      const juegosUsuario = juegos.filter(game => game.idUser === window.idUser);
 
-      // Filtrar el juego correspondiente al usuario logueado
-      const juegoData = juegos.find(game => game.idUser === userId);
-      if (!juegoData) {
+      if (juegosUsuario.length === 0) {
         this.shadowRoot.innerHTML = '<p>No se encontraron datos para este usuario.</p>';
         return;
       }
 
-      const { configuracion, resultados } = juegoData;
+      // Generar HTML para cada juego del usuario
+      const juegosHTML = juegosUsuario.map((juegoData, index) => {
+        const { configuracion, resultados } = juegoData;
 
-      // Generar las tablas con los datos del juego
+        const configuracionesHTML = configuracion.map(config => `
+          <tr>
+            <td>${config.circuitoSelect}</td>
+            <td>${config.vehiculoSelect}</td>
+            <td>${config.vueltas}</td>
+            <td>${config.longitud}</td>
+            <td>${config.aceleracion}</td>
+            <td>${config.velocidadMaximaKmh}</td>
+            <td>${config.velocidad}</td>
+            <td>${config.consumo}</td>
+            <td>${config.desgaste}</td>
+            <td>${config.nombrePiloto}</td>
+            <td>${config.motor}</td>
+          </tr>
+        `).join('');
+
+        const resultadosHTML = resultados.map(resultado => `
+          <tr>
+            <td>${resultado.number}</td>
+            <td>${resultado.driverName}</td>
+            <td>${resultado.totalTime}</td>
+          </tr>
+        `).join('');
+
+        const tiemposPorVueltaHTML = resultados.map(resultado => `
+          <div class="lap-times">
+            <h3>Tiempos por Vuelta del Piloto: ${resultado.driverName}</h3>
+            <table>
+              <tr>
+                <th>Vuelta</th>
+                <th>Tiempo</th>
+              </tr>
+              ${resultado.lapTimes.map(lap => `
+                <tr>
+                  <td>${lap.lap}</td>
+                  <td>${lap.time}</td>
+                </tr>
+              `).join('')}
+            </table>
+          </div>
+        `).join('');
+
+        return `
+          <div class="juego-container">
+            <h2>Partida ${index + 1}</h2>
+            
+            <h3>Configuración</h3>
+            <table>
+              <tr>
+                <th>Circuito</th>
+                <th>Vehículo</th>
+                <th>Vueltas</th>
+                <th>Longitud</th>
+                <th>Aceleración</th>
+                <th>Velocidad Máxima (Km/h)</th>
+                <th>Velocidad</th>
+                <th>Consumo</th>
+                <th>Desgaste</th>
+                <th>Piloto</th>
+                <th>Motor</th>
+              </tr>
+              ${configuracionesHTML}
+            </table>
+
+            <h3>Resultado Final</h3>
+            <table>
+              <tr>
+                <th>Posición</th>
+                <th>Piloto</th>
+                <th>Tiempo Total</th>
+              </tr>
+              ${resultadosHTML}
+            </table>
+
+            ${tiemposPorVueltaHTML}
+          </div>
+        `;
+      }).join('');
+
       this.shadowRoot.innerHTML = `
-        <h2>Bienvenido, ${window.user}</h2> <!-- Mostrar el nombre del usuario -->
-        <h2>Configuración del Juego</h2>
-        <table border="1">
-          <tr>
-            <th>Circuito</th>
-            <th>Vehículo</th>
-            <th>Vueltas</th>
-            <th>Longitud</th>
-            <th>Aceleración</th>
-            <th>Velocidad Máxima</th>
-            <th>Velocidad</th>
-            <th>Consumo</th>
-            <th>Desgaste</th>
-            <th>Motor</th>
-          </tr>
-          <tr>
-            <td>${configuracion[0].circuitoSelect}</td>
-            <td>${configuracion[0].vehiculoSelect}</td>
-            <td>${configuracion[0].vueltas}</td>
-            <td>${configuracion[0].longitud}</td>
-            <td>${configuracion[0].aceleracion}</td>
-            <td>${configuracion[0].velocidadMaximaKmh}</td>
-            <td>${configuracion[0].velocidad}</td>
-            <td>${configuracion[0].consumo}</td>
-            <td>${configuracion[0].desgaste}</td>
-            <td>${configuracion[0].motor}</td>
-          </tr>
-        </table>
-
-        <h2>Resultados del Piloto</h2>
-        <table border="1">
-          <tr>
-            <th>Posición</th>
-            <th>Nombre Piloto</th>
-            <th>Tiempo Total</th>
-          </tr>
-          <tr>
-            <td>${resultados[0].number}</td>
-            <td>${resultados[0].driverName}</td>
-            <td>${resultados[0].totalTime}</td>
-          </tr>
-        </table>
-
-        <h3>Tiempos por Vuelta</h3>
-        <table border="1">
-          <tr>
-            <th>Vuelta</th>
-            <th>Tiempo</th>
-          </tr>
-          ${resultados[0].lapTimes.map(lap => `
-            <tr>
-              <td>${lap.lap}</td>
-              <td>${lap.time}</td>
-            </tr>
-          `).join('')}
-        </table>
+        <h2>Perfil de Usuario: ${window.user}</h2>
+        ${juegosHTML}
       `;
     } catch (error) {
+      console.error("Error al obtener los datos del juego:", error);
       this.shadowRoot.innerHTML = '<p>Error al obtener los datos del juego.</p>';
     }
   }
 
   render() {
-    // Inicializar el Web Component
-    this.shadowRoot.innerHTML = `<p>Cargando los resultados...</p>`;
+    this.shadowRoot.innerHTML = '<p>Cargando los resultados...</p>';
     this.fetchJuegoData();
   }
 }
