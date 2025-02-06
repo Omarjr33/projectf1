@@ -5,18 +5,18 @@ export class buscarPilotos extends HTMLElement {
         super();
         this.attachShadow({ mode: 'open' });
         this.render();
-        this.pilotos = [];
+        this.pilotos = []; // Inicializa un arreglo vacío para los pilotos
     }
 
     connectedCallback() {
-        this.getData();
+        this.getData(); // Llama a getData para cargar los datos de los pilotos
     }
-
+    // Método para obtener los datos de los pilotos desde la API
     getData() {
-        getPilotos()
+        getPilotos() // Llama a la función getPilotos que devuelve una promesa
             .then((pilotos) => {
-                this.pilotos = pilotos;
-                this.renderGallery();
+                this.pilotos = pilotos; // Asigna los pilotos recibidos a la propiedad 'pilotos'
+                this.renderGallery(); // Renderiza la galería de pilotos
             })
             .catch((error) => {
                 console.error('Error en la solicitud GET:', error.message);
@@ -338,25 +338,25 @@ export class buscarPilotos extends HTMLElement {
             </div>
         </div>
         `;
-
+        // Configura la barra de búsqueda para filtrar los pilotos en la galería
         const searchBar = this.shadowRoot.getElementById("search");
         searchBar.addEventListener("input", (e) => {
             this.renderGallery(e.target.value);
         });
-
+        // Configura el botón de cierre del modal
         const modal = this.shadowRoot.getElementById("pilotoModal");
         const closeButton = this.shadowRoot.querySelector(".modal__close");
         closeButton.addEventListener("click", () => {
             modal.classList.remove("active");
         });
-
+        // Configura el evento de cierre del modal si el usuario hace clic fuera de él
         modal.addEventListener("click", (e) => {
             if (e.target === modal) {
                 modal.classList.remove("active");
             }
         });
     }
-
+    // Método para mostrar el modal con los detalles del piloto
     showModal(piloto) {
         const modal = this.shadowRoot.getElementById("pilotoModal");
         const modalContent = this.shadowRoot.getElementById("modalContent");
@@ -397,10 +397,10 @@ export class buscarPilotos extends HTMLElement {
                 </div>
             </div>
         `;
-
+        //Mostrar Modal
         modal.classList.add("active");
     }
-
+    // Método para renderizar la galería de pilotos con un filtro
     renderGallery(filter = "") {
         const filteredItems = this.pilotos.filter(item =>
             item.nombrePiloto.toLowerCase().includes(filter.toLowerCase()) ||
@@ -425,7 +425,7 @@ export class buscarPilotos extends HTMLElement {
                     <img src="${item.imagenPiloto}" class="elemento__personagem" alt="${item.nombrePiloto}"/>
                 </div>
             `;
-
+            // Añade un evento de clic a cada tarjeta para mostrar los detalles en el modal
             const card = divItems.querySelector('.elemento__cartao');
             card.addEventListener('click', () => this.showModal(item));
 

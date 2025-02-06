@@ -1,15 +1,18 @@
-import { getJuegos } from "../../Apis/juegoApis.js";
+import { getJuegos } from "../../Apis/juegoApis.js";  // Importación de la función para obtener datos de juegos
 
 export class perfilUsers extends HTMLElement {
   constructor() {
     super();
+    // Crear Shadow DOM en modo abierto para encapsulación
     this.attachShadow({ mode: 'open' });
     this.styles = `
+      /* Reseteo básico de estilos */
       * {
         box-sizing: border-box;
         margin: 0;
         padding: 0;
       }
+      /* Contenedor principal con gradiente de fondo */
       .f1-profile-container {
         background: linear-gradient(135deg, #000000, #1a1a1a, #4a0000);
         min-height: 100vh;
@@ -18,6 +21,7 @@ export class perfilUsers extends HTMLElement {
         padding: 2rem;
         perspective: 1000px;
       }
+      /* Pantalla de carga */
       .f1-loading {
         display: flex;
         justify-content: center;
@@ -25,6 +29,7 @@ export class perfilUsers extends HTMLElement {
         height: 100vh;
         background: linear-gradient(135deg, #000000, #1a1a1a, #4a0000);
       }
+      /* Animación del texto de carga */
       .f1-loader {
         font-size: 3rem;
         color:rgb(255, 255, 255);
@@ -34,6 +39,7 @@ export class perfilUsers extends HTMLElement {
           pulse 1.5s infinite,
           drift 3s ease-in-out infinite alternate;
       }
+      /* Estilo del título del perfil */
       .f1-profile-title {
         text-align: center;
         color:rgb(255, 255, 255);
@@ -43,6 +49,7 @@ export class perfilUsers extends HTMLElement {
         letter-spacing: 0.2rem;
         text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
       }
+      /* Tarjeta de carrera con efectos 3D */
       .f1-race-card {
         background-color: rgba(30, 30, 30, 0.8);
         border-radius: 10px;
@@ -52,6 +59,7 @@ export class perfilUsers extends HTMLElement {
         transition: all 0.3s ease;
         transform-style: preserve-3d;
       }
+      /* Efectos hover para las tarjetas */
       .f1-race-card:hover {
         transform: scale(1.02) rotateX(5deg);
         box-shadow: 0 10px 20px rgba(255,0,0,0.2);
@@ -67,6 +75,7 @@ export class perfilUsers extends HTMLElement {
         position: relative;
         overflow: hidden;
       }
+      /* Encabezado de la tarjeta de carrera */
       .f1-race-header::before {
         content: '';
         position: absolute;
@@ -77,9 +86,11 @@ export class perfilUsers extends HTMLElement {
         background: linear-gradient(120deg, transparent, rgba(255,255,255,0.1), transparent);
         transition: all 0.5s ease;
       }
+      /* Efecto de brillo al pasar el mouse */
       .f1-race-header:hover::before {
         left: 100%;
       }
+      /* Título de la carrera */
       .f1-race-header h2 {
         color:rgb(255, 255, 255);
         margin: 0;
@@ -88,43 +99,52 @@ export class perfilUsers extends HTMLElement {
       .f1-race-header:hover h2 {
         transform: scale(1.05);
       }
+      /* Icono de despliegue */
       .f1-dropdown-icon {
         color: #ff0000;
         transition: transform 0.3s ease;
       }
+      /* Rotación del icono cuando está activo */
       .f1-race-card.active .f1-dropdown-icon {
         transform: rotate(180deg);
       }
+      /* Contenedor de detalles de la carrera */
       .f1-race-details {
         padding: 1rem;
         display: none;
         animation: slideDown 0.4s ease;
       }
+      /* Mostrar detalles cuando está activo */
       .f1-race-card.active .f1-race-details {
         display: block;
         animation: expandDetail 0.5s ease;
       }
+      /* Secciones dentro de los detalles */
       .f1-section {
         margin-bottom: 1.5rem;
         opacity: 0;
         transform: translateY(20px);
         transition: all 0.5s ease;
       }
+      /* Animación de las secciones al activarse */
       .f1-race-card.active .f1-section {
         opacity: 1;
         transform: translateY(0);
       }
+      /* Títulos de sección */
       .f1-section h3 {
         color: #ff0000;
         border-bottom: 2px solid rgba(255, 0, 0, 0.3);
         padding-bottom: 0.5rem;
         margin-bottom: 1rem;
       }
+      /* Grid para la configuración */
       .f1-config-grid {
         display: grid;
         grid-template-columns: 1fr;
         gap: 1rem;
       }
+      /* Elementos de configuración */
       .f1-config-item {
         background-color: rgba(50, 50, 50, 0.5);
         padding: 1rem;
@@ -134,6 +154,7 @@ export class perfilUsers extends HTMLElement {
       .f1-config-item:hover {
         transform: scale(1.03);
       }
+      /* Tarjeta de resultados */
       .f1-result-card {
         background-color: rgba(50, 50, 50, 0.5);
         padding: 1rem;
@@ -143,6 +164,7 @@ export class perfilUsers extends HTMLElement {
       .f1-result-card:hover {
         transform: scale(1.02);
       }
+      /* Animaciones */
       @keyframes slideDown {
         from {
           opacity: 0;
@@ -178,11 +200,12 @@ export class perfilUsers extends HTMLElement {
       }
     `;
   }
-
+  // Método para obtener y mostrar los datos de juegos
   async fetchJuegoData() {
     try {
+      // Obtener datos de juegos desde la API
       const juegos = await getJuegos();
-
+      // Verificar si existe un usuario
       if (!window.idUser) {
         this.shadowRoot.innerHTML = `
           <style>${this.styles}</style>
@@ -195,7 +218,7 @@ export class perfilUsers extends HTMLElement {
 
       // Filtrar los juegos por el idUser
       const juegosUsuario = juegos.filter(game => game.idUser === window.idUser);
-
+      // Mostrar mensaje si no hay datos
       if (juegosUsuario.length === 0) {
         this.shadowRoot.innerHTML = `
           <style>${this.styles}</style>
@@ -267,7 +290,7 @@ export class perfilUsers extends HTMLElement {
           </div>
         </div>
       `).join('');
-
+      // Renderizar el contenido completo
       this.shadowRoot.innerHTML = `
         <style>${this.styles}</style>
         <div class="f1-profile-container">
@@ -278,7 +301,7 @@ export class perfilUsers extends HTMLElement {
         </div>
       `;
 
-      // Add event listeners after rendering
+      // Agregar event listeners después del renderizado
       this.addEventListeners();
     } catch (error) {
       console.error("Error al obtener los datos del juego:", error);
@@ -290,7 +313,7 @@ export class perfilUsers extends HTMLElement {
       `;
     }
   }
-
+  // Método para agregar listeners de eventos
   addEventListeners() {
     const raceCards = this.shadowRoot.querySelectorAll('.f1-race-header');
     raceCards.forEach(card => {
@@ -300,7 +323,7 @@ export class perfilUsers extends HTMLElement {
       });
     });
   }
-
+  // Método inicial de renderizado
   render() {
     this.shadowRoot.innerHTML = `
       <style>${this.styles}</style>
@@ -310,7 +333,7 @@ export class perfilUsers extends HTMLElement {
     `;
     this.fetchJuegoData();
   }
-
+  // Método del ciclo de vida que se ejecuta cuando el componente se conecta al DOM
   connectedCallback() {
     this.render();
   }
