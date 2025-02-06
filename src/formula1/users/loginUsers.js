@@ -120,17 +120,24 @@ export class loginUser extends HTMLElement {
             </form>
         </div>
         `;
+        //Manejo de eventos
         this.addEventListeners();
     }
 
+    /**
+     * Manejo de eventos para ingresar
+     */
     addEventListeners() {
+        //Toma el formulario de registro
         const loginForm = this.querySelector('#loginForm');
         this.querySelector('#btnIngresar').addEventListener('click', async (e) => {
             e.preventDefault();
 
+            //Toma los campos completados por el usuario
             const username = this.querySelector('#usernames').value.trim().toUpperCase();
             const password = this.querySelector('#passwords').value.trim();
 
+            //Valida los campos
             if (!username || !password) {
                 Swal.fire({
                     icon: "info",
@@ -141,7 +148,7 @@ export class loginUser extends HTMLElement {
             }
 
             try {
-                const users = await getUsuarios(); // Ahora devuelve directamente el JSON
+                const users = await getUsuarios(); //Obtiene datos de los usuarios
 
                 if (!Array.isArray(users)) {
                     throw new Error("Los datos de usuarios no son válidos.");
@@ -150,6 +157,7 @@ export class loginUser extends HTMLElement {
                 // Verificar si el usuario existe
                 const user = users.find(user => user.usuario.toUpperCase() === username);
 
+                //Si el usuario no existe
                 if (!user) {
                     Swal.fire({
                         icon: "error",
@@ -157,6 +165,7 @@ export class loginUser extends HTMLElement {
                         text: "Usuario no registrado!",
                     });
                     return;
+                    //Verifica la contraseña de acuerdo al usuario
                 } else if (user.contraseña !== password) {
                     Swal.fire({
                         icon: "error",
@@ -164,15 +173,17 @@ export class loginUser extends HTMLElement {
                         text: "Contraseña Incorrecta!",
                     });
                     return;
+                    //Caso exitoso
                 } else {
                     Swal.fire({
                         icon: "success",
                         title: "Bienvenido!",
                         text: "Ingreso Exitoso",
                     });
+                    //Variables globales para el nombre y ID usuario 
                     window.idUser = user.id;
                     window.user = user.usuario;
-                    this.adminUsers();
+                    this.adminUsers(); //Llama la función para la página principal de usuarios
                     loginForm.reset();
                     //console.log('Usuario autenticado:', user);
                 }
@@ -187,6 +198,9 @@ export class loginUser extends HTMLElement {
         });
     }
 
+    /**
+     * Función para direccionar a página pilotos
+     */
     adminUsers() {
         //Component Página Pilotos
         this.innerHTML = `

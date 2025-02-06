@@ -1,6 +1,9 @@
+//Importación sweetalert
 import Swal from 'sweetalert2';
+//Importa funciones para el manejo de la información en el archivo JSON
 import { postEquipos, getEquipos, deleteEquipos, patchEquipos } from "../../Apis/equiposApis.js";
 
+//Componente CRUD equipos
 export class equiposAdmin extends HTMLElement {
     constructor() {
         super();
@@ -423,7 +426,7 @@ export class equiposAdmin extends HTMLElement {
                 }
             }
         </style>
-
+        <!--Formulario de registro equipos-->
         <div class="card">
             <div class="card-header">
                 <h2>Registro de Equipo</h2>
@@ -433,29 +436,30 @@ export class equiposAdmin extends HTMLElement {
                     <label for="idEquipo" class="form-label">COD</label>
                     <input type="number" class="form-control" id="idEquipo" name="idEquipo" placeholder="${idEquipo}" disabled>
                 </div>
+                <!--Nombre equipo-->
                 <div class="form-grid">
                     <div class="form-group">
                         <label class="form-label" for="nombreEquipo">Nombre del Equipo</label>
                         <input type="text" class="form-control" id="nombreEquipo" name="nombreEquipo" placeholder="Ingrese el nombre del equipo" required>
                     </div>
-                    
+                    <!--Pais equipo-->
                     <div class="form-group">
                         <label class="form-label" for="paisEquipo">País</label>
                         <input type="text" class="form-control" id="paisEquipo" name="paisEquipo" placeholder="Ingrese el país" required>
                     </div>
-                    
+                    <!--Motor equipo-->
                     <div class="form-group">
                         <label class="form-label" for="motorEquipo">Motor</label>
                         <input type="text" class="form-control" id="motorEquipo" name="motorEquipo" placeholder="Especifique el motor" required>
                     </div>
-                    
+                    <!--Piloto principal-->
                     <div class="form-group">
                         <label for="nombrePiloto1" class="form-label">Piloto Principal</label>
                         <select class="nombrePilotoVeh form-control" name="nombrePiloto1" required>
                             <option value="">Seleccionar Piloto</option>
                         </select>
                     </div>
-                    
+                    <!--Piloto secundario-->
                     <div class="form-group">
                         <label for="nombrePiloto2" class="form-label">Piloto Secundario</label>
                         <select class="nombrePilotoVeh form-control" name="nombrePiloto2" required>
@@ -475,7 +479,7 @@ export class equiposAdmin extends HTMLElement {
                         </div>
                     </div>
                 </div>
-
+                <!--Evento al registrar el equipo-->
                 <button id="btnRegistrar" type="submit" class="btn-submit">
                     Registrar Equipo
                 </button>
@@ -493,13 +497,14 @@ export class equiposAdmin extends HTMLElement {
             </div>
         </div>
         `;
-        
+        //Función para el manejo de eventos
         this.addEventListener();
 
         // Cargar pilotos desde db.json
         fetch('../../../db.json')
             .then(response => response.json())
             .then(data => {
+                //Itera sobre los selects mostrando los nombres de los pilotos registrados
                 const selectsPilotos = this.shadowRoot.querySelectorAll(".nombrePilotoVeh");
                 selectsPilotos.forEach(select => {
                     data.pilotos.forEach(piloto => {
@@ -520,12 +525,18 @@ export class equiposAdmin extends HTMLElement {
             });
     }
 
+    /**
+     * Manejo de evento para mostrar equipos registrados
+     */
     addEventListener() {
         this.shadowRoot.querySelector('#btnListar').addEventListener("click", () => {
             this.mostrarEquipos();
         });
     }
 
+    /**
+     * Crea un equipo
+     */
     crearEquipo = () => {
         const formCrearEquipo = this.shadowRoot.querySelector('#formCrearEquipo');
         const dropZone = this.shadowRoot.querySelector('#dropZone');
@@ -606,9 +617,11 @@ export class equiposAdmin extends HTMLElement {
 
             const reader = new FileReader();
             reader.onloadend = () => {
+                //Toma los datos en el formulario de registro
                 const datos = Object.fromEntries(formData.entries());
                 datos.imagenEquipo = reader.result;
 
+                //Ordena los datos para enviarlos
                 const equipo = {
                     nombreEquipo: datos.nombreEquipo,
                     paisEquipo: datos.paisEquipo,
@@ -617,6 +630,7 @@ export class equiposAdmin extends HTMLElement {
                     imagenEquipo: datos.imagenEquipo
                 };
                 
+                //Envia los datos del equipo
                 postEquipos(equipo)
                     .then(response => {
                         if (!response.ok) throw new Error(`Error: ${response.status}`);
@@ -630,9 +644,9 @@ export class equiposAdmin extends HTMLElement {
                             showConfirmButton: false,
                             timer: 1500
                         });
-                        formCrearEquipo.reset();
+                        formCrearEquipo.reset(); //Limpia el formulario
                         previewContainer.style.display = 'none';
-                        this.mostrarEquipos();
+                        this.mostrarEquipos(); //Actualiza la lista de equipos
                     })
                     .catch(error => {
                         console.error('Error:', error);
@@ -647,12 +661,18 @@ export class equiposAdmin extends HTMLElement {
         });
     }
 
+    /**
+     * Mostrar equipos registrados
+     */
     mostrarEquipos = () => {
+        //Obtiene la información de los equipos
         getEquipos()
             .then((equipos) => {
+                //Toma el contenedor para almacenar los datos
                 const equiposCards = this.shadowRoot.querySelector('#equiposCards');
                 equiposCards.innerHTML = '';
                 
+                //Por cada equipo registrado muestra la información
                 equipos.forEach((equipo) => {
                     const divItems = document.createElement('div');
                     divItems.classList.add('col');
@@ -664,19 +684,22 @@ export class equiposAdmin extends HTMLElement {
                                 <p class="card__pais">🌍 ${equipo.paisEquipo}</p>
                                 <p class="card__motor">⚡ ${equipo.motorEquipo}</p>
                             </div>
+                            <!--Eventos de edición y eliminación-->
                             <div class="card__actions">
                                 <button class="btnEditarForm" data-id="${equipo.id}">Editar</button>
                                 <button class="btnEliminar" data-id="${equipo.id}">Eliminar</button>
                             </div>
                         </div>
                     `;
+                    //Añade ñas cartas
                     equiposCards.appendChild(divItems);
                 });
 
+                //Evento de editar el equipo
                 this.shadowRoot.querySelectorAll('.btnEditarForm').forEach(btn => {
                     btn.addEventListener('click', (e) => {
-                        const id = e.target.getAttribute('data-id');
-                        this.mostrarFormularioEdit(id);
+                        const id = e.target.getAttribute('data-id'); //Crea un atributo al botón para obtener el id del equipo
+                        this.mostrarFormularioEdit(id); //Muestra formulario de edición
                     });
                 });
             })
@@ -690,18 +713,24 @@ export class equiposAdmin extends HTMLElement {
             });
     }
 
+    /**
+     * Eliminar equipos
+     */
     eliminarEquipo() {
+        //Toma las cartas de los equipos
         const equiposCards = this.shadowRoot.querySelector("#equiposCards");
     
+        //Maneja el evento de eliminar equipo
         equiposCards.addEventListener("click", async (e) => {
             if (e.target.classList.contains("btnEliminar")) {
-                const id = e.target.getAttribute("data-id");
+                const id = e.target.getAttribute("data-id"); //Crea un atributo al botón para obtener el id del equipo
     
                 if (!id) {
                     console.error("ID del equipo no encontrado.");
                     return;
                 }
     
+                //Confirmación de la operación
                 const result = await Swal.fire({
                     title: '¿Eliminar equipo?',
                     text: "Esta acción no se puede deshacer",
@@ -712,9 +741,10 @@ export class equiposAdmin extends HTMLElement {
                     confirmButtonText: 'Sí, eliminar',
                     cancelButtonText: 'Cancelar'
                 });
-    
+                //Si se confirma la eliminación
                 if (result.isConfirmed) {
                     try {
+                        //Elimina el equipo del JSON
                         const response = await deleteEquipos(id);
                         if (!response.ok) throw new Error(`Error ${response.status}`);
                         
@@ -725,7 +755,7 @@ export class equiposAdmin extends HTMLElement {
                             showConfirmButton: false,
                             timer: 1500
                         });
-                        this.mostrarEquipos();
+                        this.mostrarEquipos(); //Actualiza la lista de equipos
                     } catch (error) {
                         console.error("Error:", error);
                         Swal.fire({
@@ -739,16 +769,20 @@ export class equiposAdmin extends HTMLElement {
         });
     }
 
+    //Muestra formulario de edición
     mostrarFormularioEdit = async (id) => {
         try {
+            //Obtiene el equipo a editar
             const [equipos, dbData] = await Promise.all([
                 getEquipos(),
                 fetch('../../../db.json').then(response => response.json())
             ]);
             
+            //Itera sobre los equipos buscando el id como parametro
             const equipo = equipos.find(e => e.id === id);
             if (!equipo) throw new Error('Equipo no encontrado');
 
+            //Itera sobre cada uno de los pilotos para obtener su nombre 
             const pilotosOptions = dbData.pilotos.map(piloto => 
                 `<option value="${piloto.id}" ${equipo.pilotos[0] === piloto.id ? 'selected' : ''}>${piloto.nombrePiloto}</option>`
             ).join('');
@@ -816,6 +850,7 @@ export class equiposAdmin extends HTMLElement {
                             background-color: #4b5563 !important;
                         }
                     </style>
+                    <!--Formulario de edición-->
                     <form id="formEditarEquipo" class="form-edit">
                         <div class="form-group">
                             <label for="nombreEquipo">Nombre del Equipo</label>
@@ -861,7 +896,7 @@ export class equiposAdmin extends HTMLElement {
                         Swal.showValidationMessage('Por favor seleccione ambos pilotos');
                         return false;
                     }
-
+                    //Retorna los valores de los campos del formulario
                     return {
                         nombreEquipo: document.getElementById('nombreEquipo').value,
                         paisEquipo: document.getElementById('paisEquipo').value,
@@ -882,7 +917,7 @@ export class equiposAdmin extends HTMLElement {
                     showConfirmButton: false,
                     timer: 1500
                 });
-                this.mostrarEquipos();
+                this.mostrarEquipos(); //Llama a la función para mostrar los equipos
             }
         } catch (error) {
             console.error('Error:', error);

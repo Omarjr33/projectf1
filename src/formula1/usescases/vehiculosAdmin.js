@@ -7,10 +7,14 @@ export class VehiculosAdmin extends HTMLElement {
         this.attachShadow({ mode: 'open' });
         this.currentStep = 1;
         this.render();
+        //Funciones para el manejo de eventos
         this.setupEventListeners();
         this.addEventListeners();
     }
 
+    /**
+     * Manejo de eventos
+     */
     setupEventListeners() {
         this.shadowRoot.addEventListener('click', (e) => {
             if (e.target.matches('.next-step')) {
@@ -22,6 +26,9 @@ export class VehiculosAdmin extends HTMLElement {
         });
     }
 
+    /**
+     * Manejo de las secciones en el formulario de registro
+     */
     nextStep() {
         if (this.currentStep < 5) {
             const currentSection = this.shadowRoot.querySelector(`[data-step="${this.currentStep}"]`);
@@ -35,6 +42,9 @@ export class VehiculosAdmin extends HTMLElement {
         }
     }
 
+    /**
+     * Manejo de las secciones en el formulario de registro acceder a la sección anterior
+     */
     prevStep() {
         if (this.currentStep > 1) {
             const currentSection = this.shadowRoot.querySelector(`[data-step="${this.currentStep}"]`);
@@ -48,6 +58,9 @@ export class VehiculosAdmin extends HTMLElement {
         }
     }
 
+    /**
+     * Barra de progreso de acuerdo a las secciones completadas en el formulario de registro de vehículos
+     */
     updateProgressBar() {
         const progress = this.shadowRoot.querySelector('.progress-bar');
         const percentage = ((this.currentStep - 1) / 4) * 100;
@@ -55,7 +68,7 @@ export class VehiculosAdmin extends HTMLElement {
     }
 
     render() {
-        this.shadowRoot.innerHTML = `
+        this.shadowRoot.innerHTML = /*html*/`
         <style>
             :host {
                 --primary-bg: #1e1e1e;
@@ -416,7 +429,7 @@ export class VehiculosAdmin extends HTMLElement {
                 }
             }
         </style>
-
+        <!--Formulario de registro de vehículos-->
         <div class="vehicles-container">
             <form id="formCrearVehiculo">
                 <div class="steps-container">
@@ -612,28 +625,35 @@ export class VehiculosAdmin extends HTMLElement {
                         <button type="button" id="btnRegistrarVehiculo" class="btn-submit">Guardar Vehículo</button>
                     </div>
                 </div>
+                <!--Mensaje de registro-->
                 <div id="statusMessage" class="status-message"></div>
             </form>
-
+            <!--Contenedor para mostrar vehículos registrados-->
             <div class="list-header">
                 <h2>Vehículos Registrados</h2>
+                <!--Botón de muestra de vehículos-->
                 <button id="btnListarVehiculos" type="button">↓</button>
             </div>
             <div id="vehiculosCards"></div>
         </div>
         `;
 
+        //Cargar datos de equipos y pilotos en los selects
         this.loadTeamsAndPilots();
     }
 
+    /**
+     * Función para cargar los equipos y los pilotos registrados del JSON
+     */
     loadTeamsAndPilots() {
-        fetch('../../../db.json')
+        fetch('../../../db.json') //Ruta JSON
             .then(response => response.json())
             .then(data => {
+                //Tomar id selects
                 const equipoPiloto = this.shadowRoot.querySelector("#equipoPilotoVeh");
                 const nombrePiloto = this.shadowRoot.querySelector("#nombrePilotoVeh");
                 
-                // Load teams
+                // Cargar equipos mostrando en option el nombre del equipo
                 data.equipos.forEach(equipo => {
                     const option = document.createElement("option");
                     option.value = equipo.id;
@@ -641,7 +661,7 @@ export class VehiculosAdmin extends HTMLElement {
                     equipoPiloto.appendChild(option);
                 });
 
-                // Load pilots
+                // Cargar pilotos mostrando en option el nombre del piloto
                 data.pilotos.forEach(piloto => {
                     const option = document.createElement("option");
                     option.value = piloto.id;
@@ -649,6 +669,7 @@ export class VehiculosAdmin extends HTMLElement {
                     nombrePiloto.appendChild(option);
                 });
             })
+            //En caso de error al cargar los datos
             .catch(error => {
                 console.error("Error loading data:", error);
                 Swal.fire({
@@ -659,18 +680,27 @@ export class VehiculosAdmin extends HTMLElement {
             });
     }
 
+    /**
+     * Manejo de eventos para crear y mostrar vehículos
+     */
     addEventListeners() {
         this.shadowRoot.querySelector('#btnRegistrarVehiculo').addEventListener("click", () => this.crearVehiculos());
         this.shadowRoot.querySelector('#btnListarVehiculos').addEventListener("click", () => this.mostrarVehiculos());
     }
 
+    /**
+     * Función para crear vehículos
+     */
     crearVehiculos = () => {
+        //Toma el formulario de registro de vehículos
         const formCrearVehiculo = this.shadowRoot.querySelector('#formCrearVehiculo');
         const statusMessage = this.shadowRoot.querySelector('#statusMessage');
     
+        //Toma los datos ingresados por el usuario
         const formData = new FormData(formCrearVehiculo);
         const datos = Object.fromEntries(formData.entries());
     
+        //Organiza la información registrada antes de ser enviada al JSON
         const vehiculo = {
             imagenVehiculo: datos.imagenVehiculo,
             motor: datos.motor,
@@ -722,6 +752,7 @@ export class VehiculosAdmin extends HTMLElement {
             }
         };
 
+        //Envía los datos del vehículo de acuerdo a la organización anterior
         postVehiculos(vehiculo)
             .then(response => response.json())
             .then(responseData => {
@@ -732,13 +763,14 @@ export class VehiculosAdmin extends HTMLElement {
                     timer: 2000,
                     showConfirmButton: false
                 });
-                formCrearVehiculo.reset();
+                formCrearVehiculo.reset(); //Limpia el formulario al ser registrado el vehículo
                 this.currentStep = 1;
-                this.updateProgressBar();
+                this.updateProgressBar(); //Barra de progreso en el formulario
                 const allSections = this.shadowRoot.querySelectorAll('.step-section');
                 allSections.forEach(section => section.style.display = 'none');
                 this.shadowRoot.querySelector('[data-step="1"]').style.display = 'block';
             })
+            //Error al cargar los datos
             .catch(error => {
                 console.error('Error:', error);
                 Swal.fire({
@@ -749,13 +781,20 @@ export class VehiculosAdmin extends HTMLElement {
             });
     };
 
+    /**
+     * Mostrar vehículos registrados
+     */
     mostrarVehiculos = () => {
+        //Toma los datos de los vehículos registrados
         getVehiculos()
         .then((vehiculos) => {
+            //Toma el contenedor para mostrar los vehiculos
             const vehiculosCards = this.shadowRoot.querySelector('#vehiculosCards');
             vehiculosCards.innerHTML = '';
             
+            //Por cada vehículo , crea una tarjeta
             vehiculos.forEach((vehiculo) => {
+                //Por vehículo crea una tarjeta
                 const divItems = document.createElement('div');
                 divItems.classList.add('col');
                 divItems.innerHTML = `
@@ -775,8 +814,10 @@ export class VehiculosAdmin extends HTMLElement {
                 vehiculosCards.appendChild(divItems);
             });
 
+            //Manejo de eventos para edición y eliminación
             this.setupCardEventListeners();
         })
+        //Manejo de errores
         .catch((error) => {
             console.error('Error en la solicitud GET:', error.message);
             Swal.fire({
@@ -787,19 +828,26 @@ export class VehiculosAdmin extends HTMLElement {
         });
     }
 
+    //Manejo de eventos
     setupCardEventListeners() {
+        //Eliminar vehículo
         this.shadowRoot.querySelectorAll('.btnEliminar').forEach(btn => {
             btn.addEventListener('click', (e) => this.eliminarVehiculo(e));
         });
 
+        //Abrir formulario de edición
         this.shadowRoot.querySelectorAll('.btnEditarForm').forEach(btn => {
             btn.addEventListener('click', (e) => this.mostrarFormularioEdit(e.target.dataset.id));
         });
     }
 
+    /**
+     * Función para eliminar vehículos
+     * @param {*} e //Callback
+     */
     eliminarVehiculo = async (e) => {
         const id = e.target.dataset.id;
-        
+        //Confirma la operación de elimiar
         const result = await Swal.fire({
             title: '¿Estás seguro?',
             text: "Esta acción no se puede deshacer",
@@ -810,9 +858,10 @@ export class VehiculosAdmin extends HTMLElement {
             confirmButtonText: 'Sí, eliminar',
             cancelButtonText: 'Cancelar'
         });
-
+        //Si es confirmada la respuesta
         if (result.isConfirmed) {
             try {
+                //Elimina los vehículos por el ID del vehiculo
                 await deleteVehiculos(id);
                 Swal.fire({
                     icon: 'success',
@@ -821,7 +870,7 @@ export class VehiculosAdmin extends HTMLElement {
                     timer: 1500,
                     showConfirmButton: false
                 });
-                this.mostrarVehiculos();
+                this.mostrarVehiculos(); //Actualiza las cartas
             } catch (error) {
                 console.error('Error:', error);
                 Swal.fire({
@@ -833,7 +882,12 @@ export class VehiculosAdmin extends HTMLElement {
         }
     }
 
+    /**
+     * Función para mostrar formulario de edición
+     * @param {*} id //ID del vehículo
+     */
     mostrarFormularioEdit = (id) => {
+        //Obtener los datos de los vehículos
         getVehiculos()
         .then((vehiculos) => {
             const vehiculo = vehiculos.find(v => v.id === id);
@@ -915,6 +969,7 @@ export class VehiculosAdmin extends HTMLElement {
                     `;
                     document.head.appendChild(style);
                 },
+                //Confirma los datos que se van a enviar actualizados
                 preConfirm: () => {
                     return {
                         imagenVehiculo: document.getElementById('imagenEdit').value,
@@ -928,10 +983,11 @@ export class VehiculosAdmin extends HTMLElement {
                 }
             }).then((result) => {
                 if (result.isConfirmed) {
-                    this.editarVehiculo(id, result.value);
+                    this.editarVehiculo(id, result.value); //Si el resultado es confirmado llama la función de edición
                 }
             });
         })
+        //En caso de error
         .catch(error => {
             console.error('Error:', error);
             Swal.fire({
@@ -942,11 +998,17 @@ export class VehiculosAdmin extends HTMLElement {
         });
     }
 
+    /**
+     * Función para editar vehículos
+     * @param {*} id //ID vehículo
+     * @param {*} datos //Datos actualizados
+     */
     editarVehiculo = async (id, datos) => {
         try {
+            //Actualizando los datos de los vehículos con la información recibida
             const response = await patchVehiculos(datos, id);
             if (!response.ok) throw new Error('Error al actualizar el vehículo');
-            
+            //Mensaje de actualización exitosa
             Swal.fire({
                 icon: 'success',
                 title: '¡Éxito!',
@@ -954,7 +1016,7 @@ export class VehiculosAdmin extends HTMLElement {
                 timer: 1500,
                 showConfirmButton: false
             });
-            this.mostrarVehiculos();
+            this.mostrarVehiculos(); //Actualiza las tarjetas de vehículos con los datos mostrados
         } catch (error) {
             console.error('Error:', error);
             Swal.fire({

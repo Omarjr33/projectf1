@@ -1,7 +1,13 @@
+//API para almacenar datos de los usuarios
 const URL_API = "http://localhost:3000";
 const myHeaders = new Headers({
     "Content-Type": "application/json"
 });
+
+/**
+ * Obtener la información
+ * @returns 
+ */
 const getUsuario = async() => {
     try {
         const respuesta = await fetch(`${URL_API}/users`);
@@ -19,8 +25,13 @@ const getUsuario = async() => {
 	} catch(error){
         console.log(error);
 	}
-    
 }
+
+/**
+ * Crear la información
+ * @param {Object} datos //Datos del usuario
+ * @returns 
+ */
 const postUsuario = async (datos) => {
     try {
         return await fetch(`${URL_API}/users`, {
@@ -32,6 +43,13 @@ const postUsuario = async (datos) => {
         console.error('Error en la solicitud POST:', error.message);
     }
 }
+
+/**
+ * Actualizar la información de los usuarios
+ * @param {object} datos //Datos usuario
+ * @param  id //Id usuario
+ * @returns 
+ */
 const patchUsuario = async (datos,id) =>{
     try {
         return await fetch(`${URL_API}/users/${id}`, {
@@ -43,6 +61,12 @@ const patchUsuario = async (datos,id) =>{
         console.error('Error en la solicitud PATCH:', error.message);
     }
 }
+
+/**
+ * Eliminar información de los usuarios
+ * @param id //Id del usuario
+ * @returns 
+ */
 const deleteUsuario = async (id) =>{
     try {
         return await fetch(`${URL_API}/users/${id}`, {
@@ -53,6 +77,8 @@ const deleteUsuario = async (id) =>{
         console.error('Error en la solicitud DELETE:', error.message);
     }
 }
+
+//Exportación de las funciones
 export {
     getUsuario as getUsuarios,
     postUsuario as postUsuarios,

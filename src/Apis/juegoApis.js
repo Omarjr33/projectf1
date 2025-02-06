@@ -1,7 +1,13 @@
+//API para almacenar datos del juego
 const URL_API = "http://localhost:3000";
 const myHeaders = new Headers({
     "Content-Type": "application/json"
 });
+
+/**
+ * Obtener la información del juego
+ * @returns 
+ */
 const getJuego = async() => {
     try {
         const respuesta = await fetch(`${URL_API}/juego`);
@@ -21,6 +27,12 @@ const getJuego = async() => {
 	}
     
 }
+
+/**
+ * Crear la información
+ * @param {Object} datos //Datos del juego
+ * @returns 
+ */
 const postJuego = async (datos) => {
     try {
         return await fetch(`${URL_API}/juego`, {
@@ -32,6 +44,13 @@ const postJuego = async (datos) => {
         console.error('Error en la solicitud POST:', error.message);
     }
 }
+
+/**
+ * Actualizar la información del juego
+ * @param {object} datos //Datos juego
+ * @param  id //Id juego
+ * @returns 
+ */
 const patchJuego = async (datos,id) =>{
     try {
         return await fetch(`${URL_API}/juego/${id}`, {
@@ -43,6 +62,12 @@ const patchJuego = async (datos,id) =>{
         console.error('Error en la solicitud PATCH:', error.message);
     }
 }
+
+/**
+ * Eliminar información del juego
+ * @param id //Id del juego
+ * @returns 
+ */
 const deleteJuego = async (id) =>{
     try {
         return await fetch(`${URL_API}/juego/${id}`, {
@@ -53,6 +78,8 @@ const deleteJuego = async (id) =>{
         console.error('Error en la solicitud DELETE:', error.message);
     }
 }
+
+//Exportación de las funciones
 export {
     getJuego as getJuegos,
     postJuego as postJuegos,

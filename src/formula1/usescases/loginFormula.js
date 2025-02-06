@@ -1,5 +1,6 @@
 import Swal from 'sweetalert2';
 
+//Componente de ingreso administrados
 export class LoginFormula extends HTMLElement {
     constructor() {
         super();
@@ -8,7 +9,7 @@ export class LoginFormula extends HTMLElement {
     }
 
     render() {
-        this.shadowRoot.innerHTML = `
+        this.shadowRoot.innerHTML = /*html*/ `
             <style>
                 :host {
                     display: block;
@@ -96,19 +97,23 @@ export class LoginFormula extends HTMLElement {
                     background: rgba(0, 0, 0, 0.8);
                 }
             </style>
-
+            <!--Formulario de inicio de sesión-->
             <div class="night-bg">
                 <div class="stars"></div>
                 <div class="login-container">
                     <h1 class="welcome">INICIAR SESION</h1>
                     <form id="loginForm">
                         <div class="form-group">
+                        <!--Nombre usuario-->
                             <input type="text" class="input-field" id="userAdmin" placeholder="Username">
                         </div>
                         <div class="form-group">
+                        <!--Contraseña-->
                             <input type="password" class="input-field" id="passwordAdmin" placeholder="Password">
                         </div>
+                        <!--Botón de login-->
                         <button type="submit" class="login-btn">LOGIN</button>
+                        <!--Botón de regreso al principal-->
                         <button type="button" class="reload-btn" id="reloadButton">Regresar</button>
                     </form>
                 </div>
@@ -151,9 +156,10 @@ export class LoginFormula extends HTMLElement {
         const form = this.shadowRoot.querySelector('#loginForm');
         const reloadButton = this.shadowRoot.querySelector('#reloadButton');
         
+         //Manejo de eventos al hacer click en el botón de login
         form.addEventListener('submit', (e) => {
             e.preventDefault();
-            this.ingresoAdmin();
+            this.ingresoAdmin(); //Se llama la función de ingreso
         });
 
         reloadButton.addEventListener('click', () => {
@@ -161,17 +167,20 @@ export class LoginFormula extends HTMLElement {
         });
     }
 
+    //Validación de ingreso usuario
     ingresoAdmin() {
+        //Se toman los valores del usuario y su contraseña
         const usuario = this.shadowRoot.querySelector("#userAdmin").value;
         const contraseña = this.shadowRoot.querySelector("#passwordAdmin").value;
         
+        //Se verifica si el usuario y contraseña son correctos
         if (usuario === "admin" && contraseña === "admin123") {
             Swal.fire({
                 icon: "success",
                 title: "Welcome!",
                 text: "Login successful",
             });
-            this.adminIndex();
+            this.adminIndex(); //Función para la página principal
         } else {
             Swal.fire({
                 icon: "error",
@@ -181,6 +190,9 @@ export class LoginFormula extends HTMLElement {
         }
     }
 
+    /**
+     * Función para la página principal
+     */
     adminIndex() {
         this.shadowRoot.innerHTML = `
         <admin-index></admin-index>

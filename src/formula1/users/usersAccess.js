@@ -95,9 +95,11 @@ export class usersAccess extends HTMLElement {
             <login-user></login-user>
         </div>
         `;
+        //Manejo de eventos de eventos para modo de registro e ingreso
         this.addEventListeners();
     }
 
+    //Manejo de eventos al hacer click en las opciones registro o ingreso
     addEventListeners() {
         this.querySelectorAll('.nav-link').forEach(link => {
             link.addEventListener('click', (e) => {
