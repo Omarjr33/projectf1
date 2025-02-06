@@ -1,8 +1,10 @@
+//Importación componentes navbar administarados
 import "./equiposAdmin.js";
 import "./pilotosAdmin.js";
 import "./circuitosAdmin.js";
 import "./vehiculosAdmin.js";
 
+//Componente
 export class adminIndex extends HTMLElement {
     constructor() {
         super();
@@ -189,6 +191,7 @@ export class adminIndex extends HTMLElement {
                 }
             }
         </style>
+        <!--Navegador para el llamadado de componentes de acuerdo a su elección-->
         <nav class="navbar navbar-expand-lg">
             <div class="container-fluid">
                 <div class="navbar-brand" id="logo-btn">
@@ -198,16 +201,21 @@ export class adminIndex extends HTMLElement {
                     <span>&#9776;</span>
                 </button>
                 <div class="navbar-collapse" id="navbarSupportedContent">
+                    <!--Lista con las opciones de navegación-->
                     <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <!--Item activo al momento de ingresar al componente-->
                         <li class="nav-item">
                             <a class="nav-link active" href="#" data-section="equipos">Equipos</a>
                         </li>
+                        <!--Item oculto para el llamado de pilotos-->
                         <li class="nav-item">
                             <a class="nav-link" href="#" data-section="pilotos">Pilotos</a>
                         </li>
+                        <!--Item oculto para el llamado de circuitos-->
                         <li class="nav-item">
                             <a class="nav-link" href="#" data-section="circuitos">Circuitos</a>
                         </li>
+                        <!--Item oculto para el llamado de vehiculos-->
                         <li class="nav-item">
                             <a class="nav-link" href="#" data-section="vehiculos">Vehículos</a>
                         </li>
@@ -215,21 +223,26 @@ export class adminIndex extends HTMLElement {
                 </div>
             </div>
         </nav>
+        <!--Contenedores con los componentes correspondientes a la elección-->
         <div class="container" id="equipos" style="display:block;">
+            <!--CRUD equipos-->
             <equipos-admin></equipos-admin>
         </div>
         <div class="container" id="pilotos" style="display:none;">
+            <!--CRUD pilotos-->
             <pilotos-admin></pilotos-admin>
         </div>
         <div class="container" id="circuitos" style="display:none;">
+            <!--CRUD circuitos-->
             <circuitos-admin></circuitos-admin>
         </div>
         <div class="container" id="vehiculos" style="display:none;">
+            <!--CRUD vehiculos-->
             <vehiculos-admin></vehiculos-admin>
         </div>
         `;
 
-        // Navigation logic
+        //Lógica menú de navegación
         this.setupNavigation();
     }
 
@@ -244,35 +257,35 @@ export class adminIndex extends HTMLElement {
             }));
         });
 
-        // Navigation menu logic
+        // Lógica menú de navegación por cada item con clase nav-link
         this.querySelectorAll('.nav-link').forEach(link => {
             link.addEventListener('click', (e) => {
                 e.preventDefault();
 
-                // Remove 'active' class from all links
+                // Eliminar la clase que tiene active
                 this.querySelectorAll('.nav-link').forEach(navLink => {
                     navLink.classList.remove('active');
                 });
 
-                // Add 'active' class to clicked link
+                // Se añade a la clase del item active al dar click
                 e.target.classList.add('active');
 
-                // Get section to show
+                //Obtiene la sección a mostrar
                 const section = e.target.dataset.section;
 
-                // Hide/show containers
+                // Elimina o muestra los contenedores de acuerdo a la elección
                 ['equipos', 'pilotos', 'circuitos', 'vehiculos'].forEach(containerName => {
                     const container = this.querySelector(`#${containerName}`);
                     container.style.display = containerName === section ? 'block' : 'none';
                 });
 
-                // Close mobile menu if open
+                // Cerrar el menú en celular
                 const collapse = this.querySelector('.navbar-collapse');
                 collapse.classList.remove('show');
             });
         });
 
-        // Mobile menu toggle
+        // Menú móvil
         const toggler = this.querySelector('.navbar-toggler');
         const collapse = this.querySelector('.navbar-collapse');
         

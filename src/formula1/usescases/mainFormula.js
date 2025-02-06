@@ -1,3 +1,4 @@
+//Importar login usuario
 import "../users/usersAccess.js";
 export class mainFormula extends HTMLElement{
     constructor(){
@@ -7,6 +8,7 @@ export class mainFormula extends HTMLElement{
     render(){
         this.innerHTML= /*html*/ `
         <div class="container">
+        <!--Navbar página principal-->
         <nav>
             <img class="logo" src="src/img/f1.png" alt="logo">
             <div class="nav-links" id="nav-links">
@@ -15,6 +17,7 @@ export class mainFormula extends HTMLElement{
                 <a href="#autos" class="nav-link" data-section="autos">Autos</a>
             </div>
             <div class="auth-buttons">
+                <!--Botón para inciar sesión como administrador-->
                 <button class="btn btn-primary" id="btnLogin">Iniciar sesión</button>
             </div>
             <div class="burger" id="burger">
@@ -242,22 +245,33 @@ export class mainFormula extends HTMLElement{
         this.addEventListener();
     }
 
+    /**
+     * Manejo de eventos en los ingresos
+     */
     addEventListener(){
+        //Ingreso administrados
         document.querySelector('#btnLogin').addEventListener('click', () => {
             this.logIn(); 
         });
 
+        //Ingreso usuario
         document.querySelector('#btnLoginUser').addEventListener('click', () => {
             this.logInUser(); 
         });
     }
 
+    /**
+     * Ingreso administrador
+     */
     logIn(){
         this.innerHTML= /*html*/ `
         <login-formula></login-formula>
         `;
     }
 
+    /**
+     * Ingreso usuario
+     */
     logInUser(){
         this.innerHTML= /*html*/ `
         <users-access></users-access>

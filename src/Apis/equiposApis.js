@@ -1,8 +1,13 @@
+//API para almacenar datos de los equipos
 const URL_API = "http://localhost:3000";
 const myHeaders = new Headers({
     "Content-Type": "application/json"
 });
 
+/**
+ * Obtener la información de equipos
+ * @returns 
+ */
 const getEquipo = async() => {
     try {
         const respuesta = await fetch(`${URL_API}/equipos`);
@@ -22,6 +27,12 @@ const getEquipo = async() => {
 	}
     
 }
+
+/**
+ * Crear la información
+ * @param {Object} datos //Datos equipos
+ * @returns 
+ */
 const postEquipo = async (datos) => {
     try {
         return await fetch(`${URL_API}/equipos`, {
@@ -33,6 +44,13 @@ const postEquipo = async (datos) => {
         console.error('Error en la solicitud POST:', error.message);
     }
 }
+
+/**
+ * Actualizar la información de los equipos
+ * @param {object} datos //Datos equipo
+ * @param  id //Id equipo
+ * @returns 
+ */
 const patchEquipo = async (datos,id) =>{
 
     try {
@@ -46,6 +64,12 @@ const patchEquipo = async (datos,id) =>{
     }
 
 }
+
+/**
+ * Eliminar información de los equipos
+ * @param id //Id del equipo
+ * @returns 
+ */
 const deleteEquipo = async (id) =>{
 
     try {
@@ -58,6 +82,8 @@ const deleteEquipo = async (id) =>{
     }
 
 }
+
+//Exportación de las funciones
 export {
     getEquipo as getEquipos,
     postEquipo as postEquipos,
