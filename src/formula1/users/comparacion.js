@@ -1,11 +1,12 @@
 export class CompararVehiculos extends HTMLElement {
     constructor() {
         super();
+        // Array para almacenar los IDs de los vehículos seleccionados
         this.selectedCars = [];
         this.attachShadow({ mode: 'open' });
         this.render();
     }
- 
+    // Método para renderizar el componente
     render() {
         this.shadowRoot.innerHTML = /*html*/`
         <style>
@@ -220,15 +221,15 @@ export class CompararVehiculos extends HTMLElement {
             <div id="comparisonGrid" class="comparison-grid"></div>
         </div>
         `;
- 
+            // Agregar evento para el botón de volver
         this.shadowRoot.querySelector('#backBtn').addEventListener('click', () => {
             const buscarVehiculos = document.createElement('buscar-vehiculos');
             this.replaceWith(buscarVehiculos);
         });
-        
-        this.fetchVehicles();
+        // Cargar los datos de vehículos
+        this.fetchVehicles( );
     }
- 
+    // Método para obtener los datos de vehículos del archivo JSON
     async fetchVehicles() {
         try {
             const response = await fetch('../../../db.json');
@@ -239,13 +240,13 @@ export class CompararVehiculos extends HTMLElement {
             console.error("Error al cargar los datos de vehículos:", error);
         }
     }
- 
+     // Método para poblar el select con los vehículos disponibles
     populateSelect() {
         const carSelect = this.shadowRoot.getElementById("carSelect");
         carSelect.innerHTML = '<option value="">Seleccionar vehículo para comparar</option>';
-        
+        // Agregar evento de cambio al select
         carSelect.addEventListener("change", (event) => this.displayVehicleInfo(event.target.value));
- 
+        // Agregar opciones al select solo para vehículos no seleccionados
         this.vehicles.forEach(vehiculo => {
             if (!this.selectedCars.includes(vehiculo.id)) {
                 const option = document.createElement("option");
@@ -255,25 +256,25 @@ export class CompararVehiculos extends HTMLElement {
             }
         });
     }
- 
+    // Método para mostrar la información del vehículo seleccionado
     displayVehicleInfo(vehicleId) {
         if (!vehicleId) return;
         
         const selectedVehicle = this.vehicles.find(v => v.id === vehicleId);
         const container = this.shadowRoot.getElementById("comparisonGrid");
- 
+        // Si el vehículo existe y no está ya seleccionado
         if (selectedVehicle && !this.selectedCars.includes(vehicleId)) {
             this.selectedCars.push(vehicleId);
- 
+            // Crear tarjeta para el vehículo
             const card = document.createElement("div");
             card.classList.add("car-card");
             card.dataset.vehicleId = vehicleId;
-            
+            // Generar HTML para la tarjeta del vehículo
             card.innerHTML = /*html*/`
                 <img src="${selectedVehicle.imagenVehiculo}" alt="${selectedVehicle.motor}" class="car-image">
                 <div class="car-info">
                     <h3 class="car-title">${selectedVehicle.motor}</h3>
-                    
+                     <!-- Sección de especificaciones generales -->
                     <div class="spec-section">
                         <h4 class="spec-title">Especificaciones</h4>
                         <div class="spec-grid">
@@ -287,7 +288,7 @@ export class CompararVehiculos extends HTMLElement {
                             </div>
                         </div>
                     </div>
- 
+            <!-- Sección de consumo de combustible -->
                     <div class="spec-section">
                         <h4 class="spec-title">Consumo de Combustible</h4>
                         <div class="spec-grid">
@@ -305,7 +306,7 @@ export class CompararVehiculos extends HTMLElement {
                             </div>
                         </div>
                     </div>
- 
+                    <!-- Sección de desgaste de neumáticos -->
                     <div class="spec-section">
                         <h4 class="spec-title">Desgaste de Neumáticos</h4>
                         <div class="spec-grid">
@@ -327,19 +328,19 @@ export class CompararVehiculos extends HTMLElement {
                     <button class="remove-button">Eliminar Comparación</button>
                 </div>
             `;
- 
+            // Agregar evento para eliminar la comparación
             const removeButton = card.querySelector('.remove-button');
             removeButton.addEventListener('click', () => {
                 this.selectedCars = this.selectedCars.filter(id => id !== vehicleId);
                 card.remove();
                 this.populateSelect(); 
             });
-            
+            // Agregar la tarjeta al contenedor y actualizar el select
             container.appendChild(card);
             carSelect.value = "";
             this.populateSelect(); 
         }
     }
  }
- 
+ // Registrar el componente web personalizado
  customElements.define("comparar-vehiculos", CompararVehiculos);

@@ -254,8 +254,9 @@ export class usersIndex extends HTMLElement {
             </style>
         `;
 
-        this.innerHTML = `
+        this.innerHTML = /*html*/`
             ${styles}
+            <!--Navbar de usuario-->
             <div class="racing-lines"></div>
             <div class="fullscreen-container">
                 <nav class="navbar">
@@ -291,6 +292,7 @@ export class usersIndex extends HTMLElement {
                     </div>                     
                 </nav>
 
+                <!--De acuerdo con la selección del navbar llama al componente correspondiente-->
                 <div class="content-container">
                     <div id="equipos" style="display:block;">
                         <buscar-equipos></buscar-equipos>
@@ -314,7 +316,7 @@ export class usersIndex extends HTMLElement {
             </div>
         `;
 
-        // Event listeners
+        // Event listeners menú celular
         const menuToggle = this.querySelector('.menu-toggle');
         const navMenu = this.querySelector('.nav-menu');
 
@@ -327,7 +329,7 @@ export class usersIndex extends HTMLElement {
             link.addEventListener('click', (e) => {
                 e.preventDefault();
 
-                // Remover clase active de todos los enlaces
+                //Remover clase active de los enlaces
                 this.querySelectorAll('.nav-link').forEach(navLink => {
                     navLink.classList.remove('active');
                 });

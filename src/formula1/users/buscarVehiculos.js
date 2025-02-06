@@ -7,20 +7,21 @@ export class BuscarVehiculos extends HTMLElement {
        super();
        this.attachShadow({ mode: 'open' });
        this.render();
-       this.vehiculos = [];
-       this.pilotos = [];
+       this.vehiculos = []; // Array para almacenar los vehículos
+       this.pilotos = []; // Array para almacenar los pilotos
    }
-
+    // Se ejecuta cuando el componente es añadido al DOM
    connectedCallback() {
-       this.getData();
+       this.getData(); // Obtiene los datos de vehículos y pilotos
    }
-
+ // Método para obtener los datos de vehículos y pilotos
    getData() {
        Promise.all([getVehiculos(), getPilotos()])
            .then(([vehiculos, pilotos]) => {
+                // Al recibir los datos, los guarda en las propiedades del componente
                this.pilotos = pilotos;
                this.vehiculos = vehiculos;
-               this.renderGallery();
+               this.renderGallery(); // Renderiza la galería con los vehículos
            })
            .catch((error) => {
                console.error('Error en la solicitud GET:', error.message);
@@ -346,39 +347,41 @@ export class BuscarVehiculos extends HTMLElement {
            </div>
        </div>
        `;
-       this.addEventListener();
+       this.addEventListener(); // Añade el evento al botón de comparar
+
+       // Configuración de la barra de búsqueda para filtrar vehículos
        const searchBar = this.shadowRoot.getElementById("search");
        searchBar.addEventListener("input", (e) => {
-           this.renderGallery(e.target.value);
+           this.renderGallery(e.target.value); // Filtra y actualiza la galería al escribir
        });
-
+       // Evento para cerrar el modal
        const modal = this.shadowRoot.getElementById("vehicleModal");
        const closeButton = this.shadowRoot.querySelector(".modal__close");
        closeButton.addEventListener("click", () => {
-           modal.classList.remove("active");
+           modal.classList.remove("active"); // Cierra el modal
        });
-
+       // Cierra el modal si el usuario hace clic fuera de él
        modal.addEventListener("click", (e) => {
            if (e.target === modal) {
                modal.classList.remove("active");
            }
        });
    }
-
+    // Método para añadir el evento al botón de comparar vehículos
    addEventListener() {
        this.shadowRoot.querySelector('#btnListar').addEventListener("click", () => {
            this.comparacion();
        });
    }
-
+   // Método que cambia el contenido para mostrar el componente de comparación
    comparacion(){
       this.shadowRoot.innerHTML= `<comparar-vehiculos> </comparar-vehiculos>`;
    }
-
+   // Muestra el modal con las especificaciones detalladas del vehículo
    showModal(vehiculo) {
        const modal = this.shadowRoot.getElementById("vehicleModal");
        const modalContent = this.shadowRoot.getElementById("modalContent");
-
+        // Construye el contenido del modal con los detalles del vehículo
        modalContent.innerHTML = /*html*/`
            <div class="modal__header">
                <img src="${vehiculo.imagenVehiculo}" alt="${vehiculo.motor}" class="modal__car-image">
@@ -449,9 +452,9 @@ export class BuscarVehiculos extends HTMLElement {
            </div>
        `;
 
-       modal.classList.add("active");
+       modal.classList.add("active"); // Muestra el modal
    }
-
+   // Método para renderizar la galería de vehículos filtrados por la barra de búsqueda
    renderGallery(filter = "") {
        const filteredItems = this.vehiculos.filter(item =>
            item.motor.toLowerCase().includes(filter.toLowerCase()) ||
@@ -460,8 +463,8 @@ export class BuscarVehiculos extends HTMLElement {
        );
 
        const galleryContainer = this.shadowRoot.getElementById("gallery");
-       galleryContainer.innerHTML = "";
-
+       galleryContainer.innerHTML = ""; // Limpia la galería antes de agregar los vehículos filtrados
+        // Crea y agrega una tarjeta para cada vehículo filtrado
        filteredItems.forEach(item => {
            const divItems = document.createElement('div');
            divItems.classList.add('col');
@@ -485,11 +488,11 @@ export class BuscarVehiculos extends HTMLElement {
            `;
 
            const card = divItems.querySelector('.card');
-           card.addEventListener('click', () => this.showModal(item));
+           card.addEventListener('click', () => this.showModal(item)); // Muestra el modal al hacer clic
 
-           galleryContainer.appendChild(divItems);
+           galleryContainer.appendChild(divItems); // Añade la tarjeta a la galería
        });
    }
 }
-
+// Registra el nuevo elemento customizado 'buscar-vehiculos'
 customElements.define("buscar-vehiculos", BuscarVehiculos);

@@ -6,6 +6,7 @@ export class BuscarCircuitos extends HTMLElement {
         super();
         this.attachShadow({ mode: 'open' });
         this.render();
+        // Arrays para almacenar datos de circuitos y pilotos
         this.circuitos = [];
         this.pilotos = [];
     }
@@ -294,25 +295,25 @@ export class BuscarCircuitos extends HTMLElement {
             </div>
         </div>
         `;
-
+        // Configuración del evento de búsqueda
         const searchBar = this.shadowRoot.getElementById("search");
         searchBar.addEventListener("input", (e) => {
             this.renderGallery(e.target.value);
         });
-
+        // Configuración de eventos para cerrar el modal
         const modal = this.shadowRoot.getElementById("circuitoModal");
         const closeButton = this.shadowRoot.querySelector(".modal__close");
         closeButton.addEventListener("click", () => {
             modal.classList.remove("active");
         });
-
+        // Cierra el modal al hacer clic fuera de su contenido
         modal.addEventListener("click", (e) => {
             if (e.target === modal) {
                 modal.classList.remove("active");
             }
         });
     }
-
+    // Muestra el modal con la información detallada del circuito
     showModal(circuito) {
         const modal = this.shadowRoot.getElementById("circuitoModal");
         const modalContent = this.shadowRoot.getElementById("modalContent");
@@ -348,7 +349,7 @@ export class BuscarCircuitos extends HTMLElement {
 
         modal.classList.add("active");
     }
-
+    // Renderiza la lista de ganadores en el modal
     renderGanadoresModal(ganadores) {
         return ganadores.map(ganador => `
             <div class="ganador-card">
@@ -357,8 +358,9 @@ export class BuscarCircuitos extends HTMLElement {
             </div>
         `).join('');
     }
-
+    // Renderiza la galería de circuitos con filtrado opcional
     renderGallery(filter = "") {
+        // Filtra los circuitos según el término de búsqueda
         const filteredItems = this.circuitos.filter(item =>
             item.nombreCircuito.toLowerCase().includes(filter.toLowerCase()) ||
             item.paisCircuito.toLowerCase().includes(filter.toLowerCase()) ||
@@ -367,7 +369,7 @@ export class BuscarCircuitos extends HTMLElement {
 
         const galleryContainer = this.shadowRoot.getElementById("gallery");
         galleryContainer.innerHTML = "";
-
+        // Crea y agrega las tarjetas de circuitos filtradas
         filteredItems.forEach(item => {
             const divItems = document.createElement('div');
             divItems.classList.add('col');
@@ -388,10 +390,10 @@ export class BuscarCircuitos extends HTMLElement {
                     </div>
                 </div>
             `;
-
+            // Agrega el evento click para mostrar el modal
             const card = divItems.querySelector('.card');
             card.addEventListener('click', () => this.showModal(item));
-
+            // Agrega la tarjeta al contenedor de la galería
             galleryContainer.appendChild(divItems);
         });
     }

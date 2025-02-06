@@ -1,8 +1,13 @@
+//API para almacenar datos de los circuitos
 const URL_API = "http://localhost:3000";
 const myHeaders = new Headers({
     "Content-Type": "application/json"
 });
 
+/**
+ * Obtener la información
+ * @returns 
+ */
 const getCircuito = async() => {
     try {
         const respuesta = await fetch(`${URL_API}/circuitos`);
@@ -22,6 +27,12 @@ const getCircuito = async() => {
 	}
     
 }
+
+/**
+ * Crear la información
+ * @param {Object} datos //Datos del circuito
+ * @returns 
+ */
 const postCircuito = async (datos) => {
     try {
         return await fetch(`${URL_API}/circuitos`, {
@@ -33,6 +44,13 @@ const postCircuito = async (datos) => {
         console.error('Error en la solicitud POST:', error.message);
     }
 }
+
+/**
+ * Actualizar la información de los circuitos
+ * @param {object} datos //Datos circuito
+ * @param  id //Id circuito
+ * @returns 
+ */
 const patchCircuito = async (datos,id) =>{
 
     try {
@@ -46,6 +64,12 @@ const patchCircuito = async (datos,id) =>{
     }
 
 }
+
+/**
+ * Eliminar información de los circuitos
+ * @param id //Id del circuito
+ * @returns 
+ */
 const deleteCircuito = async (id) =>{
 
     try {
@@ -58,6 +82,8 @@ const deleteCircuito = async (id) =>{
     }
 
 }
+
+//Exportación de las funciones
 export {
     getCircuito as getCircuitos,
     postCircuito as postCircuitos,

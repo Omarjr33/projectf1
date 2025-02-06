@@ -1,6 +1,9 @@
+//Importa funciones para el manejo de la información en el archivo JSON
 import { deleteCircuitos, getCircuitos, patchCircuitos, postCircuitos } from "../../Apis/circuitosApis.js";
+//Importación sweetalert
 import Swal from 'sweetalert2';
 
+//Componente CRUD circuitos
 export class CircuitosAdmin extends HTMLElement {
     constructor(){
         super();
@@ -184,93 +187,105 @@ export class CircuitosAdmin extends HTMLElement {
                 }
             }
         </style>
-
+        <!--Formulario de registro circuitos-->
         <div class="card">
             <form id="formCrearCircuito">
                 <h1>Registro de Circuito</h1>
-                
+                <!--Nombre circuito-->
                 <div class="row">
                     <div class="form-group">
                         <label for="nombreCircuito">Nombre Circuito</label>
                         <input type="text" id="nombreCircuito" name="nombreCircuito" placeholder="Ingrese nombre del circuito" required>
                     </div>
+                    <!--País circuito-->
                     <div class="form-group">
                         <label for="paisCircuito">País</label>
                         <input type="text" id="paisCircuito" name="paisCircuito" placeholder="Ingrese país" required>
                     </div>
                 </div>
-
+                <!--Número de vueltas circuito-->
                 <div class="row">
                     <div class="form-group">
                         <label for="vueltas">Vueltas</label>
                         <input type="number" id="vueltas" name="vueltas" placeholder="Número de vueltas" required>
                     </div>
+                    <!--Longitud circuito-->
                     <div class="form-group">
                         <label for="longitud">Longitud (km)</label>
                         <input type="number" id="longitud" name="longitud" placeholder="Longitud en kilómetros" step="0.001" required>
                     </div>
                 </div>
-
+                <!--URL imágen circuito-->
                 <div class="row">
                     <div class="form-group">
                         <label for="imagenCircuito">Imagen (URL)</label>
                         <input type="url" id="imagenCircuito" name="imagenCircuito" placeholder="URL de la imagen" required>
                     </div>
+                    <!--Descripción circuito-->
                     <div class="form-group">
                         <label for="descripcion">Descripción</label>
                         <input type="text" id="descripcion" name="descripcion" placeholder="Descripción del circuito" required>
                     </div>
                 </div>
-
+                <!--Record vuelta-->
                 <div class="section-title">Record Vuelta</div>
                 <div class="row">
+                    <!--Tiempo vuelta record-->
                     <div class="form-group">
                         <label for="tiempo">Tiempo</label>
                         <input type="text" id="tiempo" name="tiempo" placeholder="Tiempo" required>
                     </div>
+                    <!--Piloto vuelta record-->
                     <div class="form-group">
                         <label for="piloto">Piloto</label>
                         <input type="text" id="piloto" name="piloto" placeholder="Piloto" required>
                     </div>
+                    <!--Año vuelta record-->
                     <div class="form-group">
                         <label for="año">Año</label>
                         <input type="text" id="año" name="año" placeholder="Año" required>
                     </div>
                 </div>
-
+                <!--Podio de Ganadores-->
                 <div class="section-title">Ganadores</div>
                 <div class="row">
                     <div class="form-group">
+                        <!--Ganador última temporada-->
                         <label for="temporada1">Última Temporada</label>
                         <input type="text" id="temporada1" name="temporada1" placeholder="Año" required>
                         <label for="nombrePiloto1">Piloto</label>
+                        <!--Usa como valor los ids de los pilotos registrados-->
                         <select class="nombrePilotoVeh" name="nombrePiloto1" required>
                             <option value="">Seleccionar Piloto</option>
                         </select>
                     </div>
                     <div class="form-group">
+                    <!--Ganador penúltima temporada-->
                         <label for="temporada2">Penúltima Temporada</label>
                         <input type="text" id="temporada2" name="temporada2" placeholder="Año" required>
                         <label for="nombrePiloto2">Piloto</label>
+                        <!--Usa como valor los ids de los pilotos registrados-->
                         <select class="nombrePilotoVeh" name="nombrePiloto2" required>
                             <option value="">Seleccionar Piloto</option>
                         </select>
                     </div>
                     <div class="form-group">
+                    <!--Ganador antepenúltima temporada-->
                         <label for="temporada3">Antepenúltima Temporada</label>
                         <input type="text" id="temporada3" name="temporada3" placeholder="Año" required>
                         <label for="nombrePiloto3">Piloto</label>
+                        <!--Usa como valor los ids de los pilotos registrados-->
                         <select class="nombrePilotoVeh" name="nombrePiloto3" required>
                             <option value="">Seleccionar Piloto</option>
                         </select>
                     </div>
                 </div>
-
+                <!--Boton de registro de circuitos-->
                 <button id="btnRegistrarCircuito" type="submit">Registrar Circuito</button>
                 <div id="statusMessage" class="status-message"></div>
             </form>
         </div>
-
+        <!--Contenedor para mostrar circuitos registrados-->
         <div class="card">
             <h1>Circuitos Registrados</h1>
             <button id="btnListar" type="button">Mostrar Circuitos</button>
@@ -278,24 +293,36 @@ export class CircuitosAdmin extends HTMLElement {
         </div>
         `;
 
+        //Función para el manejo de eventos
         this.addEventListener();
+        //Función para cargar información de los pilotos en los selects
         this.loadPilotos();
     }
 
+    /**
+     * Cargar información de los pilotos en los selects
+     */
     loadPilotos() {
-        fetch('../../../db.json')
+        fetch('../../../db.json') //Ruta archivo json
             .then(response => response.json())
             .then(data => {
+                //Toma los datos de los pilotos y los selecciona en los selects
                 const selectsPilotos = this.shadowRoot.querySelectorAll(".nombrePilotoVeh");
+                //Itera sobre los selects
                 selectsPilotos.forEach(select => {
+                    //Crea un option para cada piloto
                     data.pilotos.forEach(piloto => {
                         const option = document.createElement("option");
+                        //Toma como valor el id del piloto
                         option.value = piloto.id;
+                        //Toma como texto el nombre del piloto
                         option.textContent = piloto.nombrePiloto;
+                        //Añade al select la opción
                         select.appendChild(option);
                     });
                 });
             })
+            //En caso de que ocurra un error al cargar los datos de los pilotos
             .catch(error => {
                 console.error("Error al cargar los datos de los pilotos:", error);
                 Swal.fire({
@@ -306,19 +333,29 @@ export class CircuitosAdmin extends HTMLElement {
             });
     }
 
+    //Manejo de eventos en bótones
     addEventListener() {
+        //Botón para mostrar circuitos
         this.shadowRoot.querySelector('#btnListar').addEventListener("click", () => this.mostrarCircuitos());
+        //Botón para crear los circuitos
         this.shadowRoot.querySelector('#formCrearCircuito').addEventListener('submit', (e) => {
             e.preventDefault();
             this.crearCircuitos();
         });
     }
 
+    /**
+     * Función para crear circuitos
+     */
     crearCircuitos = () => {
+        //Toma el formulario de registro
         const formCrearCircuito = this.shadowRoot.querySelector('#formCrearCircuito');
+        //Toma los datos de los campos
         const formData = new FormData(formCrearCircuito);
+        //Toma los datos del objetos
         const datos = Object.fromEntries(formData.entries());
     
+        //Estructura para almacenar la información en el JSON
         const circuito = {
             nombreCircuito: datos.nombreCircuito,
             paisCircuito: datos.paisCircuito,
@@ -338,6 +375,7 @@ export class CircuitosAdmin extends HTMLElement {
             imagenCircuito: datos.imagenCircuito
         };
 
+        //Función para enviar la información
         postCircuitos(circuito)
             .then(response => {
                 if (!response.ok) throw new Error('Error al crear el circuito');
@@ -351,8 +389,10 @@ export class CircuitosAdmin extends HTMLElement {
                     timer: 1500,
                     showConfirmButton: false
                 });
+                //Limpia los campos del formulario
                 formCrearCircuito.reset();
             })
+            //En caso de error
             .catch(error => {
                 console.error('Error:', error);
                 Swal.fire({
@@ -363,16 +403,25 @@ export class CircuitosAdmin extends HTMLElement {
             });
     };
 
+    /**
+     * Función para mostrar circuitos registrados
+     */
     mostrarCircuitos = () => {
+        //Toma los circuitos registrados del JSON
         getCircuitos()
             .then((circuitos) => {
+                //Toma el contenedor donde se va a mostrar la información
                 const circuitosCards = this.shadowRoot.querySelector('#circuitosCards');
                 circuitosCards.innerHTML = '';
 
+                //Recorre los circuitos registrados
                 circuitos.forEach((circuito) => {
+                    //Crea un elemento card
                     const divItems = document.createElement('div');
+                    //Añade una clase al elemento creado
                     divItems.classList.add('circuit-card');
-                    divItems.innerHTML = `
+                    //Añade el contenido del card con la información del circuito
+                    divItems.innerHTML = /*html*/`
                         <img src="${circuito.imagenCircuito}" alt="${circuito.nombreCircuito}">
                         <div class="circuit-content">
                             <h2>${circuito.nombreCircuito}</h2>
@@ -386,14 +435,16 @@ export class CircuitosAdmin extends HTMLElement {
                                 <p>🏎️ ${circuito.record_vuelta.piloto} (${circuito.record_vuelta.año})</p>
                             </div>
                         </div>
+                        <!--Cada card tiene botones de editar y eliminar-->
                         <div class="circuit-actions">
                             <button class="btnEditarForm" data-id="${circuito.id}">Editar</button>
                             <button class="btnEliminar" data-id="${circuito.id}">Eliminar</button>
                         </div>
                     `;
+                    //Añade a las cartas los contenedores por circuito
                     circuitosCards.appendChild(divItems);
                 });
-
+                //Función para el manejo de eventos de los botones eliminar y editar
                 this.setupCardEventListeners();
             })
             .catch((error) => {
@@ -405,17 +456,24 @@ export class CircuitosAdmin extends HTMLElement {
                 });
             });
     }
-
+    /**
+     * Función para el manejo de eventos de los botones eliminar y editar
+     */
     setupCardEventListeners() {
+        //Itera por cada botón con clase .btnEliminar y llama la función correspondiente
         this.shadowRoot.querySelectorAll('.btnEliminar').forEach(btn => {
             btn.addEventListener('click', (e) => this.eliminarCircuito(e.target.dataset.id));});
-
+            //Itera por cada botón con clase .btnEdtarForm y llama la función correspondiente
             this.shadowRoot.querySelectorAll('.btnEditarForm').forEach(btn => {
                 btn.addEventListener('click', (e) => this.mostrarFormularioEdit(e.target.dataset.id));
             });
         }
-    
+    /**
+     * Eliminar circuito
+     * @param {*} id //Id circuito
+     */
         eliminarCircuito = async (id) => {
+            //Antes de eliminar verifica la operación
             const result = await Swal.fire({
                 title: '¿Está seguro?',
                 text: "Esta acción no se puede deshacer",
@@ -426,12 +484,15 @@ export class CircuitosAdmin extends HTMLElement {
                 confirmButtonText: 'Sí, eliminar',
                 cancelButtonText: 'Cancelar'
             });
-    
+            //Si la respuesta es confirmada
             if (result.isConfirmed) {
                 try {
+                    //Realizar la petición de eliminar circuitos
                     const response = await deleteCircuitos(id);
+                    //En caso de error
                     if (!response.ok) throw new Error('Error al eliminar el circuito');
-    
+                    
+                    //Si se elimina correctamente
                     Swal.fire({
                         icon: 'success',
                         title: 'Eliminado',
@@ -439,7 +500,9 @@ export class CircuitosAdmin extends HTMLElement {
                         timer: 1500,
                         showConfirmButton: false
                     });
+                    //Refrescar la lista de circuitos
                     this.mostrarCircuitos();
+                //Error al eliminar
                 } catch (error) {
                     console.error('Error:', error);
                     Swal.fire({
@@ -450,13 +513,17 @@ export class CircuitosAdmin extends HTMLElement {
                 }
             }
         }
-    
+        
+        //Formulario para editar el circuito correspondiente
         mostrarFormularioEdit = (id) => {
+            //Obtiene los datos de los circuitos
             getCircuitos()
             .then((circuitos) => {
+                //Recorre los circuitos encontrando el id correspondiente
                 const circuito = circuitos.find(c => c.id === id);
                 if (!circuito) throw new Error('Circuito no encontrado');
     
+                //Si se encuentra el circuito se muestra el formulario de edición de datos
                 Swal.fire({
                     title: 'Editar Circuito',
                     html: `
@@ -598,10 +665,11 @@ export class CircuitosAdmin extends HTMLElement {
                         `;
                         document.head.appendChild(style);
     
-                        // Cargar pilotos en los selectores
+                        // Cargar pilotos en los selectores en el formulario de edición
                         fetch('../../../db.json')
-                            .then(response => response.json())
+                            .then(response => response.json()) // Se convierte la respuesta a formato JSON
                             .then(data => {
+                                 // Se recorren los ganadores del circuito y se llenan los select con los pilotos disponibles
                                 circuito.ganadores?.forEach((ganador, index) => {
                                     const select = document.getElementById(`piloto${index + 1}Edit`);
                                     if (select) {
@@ -609,11 +677,13 @@ export class CircuitosAdmin extends HTMLElement {
                                             const option = new Option(piloto.nombrePiloto, piloto.id);
                                             select.add(option);
                                         });
+                                         // Se asigna el valor del piloto ganador si existe
                                         select.value = ganador.piloto || '';
                                     }
                                 });
                             });
                     },
+                    // Función para obtener los datos del formulario y devolver un objeto con la información
                     preConfirm: () => {
                         return {
                             nombreCircuito: document.getElementById('nombreCircuitoEdit').value,
@@ -633,6 +703,7 @@ export class CircuitosAdmin extends HTMLElement {
                             }))
                         };
                     }
+                    // Si el usuario confirma la edición, se llama a la función para editar el circuito
                 }).then((result) => {
                     if (result.isConfirmed) {
                         this.editarCircuito(id, result.value);
@@ -648,12 +719,13 @@ export class CircuitosAdmin extends HTMLElement {
                 });
             });
         }
-    
+        // Función asíncrona para editar el circuito con los datos proporcionados
         editarCircuito = async (id, datos) => {
             try {
-                const response = await patchCircuitos(datos, id);
+                const response = await patchCircuitos(datos, id);  // Se envía la petición para actualizar
                 if (!response.ok) throw new Error('Error al actualizar el circuito');
                 
+                // Notificación de éxito con SweetAlert
                 Swal.fire({
                     icon: 'success',
                     title: '¡Éxito!',
@@ -661,7 +733,7 @@ export class CircuitosAdmin extends HTMLElement {
                     timer: 1500,
                     showConfirmButton: false
                 });
-                this.mostrarCircuitos();
+                this.mostrarCircuitos(); // Se actualiza la lista de circuitos
             } catch (error) {
                 console.error('Error:', error);
                 Swal.fire({
@@ -673,4 +745,5 @@ export class CircuitosAdmin extends HTMLElement {
         }
     }
     
+    // Definición del web component "circuitos-admin"
     customElements.define("circuitos-admin", CircuitosAdmin);

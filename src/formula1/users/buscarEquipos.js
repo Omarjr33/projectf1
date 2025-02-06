@@ -6,14 +6,15 @@ export class BuscarEquipos extends HTMLElement {
         super();
         this.attachShadow({ mode: 'open' });
         this.render();
+        // Arrays para almacenar datos de equipos y pilotos
         this.equipos = [];
         this.pilotos = [];
     }
-
+    // Se ejecuta cuando el componente es añadido al DOM
     connectedCallback() {
         this.getData();
     }
-
+    // Obtiene los datos de equipos y pilotos de manera asíncrona
     getData() {
         Promise.all([getEquipos(), getPilotos()])
             .then(([equipos, pilotos]) => {
@@ -321,29 +322,29 @@ export class BuscarEquipos extends HTMLElement {
             </div>
         </div>
         `;
-
+        // Arrays para almacenar datos de equipos y pilotos
         const searchBar = this.shadowRoot.getElementById("search");
         searchBar.addEventListener("input", (e) => {
             this.renderGallery(e.target.value);
         });
-
+        // Configuración de eventos para cerrar el modal
         const modal = this.shadowRoot.getElementById("teamModal");
         const closeButton = this.shadowRoot.querySelector(".modal__close");
         closeButton.addEventListener("click", () => {
             modal.classList.remove("active");
         });
-
+        // Cierra el modal al hacer clic fuera de su contenido
         modal.addEventListener("click", (e) => {
             if (e.target === modal) {
                 modal.classList.remove("active");
             }
         });
     }
-
+    // Muestra el modal con la información detallada del equipo y sus pilotos
     showModal(equipo, pilotos) {
         const modal = this.shadowRoot.getElementById("teamModal");
         const modalContent = this.shadowRoot.getElementById("modalContent");
-        
+        // Encuentra los pilotos correspondientes al equipo actual
         const pilotosEquipo = equipo.pilotos.map(pilotoID => {
             return this.pilotos.find(piloto => piloto.id === pilotoID);
         }).filter(piloto => piloto);
@@ -377,11 +378,12 @@ export class BuscarEquipos extends HTMLElement {
                 </div>
             </div>
         `;
-
+        //Visualizacion del modal 
         modal.classList.add("active");
     }
-
+     // Renderiza la galería de equipos con filtrado opcional
     renderGallery(filter = "") {
+        // Filtra los equipos según el término de búsqueda
         const filteredItems = this.equipos.filter(item =>
             item.nombreEquipo.toLowerCase().includes(filter.toLowerCase()) ||
             item.paisEquipo.toLowerCase().includes(filter.toLowerCase()) ||
@@ -389,7 +391,7 @@ export class BuscarEquipos extends HTMLElement {
         );
 
         const galleryContainer = this.shadowRoot.getElementById("gallery");
-        galleryContainer.innerHTML = "";
+        galleryContainer.innerHTML = "";  // Se limpia la galería antes de renderizar
 
         filteredItems.forEach(item => {
             const divItems = document.createElement('div');

@@ -118,16 +118,22 @@ export class registroUser extends HTMLElement {
             </form>
         </div>
         `;
+        //Manejo de eventos al registrar el usuario
         this.addEventListeners();
     }
 
+    /**
+     * Manejo de eventos para registrar el usuario
+     */
     addEventListeners() {
         this.querySelector('#btnRegistrarse').addEventListener('click', async (event) => {
             event.preventDefault(); // Evita que el botón active el envío automático del formulario
     
+            //Tomar los valores ingresados por el usuario en el formulario
             const username = this.querySelector('#username').value.toUpperCase();
             const password = this.querySelector('#password').value;
     
+            //Comprobar si en los campos hay información
             if (!username || !password) {
                 Swal.fire({
                     icon: "info",
@@ -137,6 +143,7 @@ export class registroUser extends HTMLElement {
                 return;
             }
     
+            //Comprobar la longitud de la contraseña
             if (password.length < 8) {
                 Swal.fire({
                     icon: "info",
@@ -153,6 +160,7 @@ export class registroUser extends HTMLElement {
                 // Verificar si el usuario ya está registrado
                 const userExists = users.some(user => user.usuario.toUpperCase() === username);
 
+                //Si el usuario está disponible
                 if (userExists) {
                     Swal.fire({
                         icon: "error",
@@ -166,6 +174,7 @@ export class registroUser extends HTMLElement {
                 const formData = new FormData(this.querySelector('#signupForm'));
                 const datos = Object.fromEntries(formData.entries());
 
+                //Envía los datos de los usuarios
                 const response = await postUsuarios(datos);
 
                 if (!response.ok) {

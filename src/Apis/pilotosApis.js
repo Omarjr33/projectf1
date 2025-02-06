@@ -1,8 +1,13 @@
+//API para almacenar datos de los pilotos
 const URL_API = "http://localhost:3000";
 const myHeaders = new Headers({
     "Content-Type": "application/json"
 });
 
+/**
+ * Obtener la información piloto
+ * @returns 
+ */
 const getPiloto = async() => {
     try {
         const respuesta = await fetch(`${URL_API}/pilotos`);
@@ -22,6 +27,12 @@ const getPiloto = async() => {
 	}
     
 }
+
+/**
+ * Crear la información
+ * @param {Object} datos //Datos del piloto
+ * @returns 
+ */
 const postPiloto = async (datos) => {
     try {
         return await fetch(`${URL_API}/pilotos`, {
@@ -33,6 +44,13 @@ const postPiloto = async (datos) => {
         console.error('Error en la solicitud POST:', error.message);
     }
 }
+
+/**
+ * Actualizar la información de los pilotos
+ * @param {object} datos //Datos piloto
+ * @param  id //Id piloto
+ * @returns 
+ */
 const patchPiloto = async (datos,id) =>{
 
     try {
@@ -46,6 +64,12 @@ const patchPiloto = async (datos,id) =>{
     }
 
 }
+
+/**
+ * Eliminar información de los pilotos
+ * @param id //Id del piloto
+ * @returns 
+ */
 const deletePiloto = async (id) =>{
 
     try {
@@ -58,6 +82,8 @@ const deletePiloto = async (id) =>{
     }
 
 }
+
+//Exportación de las funciones
 export {
     getPiloto as getPilotos,
     postPiloto as postPilotos,

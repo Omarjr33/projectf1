@@ -1,8 +1,13 @@
+//API para almacenar datos de los vehiculos
 const URL_API = "http://localhost:3000";
 const myHeaders = new Headers({
     "Content-Type": "application/json"
 });
 
+/**
+ * Obtener la información
+ * @returns 
+ */
 const getVehiculo = async() => {
     try {
         const respuesta = await fetch(`${URL_API}/vehiculos`);
@@ -23,6 +28,12 @@ const getVehiculo = async() => {
     
 }
 
+
+/**
+ * Crear la información
+ * @param {Object} datos //Datos del vehiculo
+ * @returns 
+ */
 const postVehiculo = async (datos) => {
     try {
         return await fetch(`${URL_API}/vehiculos`, {
@@ -35,6 +46,12 @@ const postVehiculo = async (datos) => {
     }
 }
 
+/**
+ * Actualizar la información de los vehiculoss
+ * @param {object} datos //Datos vehiculos
+ * @param  id //Id vehiculos
+ * @returns 
+ */
 const patchVehiculo = async (datos,id) =>{
 
     try {
@@ -48,6 +65,12 @@ const patchVehiculo = async (datos,id) =>{
     }
 
 }
+
+/**
+ * Eliminar información de los vehiculos
+ * @param id //Id del vehiculo
+ * @returns 
+ */
 const deleteVehiculo = async (id) =>{
 
     try {
@@ -60,6 +83,8 @@ const deleteVehiculo = async (id) =>{
     }
 
 }
+
+//Exportación de las funciones
 export {
     getVehiculo as getVehiculos,
     postVehiculo as postVehiculos,

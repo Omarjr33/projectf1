@@ -1,7 +1,15 @@
 import { postJuegos } from "../../Apis/juegoApis.js";
 import Swal from 'sweetalert2';
 
+// Clase para representar un circuito de carreras
 class Circuit {
+    /**
+     * Constructor de la clase Circuit
+     * @param {string} name - Nombre del circuito
+     * @param {number} laps - Número de vueltas
+     * @param {number} length - Longitud del circuito en kilómetros
+     * @param {string} weather - Condiciones climáticas ("seco", "lluvioso", "extremo")
+     */
     constructor(name, laps, length, weather) {
         this.name = name;
         this.laps = laps;
@@ -10,16 +18,27 @@ class Circuit {
     }
 }
 
+// Clase para representar un vehículo de carreras
 class Car {
+    /**
+     * Constructor de la clase Car
+     * @param {number} acceleration - Aceleración del vehículo en m/s²
+     * @param {number} maxSpeed - Velocidad máxima del vehículo en km/h
+     * @param {number} normalSpeed - Velocidad normal del vehículo en km/h
+     */
     constructor(acceleration, maxSpeed, normalSpeed) {
         this.acceleration = acceleration;
         this.maxSpeed = maxSpeed;
         this.normalSpeed = normalSpeed;
+        
+        // Consumo de combustible por condición climática (litros por vuelta)
         this.fuelConsumption = {
             seco: 1.9,
             lluvioso: 2.1,
             extremo: 2.4
         };
+        
+        // Desgaste de neumáticos por condición climática (factor de desgaste)
         this.tireWear = {
             seco: 1.5,
             lluvioso: 0.8,
@@ -28,38 +47,67 @@ class Car {
     }
 }
 
+// Clase para representar un piloto de carreras
 class Driver {
+    /**
+     * Constructor de la clase Driver
+     * @param {string} name - Nombre del piloto
+     * @param {number} number - Número del piloto
+     * @param {Car} car - Vehículo del piloto
+     */
     constructor(name, number, car) {
         this.name = name;
         this.number = number;
         this.car = car;
-        this.lapTimes = [];
-        this.totalTime = 0;
+        this.lapTimes = []; // Arreglo para almacenar los tiempos por vuelta
+        this.totalTime = 0; // Tiempo total de la carrera
     }
 }
 
+// Clase para simular una carrera con un solo piloto
 class SingleDriverRace {
+    /**
+     * Constructor de la clase SingleDriverRace
+     * @param {Circuit} circuit - Circuito donde se llevará a cabo la carrera
+     * @param {Driver} driver - Piloto que participará en la carrera
+     */
     constructor(circuit, driver) {
         this.circuit = circuit;
         this.driver = driver;
     }
 
+    /**
+     * Calcula el tiempo de una vuelta basado en varios factores como el clima, desgaste y consumo
+     * @returns {number} Tiempo de la vuelta en segundos
+     */
     calculateLapTime() {
+        // Tiempo base en segundos (distancia / velocidad normal * 3600)
         const baseTime = (this.circuit.length / this.driver.car.normalSpeed) * 3600;
         const currentLap = this.driver.lapTimes.length + 1;
+
+        // Factor climático
         const weatherEffect = {
             seco: 1,
             lluvioso: 1.2,
             extremo: 1.4
         }[this.circuit.weather];
         
+        // Desgaste de neumáticos según la vuelta actual
         const tireWear = this.driver.car.tireWear[this.circuit.weather] * (currentLap / this.circuit.laps);
+        
+        // Efecto del consumo de combustible
         const fuelEffect = this.driver.car.fuelConsumption[this.circuit.weather] * (currentLap / this.circuit.laps);
+        
+        // Factor aleatorio entre 0.95 y 1.05 para simular variaciones en la conducción
         const randomFactor = 0.95 + Math.random() * 0.1;
 
+        // Cálculo del tiempo final de la vuelta
         return baseTime * weatherEffect * (1 + tireWear) * (1 + fuelEffect) * randomFactor;
     }
 
+    /**
+     * Simula la carrera completa, calculando los tiempos de cada vuelta
+     */
     simulate() {
         this.driver.lapTimes = [];
         this.driver.totalTime = 0;
@@ -71,7 +119,16 @@ class SingleDriverRace {
         }
     }
 
+    /**
+     * Obtiene los resultados de la carrera con tiempos formateados
+     * @returns {Object} Resultados de la carrera
+     */
     getResults() {
+        /**
+         * Formatea un tiempo en segundos a minutos y segundos con tres decimales
+         * @param {number} seconds - Tiempo en segundos
+         * @returns {string} Tiempo formateado como mm:ss.SSS
+         */
         const formatTime = (seconds) => {
             const mins = Math.floor(seconds / 60);
             const secs = (seconds % 60).toFixed(3);
@@ -443,10 +500,15 @@ export class JuegoElement extends HTMLElement {
         </div>
         `;
 
+        //Manejo de eventos
         this.addEventListeners();
+        //Carga de datos
         this.fetchData();
     }
 
+    /**
+     * Carga de datos
+     */
     async fetchData() {
         try {
             const loadingIndicator = this.shadowRoot.querySelector('#loadingIndicator');
@@ -457,6 +519,7 @@ export class JuegoElement extends HTMLElement {
 
             loadingIndicator.style.display = 'none';
 
+            //Carga de datos en en los selects
             this.populateCircuitoSelect(data.circuitos);
             this.populateVehiculoSelect(data.vehiculos);
 
@@ -475,6 +538,7 @@ export class JuegoElement extends HTMLElement {
         }
     }
 
+    //Seleccionar circuito en la configuración del vehículo
     populateCircuitoSelect(circuitos) {
         const circuitoSelect = this.shadowRoot.querySelector("#circuitoSelect");
         circuitos.forEach(circuito => {
@@ -485,6 +549,7 @@ export class JuegoElement extends HTMLElement {
         });
     }
 
+    //Seleccionar vehiculo en la configuración del vehícu
     populateVehiculoSelect(vehiculos) {
         const vehiculoSelect = this.shadowRoot.querySelector("#vehiculoSelect");
         vehiculos.forEach(vehiculo => {
@@ -495,6 +560,7 @@ export class JuegoElement extends HTMLElement {
         });
     }
 
+    //Mostrar información de acuerdo al circuito seleccionado
     setupCircuitoListener(circuitos) {
         const circuitoSelect = this.shadowRoot.querySelector("#circuitoSelect");
         const circuitosInfoDiv = this.shadowRoot.querySelector(".circuitosInfo");
@@ -510,6 +576,7 @@ export class JuegoElement extends HTMLElement {
         });
     }
 
+    //Mostar información de acuerdo al vehículo seleccionado
     setupVehiculoListener(vehiculos) {
         const vehiculoSelect = this.shadowRoot.querySelector("#vehiculoSelect");
         const vehiculosInfoDiv = this.shadowRoot.querySelector(".vehiculosInfo");
@@ -525,6 +592,7 @@ export class JuegoElement extends HTMLElement {
         });
     }
 
+    //Mostrar información de acuerdo al circuito seleccionado
     displayCircuitoInfo(circuito, container) {
         if (circuito) {
             container.innerHTML = `
@@ -547,6 +615,7 @@ export class JuegoElement extends HTMLElement {
         }
     }
 
+    //Mostrar información del vehículo seleccionado
     displayVehiculoInfo(vehiculo, container) {
         if (vehiculo) {
             container.innerHTML = `
@@ -597,6 +666,7 @@ export class JuegoElement extends HTMLElement {
         }
     }
 
+    //Mostrar rendimiento del vehiculo
     displayRendimientoInfo(vehiculo, rendimiento, container) {
         let velocidad;
         if (!rendimiento || !vehiculo.rendimiento[rendimiento]) {
@@ -714,6 +784,7 @@ export class JuegoElement extends HTMLElement {
         }
     };    
 
+    //Configuración de la partida
     async crearConfiguracion(e) {
         e.preventDefault();
         
@@ -851,7 +922,7 @@ export class JuegoElement extends HTMLElement {
             const weatherOption = this.shadowRoot.querySelector('.weather-option.active');
             const clima = weatherOption ? weatherOption.dataset.clima : 'seco';
             
-            // Crear instancias para la simulación
+            // Crear instancias para la simulación de acuerdo a los datos ingresados
             const circuit = new Circuit(
                 datos.circuitoSelect,
                 datos.vueltas,
@@ -875,574 +946,574 @@ export class JuegoElement extends HTMLElement {
             // Mostrar resultados
             juegoSimulacion.innerHTML = `
                 <style>
-  @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-            100% { transform: scale(1); }
-        }
-
-        @keyframes slideIn {
-            from { transform: translateX(-100%); }
-            to { transform: translateX(0); }
-        }
-
-        @keyframes glow {
-            0% { box-shadow: 0 0 5px #ff0000; }
-            50% { box-shadow: 0 0 20px #ff0000; }
-            100% { box-shadow: 0 0 5px #ff0000; }
-        }
-
-        @keyframes rotate {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        @keyframes slideInRight {
-            from { transform: translateX(100%); opacity: 0; }
-            to { transform: translateX(0); opacity: 1; }
-        }
-
-        @keyframes bounceIn {
-            0% { transform: scale(0.3); opacity: 0; }
-            50% { transform: scale(1.05); }
-            70% { transform: scale(0.9); }
-            100% { transform: scale(1); opacity: 1; }
-        }
-
-        @keyframes shimmer {
-            0% { background-position: -1000px 0; }
-            100% { background-position: 1000px 0; }
-        }
-
-        .circuit-section {
-            margin-top: 40px;
-            background: rgba(34, 34, 34, 0.5);
-            border-radius: 15px;
-            padding: 20px;
-            animation: fadeIn 1s ease-out;
-        }
-
-        .circuit-grid {
-            display: grid;
-            grid-template-columns: 1fr 2fr;
-            gap: 20px;
-        }
-
-        .circuit-image-container {
-            position: relative;
-            overflow: hidden;
-            border-radius: 10px;
-            aspect-ratio: 16/9;
-        }
-
-        .circuit-image {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            transition: transform 0.5s ease;
-        }
-
-        .circuit-image-container:hover .circuit-image {
-            transform: scale(1.1);
-        }
-
-        .circuit-data {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 15px;
-        }
-
-        .circuit-stat {
-            background: rgba(0, 0, 0, 0.3);
-            padding: 15px;
-            border-radius: 8px;
-            transition: all 0.3s ease;
-            animation: fadeIn 0.5s ease-out;
-        }
-
-        .circuit-stat:hover {
-            background: rgba(255, 215, 0, 0.1);
-            transform: translateY(-5px);
-        }
-
-        .stat-value {
-            font-size: 24px;
-            font-weight: bold;
-            color: #ffffff;
-            margin-top: 5px;
-        }
-
-        .circuit-name {
-            font-size: 28px;
-            font-weight: bold;
-            margin-bottom: 20px;
-            color: #ff0000;
-            grid-column: 1 / -1;
-            animation: slideInRight 1s ease-out;
-        }
-
-        .animated-border {
-            position: relative;
-        }
-
-        .animated-border::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            right: 0;
-            bottom: 0;
-            left: 0;
-            border: 2px solid transparent;
-            border-radius: 8px;
-            animation: borderGlow 2s infinite;
-        }
-
-        @keyframes borderGlow {
-            0% { border-color: transparent; }
-            50% { border-color: #ff0000; }
-            100% { border-color: transparent; }
-        }
-
-        .loading-indicator {
-            width: 50px;
-            height: 50px;
-            border: 3px solid #333;
-            border-top: 3px solid #ff0000;
-            border-radius: 50%;
-            animation: rotate 1s linear infinite;
-            margin: 20px auto;
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Inter', sans-serif;
-        }
-
-        body {
-            background-color: #1a1a1a;
-            color: white;
-            padding: 20px;
-            line-height: 1.2;
-        }
-
-        .dashboard {
-            max-width: 1200px;
-            margin: 100px auto;
-            animation: fadeIn 1s ease-out;
-        }
-
-        .grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr 1fr;
-            gap: 20px;
-            align-items: center;
-            justify-content: space-around;
-            
-        }
-
-        .label {
-            color: #666;
-            font-size: 12px;
-            margin-bottom: 5px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        .position {
-            font-size: 70px;
-            font-weight: 800;
-            line-height: 1;
-            animation: pulse 2s infinite;
-        }
-
-        .gap {
-            color: #ff0000;
-            font-weight: 600;
-            animation: fadeIn 1s ease-out;
-        }
-
-        .lap-times {
-            margin-top: 30px;
-        }
-
-        .speed {
-            margin-top: 30px;
-        }
-
-        .speed-value {
-            font-size: 72px;
-            font-weight: 800;
-            line-height: 1;
-            animation: fadeIn 1.5s ease-out;
-        }
-
-        .speed-unit {
-            color: #666;
-            font-size: 14px;
-        }
-
-        .car-view {
-            position: relative;
-            background: linear-gradient(180deg, #222 0%, #1a1a1a 100%);
-            height: 400px;
-            border-radius: 10px;
-            overflow: hidden;
-            transition: all 0.3s ease;
-            cursor: pointer;
-        }
-
-        .car-image-container {
-            width: 100%;
-            height: 100%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: transform 0.5s ease;
-        }
-
-        .car-image {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            transition: transform 0.3s ease;
-        }
-
-        .driver-overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(0deg, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.5) 50%, rgba(0,0,0,0) 100%);
-            opacity: 0;
-            transition: opacity 0.3s ease;
-            display: flex;
-            flex-direction: column;
-            justify-content: flex-end;
-            padding: 20px;
-            color: white;
-            z-index: 10;
-        }
-
-        .car-view:hover .driver-overlay {
-            opacity: 1;
-        }
-
-        .car-view:hover .car-image {
-            transform: scale(1.1);
-        }
-
-        .team-logo {
-            width: 80px;
-            height: auto;
-            margin-bottom: 10px;
-        }
-
-        .driver-overlay-name {
-            font-size: 24px;
-            font-weight: bold;
-            margin-bottom: 5px;
-            color: #ffffff;
-        }
-
-        .driver-overlay-team {
-            font-size: 16px;
-            opacity: 0.8;
-        }
-
-        .driver-image {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            width: 60%;
-            border-radius: 50%;
-            opacity: 0;
-            transform: translateY(-20px);
-            transition: all 0.3s ease;
-        }
-
-        .car-view:hover .driver-image {
-            opacity: 1;
-            transform: translateY(0);
-        }
-
-        .controls {
-            position: absolute;
-            bottom: 20px;
-            width: 100%;
-            padding: 0 20px;
-        }
-
-        .bar {
-            background: rgba(51, 51, 51, 0.5);
-            height: 8px;
-            border-radius: 4px;
-            margin: 10px 0;
-            overflow: hidden;
-        }
-
-        .bar-fill {
-            height: 100%;
-            border-radius: 4px;
-            transition: width 0.3s ease-out;
-        }
-
-        .brakes .bar-fill {
-            background: #ff0000;
-            animation: slideIn 1s ease-out;
-        }
-
-        .throttle .bar-fill {
-            background: white;
-            animation: slideIn 1.2s ease-out;
-        }
-
-        .driver-info {
-            text-align: right;
-            animation: fadeIn 1s ease-out;
-        }
-
-        .driver-name {
-            color: #ff0000;
-            font-size: 24px;
-            font-weight: 800;
-            letter-spacing: -0.5px;
-        }
-
-        .driver-number {
-            color: #ff0000;
-            font-size: 32px;
-            font-weight: 800;
-            animation: pulse 2s infinite;
-        }
-
-        .coords {
-            margin-top: 30px;
-            animation: fadeIn 1.5s ease-out;
-        }
-
-        .safety-car {
-            margin-top: 30px;
-        }
-
-        .safety-message {
-            color: #ffffff;
-            font-weight: 600;
-            animation: glow 2s infinite;
-        }
-
-        .battery-fuel .bar {
-            margin: 20px 0;
-        }
-
-        .battery .bar-fill {
-            background: #ff0000;
-            animation: slideIn 1.4s ease-out;
-        }
-
-        .fuel .bar-fill {
-            background: white;
-            animation: slideIn 1.6s ease-out;
-        }
-
-        .pit-window {
-            background: #ff0000;
-            color: black;
-            padding: 5px 15px;
-            display: inline-block;
-            margin-top: 10px;
-            border-radius: 4px;
-            font-weight: 600;
-            animation: pulse 2s infinite;
-        }
-
-        .tire-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
-            margin-top: 15px;
-        }
-
-        .tire {
-            text-align: center;
-            animation: fadeIn 2s ease-out;
-        }
-
-        .tire-pressure {
-            font-size: 12px;
-            margin-bottom: 5px;
-            color: #999;
-        }
-
-        .tire-life {
-            background: rgba(51, 51, 51, 0.5);
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto;
-            font-weight: 600;
-            transition: all 0.3s ease;
-        }
-
-        .tire-life:hover {
-            transform: scale(1.1);
-            background: rgba(255, 0, 0, 0.2);
-        }
-
-        .laps-circle {
-            width: 120px;
-            height: 120px;
-            border: 4px solid #333;
-            border-radius: 50%;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            margin: 20px auto 0;
-            transition: all 0.3s ease;
-            animation: fadeIn 2s ease-out;
-        }
-
-        .laps-circle:hover {
-            border-color: #ff0000;
-            transform: scale(1.1);
-        }
-
-        .laps-number {
-            font-size: 36px;
-            font-weight: 800;
-        }
-
-        .laps-label {
-            color: #666;
-            font-size: 12px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        .highlight {
-            position: relative;
-            overflow: hidden;
-        }
-
-        .highlight::after {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: linear-gradient(
-                45deg,
-                transparent,
-                rgba(255, 0, 0, 0.1),
-                transparent
-            );
-            transform: rotate(45deg);
-            animation: shine 3s infinite;
-        }
-
-        @keyframes shine {
-            0% { transform: translateX(-100%) rotate(45deg); }
-            100% { transform: translateX(100%) rotate(45deg); }
-        }
-</style>
-
-<div id="juegoSimulacion">
-  <div class="dashboard">
-    <div class="grid">
-      <div>
-        <div class="label">POSICION</div>
-        <div class="position">1</div>
-        <div class="lap-times">
-          <div>
-            <div class="label">Aceleración</div>
-            <div>${datos.aceleracion}</div>
-          </div>
-          <div>
-            <div class="label">Velocidad Máxima</div>
-            <div>${datos.velocidadMaximaKmh}</div>
-          </div>
-        </div>
-        <div class="speed">
-          <div class="label">Desgaste Neumáticos</div>
-          <div class="speed-value">${datos.desgaste}</div>
-        </div>
-      </div>
-      <div class="car-view highlight">
-        <div class="car-image-container">
-          <img src="src/img/img2.png" class="car-image" alt="F1 Car">
-        </div>
-        <div class="driver-overlay">
-          <img src="src/img/liam-lawson.b09c773d.png" class="driver-image" alt="${results.driverName}">
-          <img src="src/img/f1.png" class="team-logo" alt="${results.team}">
-          <div class="driver-overlay-name">${results.driverName}</div>
-          <div class="driver-overlay-team">${results.team}</div>
-        </div>
-      </div>
-      <div>
-        <div class="driver-info">
-          <div class="label">PILOTO</div>
-          <div class="driver-name">${results.driverName.toUpperCase()}</div>
-          <div class="driver-number">${circuit.laps}</div>
-        </div>
-        <div class="safety-car">
-          <div class="label">Consumo Combustible</div>
-          <div class="safety-message">${datos.consumo}</div>
-        </div>
-      </div>
-    </div>
-    <div class="grid bottom-grid">
-      <div>
-        <div class="label">VUELTAS COMPLETADAS</div>
-        <div class="laps-circle">
-          <div class="laps-number">${circuit.laps}</div>
-          <div class="laps-label">VUELTAS</div>
-        </div>
-      </div>
-      <div>
-        <div class="label">TIEMPO TOTAL</div>
-        <div class="laps-circle">
-          <div class="laps-number">${results.totalTime}</div>
-        </div>
-      </div>
-    </div>
-    <div class="circuit-section">
-      <div class="circuit-grid">
-        <div class="circuit-image-container animated-border">
-          <img src="src/img/circuito1.png" alt="${circuit.name} Layout" class="circuit-image">
-        </div>
-        <div class="circuit-data">
-          <div class="circuit-name">${circuit.name}</div>
-          <div class="circuit-stat">
-            <div class="label">LONGITUD</div>
-            <div class="stat-value">${circuit.length} km</div>
-          </div>
-          <div class="circuit-stat">
-            <div class="label">VUELTAS</div>
-            <div class="stat-value">${circuit.laps}</div>
-          </div>
-          <div class="circuit-stat"> 
-            <div class="label">DISTANCIA TOTAL</div>
-            <div class="stat-value">${circuit.length * circuit.laps} km</div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
+                @keyframes fadeIn {
+                            from { opacity: 0; transform: translateY(20px); }
+                            to { opacity: 1; transform: translateY(0); }
+                        }
+
+            @keyframes pulse {
+                0% { transform: scale(1); }
+                50% { transform: scale(1.05); }
+                100% { transform: scale(1); }
+            }
+
+            @keyframes slideIn {
+                from { transform: translateX(-100%); }
+                to { transform: translateX(0); }
+            }
+
+            @keyframes glow {
+                0% { box-shadow: 0 0 5px #ff0000; }
+                50% { box-shadow: 0 0 20px #ff0000; }
+                100% { box-shadow: 0 0 5px #ff0000; }
+            }
+
+            @keyframes rotate {
+                0% { transform: rotate(0deg); }
+                100% { transform: rotate(360deg); }
+            }
+
+            @keyframes slideInRight {
+                from { transform: translateX(100%); opacity: 0; }
+                to { transform: translateX(0); opacity: 1; }
+            }
+
+            @keyframes bounceIn {
+                0% { transform: scale(0.3); opacity: 0; }
+                50% { transform: scale(1.05); }
+                70% { transform: scale(0.9); }
+                100% { transform: scale(1); opacity: 1; }
+            }
+
+            @keyframes shimmer {
+                0% { background-position: -1000px 0; }
+                100% { background-position: 1000px 0; }
+            }
+
+            .circuit-section {
+                margin-top: 40px;
+                background: rgba(34, 34, 34, 0.5);
+                border-radius: 15px;
+                padding: 20px;
+                animation: fadeIn 1s ease-out;
+            }
+
+            .circuit-grid {
+                display: grid;
+                grid-template-columns: 1fr 2fr;
+                gap: 20px;
+            }
+
+            .circuit-image-container {
+                position: relative;
+                overflow: hidden;
+                border-radius: 10px;
+                aspect-ratio: 16/9;
+            }
+
+            .circuit-image {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                transition: transform 0.5s ease;
+            }
+
+            .circuit-image-container:hover .circuit-image {
+                transform: scale(1.1);
+            }
+
+            .circuit-data {
+                display: grid;
+                grid-template-columns: repeat(2, 1fr);
+                gap: 15px;
+            }
+
+            .circuit-stat {
+                background: rgba(0, 0, 0, 0.3);
+                padding: 15px;
+                border-radius: 8px;
+                transition: all 0.3s ease;
+                animation: fadeIn 0.5s ease-out;
+            }
+
+            .circuit-stat:hover {
+                background: rgba(255, 215, 0, 0.1);
+                transform: translateY(-5px);
+            }
+
+            .stat-value {
+                font-size: 24px;
+                font-weight: bold;
+                color: #ffffff;
+                margin-top: 5px;
+            }
+
+            .circuit-name {
+                font-size: 28px;
+                font-weight: bold;
+                margin-bottom: 20px;
+                color: #ff0000;
+                grid-column: 1 / -1;
+                animation: slideInRight 1s ease-out;
+            }
+
+            .animated-border {
+                position: relative;
+            }
+
+            .animated-border::after {
+                content: '';
+                position: absolute;
+                top: 0;
+                right: 0;
+                bottom: 0;
+                left: 0;
+                border: 2px solid transparent;
+                border-radius: 8px;
+                animation: borderGlow 2s infinite;
+            }
+
+            @keyframes borderGlow {
+                0% { border-color: transparent; }
+                50% { border-color: #ff0000; }
+                100% { border-color: transparent; }
+            }
+
+            .loading-indicator {
+                width: 50px;
+                height: 50px;
+                border: 3px solid #333;
+                border-top: 3px solid #ff0000;
+                border-radius: 50%;
+                animation: rotate 1s linear infinite;
+                margin: 20px auto;
+            }
+
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+                font-family: 'Inter', sans-serif;
+            }
+
+            body {
+                background-color: #1a1a1a;
+                color: white;
+                padding: 20px;
+                line-height: 1.2;
+            }
+
+            .dashboard {
+                max-width: 1200px;
+                margin: 100px auto;
+                animation: fadeIn 1s ease-out;
+            }
+
+            .grid {
+                display: grid;
+                grid-template-columns: 1fr 1fr 1fr;
+                gap: 20px;
+                align-items: center;
+                justify-content: space-around;
+                
+            }
+
+            .label {
+                color: #666;
+                font-size: 12px;
+                margin-bottom: 5px;
+                text-transform: uppercase;
+                letter-spacing: 1px;
+            }
+
+            .position {
+                font-size: 70px;
+                font-weight: 800;
+                line-height: 1;
+                animation: pulse 2s infinite;
+            }
+
+            .gap {
+                color: #ff0000;
+                font-weight: 600;
+                animation: fadeIn 1s ease-out;
+            }
+
+            .lap-times {
+                margin-top: 30px;
+            }
+
+            .speed {
+                margin-top: 30px;
+            }
+
+            .speed-value {
+                font-size: 72px;
+                font-weight: 800;
+                line-height: 1;
+                animation: fadeIn 1.5s ease-out;
+            }
+
+            .speed-unit {
+                color: #666;
+                font-size: 14px;
+            }
+
+            .car-view {
+                position: relative;
+                background: linear-gradient(180deg, #222 0%, #1a1a1a 100%);
+                height: 400px;
+                border-radius: 10px;
+                overflow: hidden;
+                transition: all 0.3s ease;
+                cursor: pointer;
+            }
+
+            .car-image-container {
+                width: 100%;
+                height: 100%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                transition: transform 0.5s ease;
+            }
+
+            .car-image {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                transition: transform 0.3s ease;
+            }
+
+            .driver-overlay {
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: linear-gradient(0deg, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.5) 50%, rgba(0,0,0,0) 100%);
+                opacity: 0;
+                transition: opacity 0.3s ease;
+                display: flex;
+                flex-direction: column;
+                justify-content: flex-end;
+                padding: 20px;
+                color: white;
+                z-index: 10;
+            }
+
+            .car-view:hover .driver-overlay {
+                opacity: 1;
+            }
+
+            .car-view:hover .car-image {
+                transform: scale(1.1);
+            }
+
+            .team-logo {
+                width: 80px;
+                height: auto;
+                margin-bottom: 10px;
+            }
+
+            .driver-overlay-name {
+                font-size: 24px;
+                font-weight: bold;
+                margin-bottom: 5px;
+                color: #ffffff;
+            }
+
+            .driver-overlay-team {
+                font-size: 16px;
+                opacity: 0.8;
+            }
+
+            .driver-image {
+                position: absolute;
+                top: 20px;
+                right: 20px;
+                width: 60%;
+                border-radius: 50%;
+                opacity: 0;
+                transform: translateY(-20px);
+                transition: all 0.3s ease;
+            }
+
+            .car-view:hover .driver-image {
+                opacity: 1;
+                transform: translateY(0);
+            }
+
+            .controls {
+                position: absolute;
+                bottom: 20px;
+                width: 100%;
+                padding: 0 20px;
+            }
+
+            .bar {
+                background: rgba(51, 51, 51, 0.5);
+                height: 8px;
+                border-radius: 4px;
+                margin: 10px 0;
+                overflow: hidden;
+            }
+
+            .bar-fill {
+                height: 100%;
+                border-radius: 4px;
+                transition: width 0.3s ease-out;
+            }
+
+            .brakes .bar-fill {
+                background: #ff0000;
+                animation: slideIn 1s ease-out;
+            }
+
+            .throttle .bar-fill {
+                background: white;
+                animation: slideIn 1.2s ease-out;
+            }
+
+            .driver-info {
+                text-align: right;
+                animation: fadeIn 1s ease-out;
+            }
+
+            .driver-name {
+                color: #ff0000;
+                font-size: 24px;
+                font-weight: 800;
+                letter-spacing: -0.5px;
+            }
+
+            .driver-number {
+                color: #ff0000;
+                font-size: 32px;
+                font-weight: 800;
+                animation: pulse 2s infinite;
+            }
+
+            .coords {
+                margin-top: 30px;
+                animation: fadeIn 1.5s ease-out;
+            }
+
+            .safety-car {
+                margin-top: 30px;
+            }
+
+            .safety-message {
+                color: #ffffff;
+                font-weight: 600;
+                animation: glow 2s infinite;
+            }
+
+            .battery-fuel .bar {
+                margin: 20px 0;
+            }
+
+            .battery .bar-fill {
+                background: #ff0000;
+                animation: slideIn 1.4s ease-out;
+            }
+
+            .fuel .bar-fill {
+                background: white;
+                animation: slideIn 1.6s ease-out;
+            }
+
+            .pit-window {
+                background: #ff0000;
+                color: black;
+                padding: 5px 15px;
+                display: inline-block;
+                margin-top: 10px;
+                border-radius: 4px;
+                font-weight: 600;
+                animation: pulse 2s infinite;
+            }
+
+            .tire-grid {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 15px;
+                margin-top: 15px;
+            }
+
+            .tire {
+                text-align: center;
+                animation: fadeIn 2s ease-out;
+            }
+
+            .tire-pressure {
+                font-size: 12px;
+                margin-bottom: 5px;
+                color: #999;
+            }
+
+            .tire-life {
+                background: rgba(51, 51, 51, 0.5);
+                width: 60px;
+                height: 60px;
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                margin: 0 auto;
+                font-weight: 600;
+                transition: all 0.3s ease;
+            }
+
+            .tire-life:hover {
+                transform: scale(1.1);
+                background: rgba(255, 0, 0, 0.2);
+            }
+
+            .laps-circle {
+                width: 120px;
+                height: 120px;
+                border: 4px solid #333;
+                border-radius: 50%;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                margin: 20px auto 0;
+                transition: all 0.3s ease;
+                animation: fadeIn 2s ease-out;
+            }
+
+            .laps-circle:hover {
+                border-color: #ff0000;
+                transform: scale(1.1);
+            }
+
+            .laps-number {
+                font-size: 36px;
+                font-weight: 800;
+            }
+
+            .laps-label {
+                color: #666;
+                font-size: 12px;
+                text-transform: uppercase;
+                letter-spacing: 1px;
+            }
+
+            .highlight {
+                position: relative;
+                overflow: hidden;
+            }
+
+            .highlight::after {
+                content: '';
+                position: absolute;
+                top: -50%;
+                left: -50%;
+                width: 200%;
+                height: 200%;
+                background: linear-gradient(
+                    45deg,
+                    transparent,
+                    rgba(255, 0, 0, 0.1),
+                    transparent
+                );
+                transform: rotate(45deg);
+                animation: shine 3s infinite;
+            }
+
+            @keyframes shine {
+                0% { transform: translateX(-100%) rotate(45deg); }
+                100% { transform: translateX(100%) rotate(45deg); }
+            }
+                </style>
+
+                <div id="juegoSimulacion">
+                <div class="dashboard">
+                    <div class="grid">
+                    <div>
+                        <div class="label">POSICION</div>
+                        <div class="position">1</div>
+                        <div class="lap-times">
+                        <div>
+                            <div class="label">Aceleración</div>
+                            <div>${datos.aceleracion}</div>
+                        </div>
+                        <div>
+                            <div class="label">Velocidad Máxima</div>
+                            <div>${datos.velocidadMaximaKmh}</div>
+                        </div>
+                        </div>
+                        <div class="speed">
+                        <div class="label">Desgaste Neumáticos</div>
+                        <div class="speed-value">${datos.desgaste}</div>
+                        </div>
+                    </div>
+                    <div class="car-view highlight">
+                        <div class="car-image-container">
+                        <img src="src/img/img2.png" class="car-image" alt="F1 Car">
+                        </div>
+                        <div class="driver-overlay">
+                        <img src="src/img/liam-lawson.b09c773d.png" class="driver-image" alt="${results.driverName}">
+                        <img src="src/img/f1.png" class="team-logo" alt="${results.team}">
+                        <div class="driver-overlay-name">${results.driverName}</div>
+                        <div class="driver-overlay-team">Piloto</div>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="driver-info">
+                        <div class="label">PILOTO</div>
+                        <div class="driver-name">${results.driverName.toUpperCase()}</div>
+                        <div class="driver-number">${circuit.laps}</div>
+                        </div>
+                        <div class="safety-car">
+                        <div class="label">Consumo Combustible</div>
+                        <div class="safety-message">${datos.consumo}</div>
+                        </div>
+                    </div>
+                    </div>
+                    <div class="grid bottom-grid">
+                    <div>
+                        <div class="label">VUELTAS COMPLETADAS</div>
+                        <div class="laps-circle">
+                        <div class="laps-number">${circuit.laps}</div>
+                        <div class="laps-label">VUELTAS</div>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="label">TIEMPO TOTAL</div>
+                        <div class="laps-circle">
+                        <div class="laps-number">${results.totalTime}</div>
+                        </div>
+                    </div>
+                    </div>
+                    <div class="circuit-section">
+                    <div class="circuit-grid">
+                        <div class="circuit-image-container animated-border">
+                        <img src="src/img/circuito1.png" alt="${circuit.name} Layout" class="circuit-image">
+                        </div>
+                        <div class="circuit-data">
+                        <div class="circuit-name">${circuit.name}</div>
+                        <div class="circuit-stat">
+                            <div class="label">LONGITUD</div>
+                            <div class="stat-value">${circuit.length} km</div>
+                        </div>
+                        <div class="circuit-stat">
+                            <div class="label">VUELTAS</div>
+                            <div class="stat-value">${circuit.laps}</div>
+                        </div>
+                        <div class="circuit-stat"> 
+                            <div class="label">DISTANCIA TOTAL</div>
+                            <div class="stat-value">${circuit.length * circuit.laps} km</div>
+                        </div>
+                        </div>
+                    </div>
+                    </div>
+                </div>
+                </div>
             `;
-    
+            //Organizar datos del usuario
             const usuario = {
                 idUser: idUser,
                 configuracion: [
@@ -1496,7 +1567,7 @@ export class JuegoElement extends HTMLElement {
         }
     }
     
-
+    //Validar el formulario de configuaración
     validarDatos(datos) {
         if (!datos.circuitoSelect || !datos.vehiculoSelect) {
             Swal.fire({
