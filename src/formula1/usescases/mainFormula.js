@@ -40,13 +40,13 @@ export class mainFormula extends HTMLElement{
                     </div>
                     <div class="carousel">
                         <div class="carousel-inner">
-                            <div class="carousel-item active" data-name="Lewis Hamilton" data-description="Piloto británico, siete veces campeón del mundo. Un ícono del deporte que ha redefinido los límites de la Fórmula 1 con su extraordinaria habilidad y determinación inquebrantable.">
-                                <img src="src/img/im1.png" alt="Lewis Hamilton">
+                            <div class="carousel-item active" data-name="Max Verstappen" data-description="Piloto neerlandés de Fórmula 1. Compite para el equipo Red Bull Racing y es reconocido por su agresividad en pista, talento natural y habilidades excepcionales para adelantar.">
+                                <img src="src/img/im1.png" alt="Max Verstappen">
                             </div>
-                            <div class="carousel-item" data-name="Max Verstappen" data-description="Piloto neerlandés, campeón del mundo en 2021 y 2022. Una fuerza imparable que combina agresividad calculada con precisión milimétrica en cada vuelta.">
+                            <div class="carousel-item" data-name="Alex Albon" data-description="Piloto británico, corre para el equipo Williams Racing y es conocido por su talento en pista, consistencia y capacidad de defensa en carrera.">
                                 <img src="src/img/im2.png" alt="Max Verstappen">
                             </div>
-                            <div class="carousel-item" data-name="Charles Leclerc" data-description="Piloto monegasco, destacado por su velocidad y talento. Un virtuoso del volante que representa el futuro brillante de Ferrari y la Fórmula 1.">
+                            <div class="carousel-item" data-name="Liam Lawson" data-description="Piloto neozelandés, es parte del programa de jóvenes pilotos de Red Bull y ha competido en diversas categorías de monoplazas, incluyendo la Fórmula 2 y la Super Fórmula japonesa.">
                                 <img src="src/img/liam-lawson.b09c773d.png" alt="Charles Leclerc">
                             </div>
                         </div>
