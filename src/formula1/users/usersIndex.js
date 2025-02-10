@@ -62,6 +62,7 @@ export class usersIndex extends HTMLElement {
                     display: flex;
                     align-items: center;
                     padding: 0;
+                    cursor: pointer;
                 }
 
                 .navbar-brand img {
@@ -70,6 +71,10 @@ export class usersIndex extends HTMLElement {
                     object-fit: contain;
                     filter: drop-shadow(0 0 5px rgba(237, 28, 36, 0.5));
                     transition: transform 0.3s ease;
+                }
+
+                .navbar-brand:hover img {
+                    transform: scale(1.05);
                 }
 
                 .nav-menu {
@@ -261,7 +266,7 @@ export class usersIndex extends HTMLElement {
             <div class="fullscreen-container">
                 <nav class="navbar">
                     <div class="container-fluid">
-                        <a class="navbar-brand" href="#">
+                        <a class="navbar-brand" href="#" id="logo-link">
                             <img src="src/img/f1.png" alt="F1 Logo">
                         </a>
                         <button class="menu-toggle">
@@ -286,7 +291,7 @@ export class usersIndex extends HTMLElement {
                                 <a class="nav-link" href="#" data-section="juego">Juego</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" href="#" data-section="perfil">👤</a>
+                                <a class="nav-link" href="#" data-section="perfil" id="perfil-link">👤</a>
                             </li>
                         </ul>   
                     </div>                     
@@ -319,15 +324,37 @@ export class usersIndex extends HTMLElement {
         // Event listeners menú celular
         const menuToggle = this.querySelector('.menu-toggle');
         const navMenu = this.querySelector('.nav-menu');
+        const logoLink = this.querySelector('#logo-link');
 
         menuToggle?.addEventListener('click', () => {
             menuToggle.classList.toggle('active');
             navMenu.classList.toggle('active');
         });
 
+        // Logo click handler - Recarga la página inicial
+        logoLink?.addEventListener('click', (e) => {
+            e.preventDefault();
+            window.location.href = '/index.html';
+        });
+
         this.querySelectorAll('.nav-link').forEach(link => {
             link.addEventListener('click', (e) => {
                 e.preventDefault();
+
+                const section = e.target.dataset.section;
+                
+                // Si es el perfil, solo recargamos el componente para actualizar los datos
+                if (section === 'perfil') {
+                    // Removemos el componente perfil-users actual si existe
+                    const oldPerfilComponent = this.querySelector('perfil-users');
+                    if (oldPerfilComponent) {
+                        oldPerfilComponent.remove();
+                    }
+
+                    // Creamos un nuevo componente perfil-users
+                    const newPerfilComponent = document.createElement('perfil-users');
+                    this.querySelector('#perfil').appendChild(newPerfilComponent);
+                }
 
                 //Remover clase active de los enlaces
                 this.querySelectorAll('.nav-link').forEach(navLink => {
@@ -337,11 +364,8 @@ export class usersIndex extends HTMLElement {
                 // Añadir clase active al enlace clickeado
                 e.target.classList.add('active');
 
-                // Obtener la sección a mostrar
-                const section = e.target.dataset.section;
-
                 // Cambiar secciones con animación
-                ['equipos', 'pilotos', 'circuitos', 'vehiculos', 'juego','perfil'].forEach(containerName => {
+                ['equipos', 'pilotos', 'circuitos', 'vehiculos', 'juego', 'perfil'].forEach(containerName => {
                     const container = this.querySelector(`#${containerName}`);
                     if (containerName === section) {
                         container.style.display = 'block';

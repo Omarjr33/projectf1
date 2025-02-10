@@ -250,11 +250,8 @@ export class adminIndex extends HTMLElement {
         // Logo navigation (back button)
         const logoBtn = this.querySelector('#logo-btn');
         logoBtn?.addEventListener('click', () => {
-            // Dispatch a custom event to navigate back
-            this.dispatchEvent(new CustomEvent('navigate-back', {
-                bubbles: true,
-                composed: true
-            }));
+            // Navigate to the initial page
+            window.location.href = '../index.html';
         });
 
         // Lógica menú de navegación por cada item con clase nav-link

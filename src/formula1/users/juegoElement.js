@@ -1455,7 +1455,7 @@ export class JuegoElement extends HTMLElement {
                         <img src="src/img/img2.png" class="car-image" alt="F1 Car">
                         </div>
                         <div class="driver-overlay">
-                        <img src="src/img/liam-lawson.b09c773d.png" class="driver-image" alt="${results.driverName}">
+                        <img src="src/img/liam-lawson.png" class="driver-image" alt="${results.driverName}">
                         <img src="src/img/f1.png" class="team-logo" alt="${results.team}">
                         <div class="driver-overlay-name">${results.driverName}</div>
                         <div class="driver-overlay-team">Piloto</div>
